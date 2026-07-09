@@ -1,27 +1,378 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><script>(function(){const s=localStorage.getItem("chroma-theme");const p=window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.setAttribute("data-theme",s||(p?"light":"dark"));})();</script><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dysgraphia Experience — ChromaSim</title><link rel="icon" type="image/png" href="emblem.png"><link rel="stylesheet" href="css/styles.css"></head>
-<body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
-<main id="main"><header class="page-header pillar-digital"><div class="container"><h1>Dysgraphia: Beyond the Keyboard</h1><p>Capture thoughts as nodes and voice snippets instead of forcing linear typing.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
-<section class="section"><div class="container"><div class="experience-shell">
-  <div class="experience-controls"><button id="addNode" class="btn btn-primary">Add Thought Node</button><button id="voiceBtn" class="btn btn-secondary">Speech to Text</button><button id="clearNodes" class="btn btn-secondary">Clear Map</button><button id="graphPivot" class="btn btn-secondary">Activate Stabilize Pivot</button><span id="graphState" class="xp-badge">Challenge mode active</span></div>
-  <div class="experience-grid">
-    <div class="experience-panel node-canvas" id="canvas">
-      <svg class="flow-svg" id="flowSvg"></svg>
-      <p class="muted-note">Drag nodes to reorganize thought clusters.</p>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dysgraphia Experience — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .dg-chip {
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .dg-chip.active {
+      border-color: var(--border-hover);
+      background: var(--bg-card);
+    }
+    .dg-field {
+      width: 100%;
+      min-height: 120px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      padding: 0.75rem;
+      font-family: inherit;
+    }
+    .dg-export {
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      min-height: 140px;
+    }
+    .strict-shake {
+      animation: dgshake 220ms linear 1;
+    }
+    @keyframes dgshake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav">
+        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
+      </nav>
     </div>
-    <div class="experience-panel"><h3>Semantic Smoothing Output</h3><textarea id="out" style="width:100%;min-height:210px;background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border);border-radius:12px;padding:0.75rem;"></textarea><p class="muted-note">Filler words are lightly cleaned while preserving intent.</p></div>
-  </div></div></div></section></main>
-<script>
-const canvas=document.getElementById("canvas"),out=document.getElementById("out"),svg=document.getElementById("flowSvg");let i=0,dragNode=null,offX=0,offY=0,stabilized=false;
-const links=[];
-function drawLinks(){svg.innerHTML="";links.forEach(([a,b])=>{if(!a.isConnected||!b.isConnected)return;const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect(),cr=canvas.getBoundingClientRect();const x1=ar.left-cr.left+ar.width/2,y1=ar.top-cr.top+ar.height/2,x2=br.left-cr.left+br.width/2,y2=br.top-cr.top+br.height/2;const line=document.createElementNS("http://www.w3.org/2000/svg","line");line.setAttribute("x1",x1);line.setAttribute("y1",y1);line.setAttribute("x2",x2);line.setAttribute("y2",y2);line.setAttribute("stroke","currentColor");line.setAttribute("stroke-opacity","0.35");line.setAttribute("stroke-width","1.5");svg.appendChild(line);});}
-function makeNode(label){const n=document.createElement("div");n.className="mind-node";n.textContent=label;n.style.left=Math.random()*70+"%";n.style.top=Math.random()*70+"%";n.addEventListener("pointerdown",(e)=>{dragNode=n;offX=e.offsetX;offY=e.offsetY;n.setPointerCapture(e.pointerId);});canvas.appendChild(n);return n;}
-document.getElementById("addNode").onclick=()=>{const node=makeNode(`Idea ${++i}`);const nodes=[...canvas.querySelectorAll(".mind-node")];if(nodes.length>1)links.push([nodes[nodes.length-2],node]);drawLinks();};
-canvas.addEventListener("pointermove",(e)=>{if(!dragNode)return;const r=canvas.getBoundingClientRect();dragNode.style.left=Math.max(0,Math.min(r.width-80,e.clientX-r.left-offX))+"px";dragNode.style.top=Math.max(0,Math.min(r.height-30,e.clientY-r.top-offY))+"px";drawLinks();});
-canvas.addEventListener("pointerup",()=>{dragNode=null;});
-document.getElementById("clearNodes").onclick=()=>{[...canvas.querySelectorAll(".mind-node")].forEach(n=>n.remove());links.length=0;drawLinks();i=0;};
-document.getElementById("voiceBtn").onclick=()=>{const demo="um I think like inclusive tools should let people map ideas before writing final text so each thought can stand on its own before sequencing";out.value=demo.replace(/\b(um|like|you know)\b/gi,"").replace(/\s+/g," ").trim();};
-document.getElementById("graphPivot").onclick=()=>{stabilized=!stabilized;document.getElementById("graphPivot").textContent=stabilized?"Return to Challenge Mode":"Activate Stabilize Pivot";document.getElementById("graphState").textContent=stabilized?"Inclusive pivot active":"Challenge mode active";canvas.style.filter=stabilized?"none":"blur(0.2px)";};
-setInterval(()=>{if(stabilized)return;canvas.querySelectorAll(".mind-node").forEach((n,idx)=>{const x=parseFloat(n.style.left)||0;const y=parseFloat(n.style.top)||0;n.style.left=(x+Math.sin(Date.now()/650+idx)*0.8)+"px";n.style.top=(y+Math.cos(Date.now()/700+idx)*0.6)+"px";});drawLinks();},220);
-["Context","Barrier","Support","Next Step"].forEach((t)=>{const n=makeNode(t);if(i>0)links.push([[...canvas.querySelectorAll(".mind-node")][i-1],n]);i++;});drawLinks();
-</script></body></html>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-digital">
+      <div class="container">
+        <h1>Dysgraphia: Beyond the Keyboard</h1>
+        <p>This module starts with a strict, high-friction text form. Then it unlocks multimodal expression, semantic smoothing, and structured export.</p>
+        <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="experience-shell">
+          <div class="experience-controls">
+            <button id="pivotBtn" class="btn btn-primary">Activate Inclusive Pivot</button>
+            <button id="saveBtn" class="btn btn-secondary">Save Snapshot</button>
+            <span id="modeBadge" class="xp-badge">Challenge mode active</span>
+            <span id="frictionBadge" class="xp-badge">Friction: High</span>
+          </div>
+
+          <div class="experience-grid">
+            <div class="experience-panel">
+              <h3>Challenge Scene: Strict Form</h3>
+              <p class="muted-note">Linear-only, punctuation-sensitive, and formatting-rigid input.</p>
+              <label for="strictInput" class="muted-note">Write one polished paragraph (120+ chars, period required):</label>
+              <textarea id="strictInput" class="dg-field" placeholder="Type here..."></textarea>
+              <div class="experience-controls" style="margin-top:0.7rem;">
+                <button id="strictSubmit" class="btn btn-secondary">Submit Strict Form</button>
+                <span id="strictFeedback" class="xp-badge">Waiting</span>
+              </div>
+            </div>
+
+            <div class="experience-panel">
+              <h3>Friction Meter</h3>
+              <p class="muted-note">Tracks interaction strain across challenge and pivot modes.</p>
+              <div class="bar-meter"><div id="frictionFill" class="bar-meter-fill" style="width:78%"></div></div>
+              <ul class="feature-list" style="margin-top:0.75rem;">
+                <li id="metricFine">Fine-motor demand: high</li>
+                <li id="metricLinear">Linear sequencing pressure: high</li>
+                <li id="metricEdit">Error correction burden: high</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="experience-grid" style="margin-top:1rem;">
+            <div class="experience-panel node-canvas" id="canvas">
+              <h3>Pivot Scene: Node Map Workspace</h3>
+              <svg class="flow-svg" id="flowSvg"></svg>
+              <div class="experience-controls">
+                <button id="addNode" class="btn btn-secondary">Add Node</button>
+                <button id="clearNodes" class="btn btn-secondary">Clear</button>
+              </div>
+              <p class="muted-note">Drag nodes. In challenge mode, drift grows over time (fatigue curve).</p>
+            </div>
+
+            <div class="experience-panel">
+              <h3>Live Dictation + Intent Controls</h3>
+              <div class="experience-controls">
+                <button id="dictateBtn" class="btn btn-secondary">Mock Dictation</button>
+                <button id="applySmoothing" class="btn btn-secondary">Apply Smoothing</button>
+                <button id="keepRaw" class="btn btn-secondary">Keep As Spoken</button>
+              </div>
+              <div class="experience-controls">
+                <button class="dg-chip active" data-chip="um">um</button>
+                <button class="dg-chip active" data-chip="like">like</button>
+                <button class="dg-chip active" data-chip="you know">you know</button>
+                <button class="dg-chip active" data-chip="sort of">sort of</button>
+              </div>
+              <textarea id="dictationRaw" class="dg-field" placeholder="Dictation appears here..."></textarea>
+              <textarea id="dictationSmooth" class="dg-field" style="margin-top:0.6rem;" placeholder="Smoothed output..."></textarea>
+            </div>
+          </div>
+
+          <div class="experience-panel" style="margin-top:1rem;">
+            <h3>Intent-Preserving Structured Export</h3>
+            <div class="experience-controls">
+              <button id="exportBtn" class="btn btn-primary">Generate Export</button>
+            </div>
+            <div id="exportOut" class="dg-export">No export yet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const strictInput = document.getElementById("strictInput");
+    const strictSubmit = document.getElementById("strictSubmit");
+    const strictFeedback = document.getElementById("strictFeedback");
+    const pivotBtn = document.getElementById("pivotBtn");
+    const modeBadge = document.getElementById("modeBadge");
+    const frictionBadge = document.getElementById("frictionBadge");
+    const frictionFill = document.getElementById("frictionFill");
+    const metricFine = document.getElementById("metricFine");
+    const metricLinear = document.getElementById("metricLinear");
+    const metricEdit = document.getElementById("metricEdit");
+    const saveBtn = document.getElementById("saveBtn");
+
+    const canvas = document.getElementById("canvas");
+    const svg = document.getElementById("flowSvg");
+    const addNode = document.getElementById("addNode");
+    const clearNodes = document.getElementById("clearNodes");
+    const exportBtn = document.getElementById("exportBtn");
+    const exportOut = document.getElementById("exportOut");
+
+    const dictateBtn = document.getElementById("dictateBtn");
+    const applySmoothing = document.getElementById("applySmoothing");
+    const keepRaw = document.getElementById("keepRaw");
+    const raw = document.getElementById("dictationRaw");
+    const smooth = document.getElementById("dictationSmooth");
+
+    let pivotOn = false;
+    let fatigue = 0;
+    let dragNode = null;
+    let offX = 0;
+    let offY = 0;
+    let nodeCount = 0;
+    const links = [];
+
+    function updateFriction(value) {
+      const clamped = Math.max(5, Math.min(95, value));
+      frictionFill.style.width = `${clamped}%`;
+      if (clamped > 65) {
+        frictionBadge.textContent = "Friction: High";
+      } else if (clamped > 35) {
+        frictionBadge.textContent = "Friction: Medium";
+      } else {
+        frictionBadge.textContent = "Friction: Low";
+      }
+    }
+
+    function setMode(pivot) {
+      pivotOn = pivot;
+      pivotBtn.textContent = pivot ? "Return to Challenge Mode" : "Activate Inclusive Pivot";
+      modeBadge.textContent = pivot ? "Inclusive pivot active" : "Challenge mode active";
+      metricFine.textContent = `Fine-motor demand: ${pivot ? "lower" : "high"}`;
+      metricLinear.textContent = `Linear sequencing pressure: ${pivot ? "reduced" : "high"}`;
+      metricEdit.textContent = `Error correction burden: ${pivot ? "assisted" : "high"}`;
+      updateFriction(pivot ? 26 : 78);
+    }
+
+    function makeNode(label) {
+      const n = document.createElement("div");
+      n.className = "mind-node";
+      n.textContent = label;
+      n.style.left = `${Math.random() * 70}%`;
+      n.style.top = `${Math.random() * 65}%`;
+      n.addEventListener("pointerdown", (e) => {
+        dragNode = n;
+        offX = e.offsetX;
+        offY = e.offsetY;
+        n.setPointerCapture(e.pointerId);
+      });
+      canvas.appendChild(n);
+      return n;
+    }
+
+    function drawLinks() {
+      svg.innerHTML = "";
+      links.forEach(([a, b]) => {
+        if (!a.isConnected || !b.isConnected) return;
+        const ar = a.getBoundingClientRect();
+        const br = b.getBoundingClientRect();
+        const cr = canvas.getBoundingClientRect();
+        const x1 = ar.left - cr.left + ar.width / 2;
+        const y1 = ar.top - cr.top + ar.height / 2;
+        const x2 = br.left - cr.left + br.width / 2;
+        const y2 = br.top - cr.top + br.height / 2;
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("stroke", "currentColor");
+        line.setAttribute("stroke-opacity", "0.35");
+        line.setAttribute("stroke-width", "1.5");
+        svg.appendChild(line);
+      });
+    }
+
+    strictSubmit.addEventListener("click", () => {
+      const text = strictInput.value.trim();
+      const valid = text.length >= 120 && /[.?!]$/.test(text);
+      strictFeedback.textContent = valid ? "Accepted" : "Rejected: formatting mismatch";
+      if (!valid) {
+        strictInput.classList.add("strict-shake");
+        setTimeout(() => strictInput.classList.remove("strict-shake"), 260);
+        updateFriction(pivotOn ? 38 : 86);
+      }
+    });
+
+    pivotBtn.addEventListener("click", () => setMode(!pivotOn));
+
+    canvas.addEventListener("pointermove", (e) => {
+      if (!dragNode) return;
+      const r = canvas.getBoundingClientRect();
+      let x = Math.max(0, Math.min(r.width - 95, e.clientX - r.left - offX));
+      let y = Math.max(24, Math.min(r.height - 34, e.clientY - r.top - offY));
+      if (!pivotOn) {
+        // Fatigue curve: movement accuracy decreases over time
+        fatigue = Math.min(18, fatigue + 0.015);
+        x += (Math.random() - 0.5) * fatigue;
+        y += (Math.random() - 0.5) * fatigue;
+      }
+      dragNode.style.left = `${x}px`;
+      dragNode.style.top = `${y}px`;
+      drawLinks();
+    });
+
+    canvas.addEventListener("pointerup", () => {
+      dragNode = null;
+    });
+
+    addNode.addEventListener("click", () => {
+      const labels = ["Idea", "Example", "Need", "Constraint", "Next Step"];
+      const n = makeNode(`${labels[nodeCount % labels.length]} ${++nodeCount}`);
+      const nodes = [...canvas.querySelectorAll(".mind-node")];
+      if (nodes.length > 1) links.push([nodes[nodes.length - 2], n]);
+      drawLinks();
+    });
+
+    clearNodes.addEventListener("click", () => {
+      canvas.querySelectorAll(".mind-node").forEach((n) => n.remove());
+      links.length = 0;
+      nodeCount = 0;
+      fatigue = 0;
+      drawLinks();
+    });
+
+    const fillerChips = [...document.querySelectorAll(".dg-chip")];
+    const fillerState = new Map(fillerChips.map((chip) => [chip.dataset.chip, true]));
+    fillerChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const key = chip.dataset.chip;
+        const next = !fillerState.get(key);
+        fillerState.set(key, next);
+        chip.classList.toggle("active", next);
+      });
+    });
+
+    dictateBtn.addEventListener("click", () => {
+      raw.value = "um I wanted to explain the barrier but like my hands keep pausing and you know the sentence breaks before the idea is done and I sort of lose the thread";
+      smooth.value = "";
+    });
+
+    applySmoothing.addEventListener("click", () => {
+      let output = raw.value;
+      fillerState.forEach((enabled, token) => {
+        if (enabled) {
+          const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          output = output.replace(new RegExp(`\\b${escaped}\\b`, "gi"), "");
+        }
+      });
+      smooth.value = output.replace(/\s+/g, " ").trim();
+    });
+
+    keepRaw.addEventListener("click", () => {
+      smooth.value = raw.value;
+    });
+
+    exportBtn.addEventListener("click", () => {
+      const nodes = [...canvas.querySelectorAll(".mind-node")].map((n) => n.textContent.trim());
+      const spoken = smooth.value.trim() || raw.value.trim() || "(no dictation text)";
+      const strict = strictInput.value.trim() || "(strict form empty)";
+      exportOut.textContent =
+`# Dysgraphia Intent Export
+
+## Core Intent
+${spoken}
+
+## Node Map Outline
+${nodes.length ? nodes.map((n) => `- ${n}`).join("\n") : "- (no nodes created)"}
+
+## Strict Form Snapshot
+${strict}
+
+## Notes
+- Export preserves spoken structure before grammar normalization.
+- Author can reorder bullets without rewriting core content.`;
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const snapshot = {
+        strict: strictInput.value,
+        raw: raw.value,
+        smooth: smooth.value,
+        pivotOn,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem("chroma-dysgraphia-snapshot", JSON.stringify(snapshot));
+      strictFeedback.textContent = "Snapshot saved";
+    });
+
+    // Seed starter map
+    ["Context 1", "Barrier 1", "Support 1", "Next Step 1"].forEach((label) => {
+      const n = makeNode(label);
+      const nodes = [...canvas.querySelectorAll(".mind-node")];
+      if (nodes.length > 1) links.push([nodes[nodes.length - 2], n]);
+      nodeCount += 1;
+    });
+    drawLinks();
+    setMode(false);
+  </script>
+</body>
+</html>
