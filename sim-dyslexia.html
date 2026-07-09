@@ -18,6 +18,7 @@
   <title>Dyslexia Experience — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="js/chroma-access.js"></script>
 </head>
 <body>
   <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
@@ -48,7 +49,7 @@
     const chars = [...p.textContent].map((ch) => `<span class="drift-char">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
     p.innerHTML = chars;
     p.addEventListener("mousemove", (e) => {
-      if (anchored || window.chromaSeizureSafe?.()) return;
+      if (anchored || window.chromaSeizureSafe?.() || window.chromaDyslexiaMode?.()) return;
       const velocity = Math.min(4, Math.abs(e.movementX) + Math.abs(e.movementY));
       p.querySelectorAll(".drift-char").forEach((el, i) => {
         const x = (Math.sin((i + e.clientX) * 0.08) * velocity).toFixed(2);
@@ -70,6 +71,17 @@
       u.onend = () => { document.getElementById("readState").textContent = "Idle"; };
       window.speechSynthesis.speak(u);
     });
+
+    function syncGlobalDyslexia() {
+      if (window.chromaDyslexiaMode?.()) {
+        p.classList.add("anchor-font");
+        p.querySelectorAll(".drift-char").forEach((el) => (el.style.transform = "none"));
+      } else if (!anchored) {
+        p.classList.remove("anchor-font");
+      }
+    }
+    syncGlobalDyslexia();
+    document.addEventListener("chroma-dyslexia-change", syncGlobalDyslexia);
   </script>
 </body>
 </html>

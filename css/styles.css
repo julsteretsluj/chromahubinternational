@@ -473,6 +473,179 @@ button:focus-visible {
   filter: saturate(0.45) contrast(0.88) brightness(0.95);
 }
 
+/* OpenDyslexic for dyslexia-friendly mode */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("https://cdn.jsdelivr.net/gh/antijingoist/open-dyslexic@master/compiled/OpenDyslexic-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+[data-dyslexia-mode="true"] body,
+[data-dyslexia-mode="true"] button,
+[data-dyslexia-mode="true"] input,
+[data-dyslexia-mode="true"] textarea,
+[data-dyslexia-mode="true"] select {
+  font-family: "OpenDyslexic", "Comic Sans MS", Verdana, sans-serif !important;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+  word-spacing: 0.12em;
+}
+
+[data-dyslexia-mode="true"] h1,
+[data-dyslexia-mode="true"] h2,
+[data-dyslexia-mode="true"] h3,
+[data-dyslexia-mode="true"] h4,
+[data-dyslexia-mode="true"] p,
+[data-dyslexia-mode="true"] li {
+  font-family: "OpenDyslexic", "Comic Sans MS", Verdana, sans-serif;
+  line-height: 1.85;
+  letter-spacing: 0.04em;
+  word-spacing: 0.1em;
+}
+
+/* Colorblind-safe palette remaps */
+[data-colorblind-mode="deuteranopia"] {
+  --chroma-red: #d55e00;
+  --chroma-orange: #e69f00;
+  --chroma-green: #0072b2;
+  --chroma-teal: #56b4e9;
+  --chroma-blue: #0072b2;
+  --chroma-indigo: #cc79a7;
+  --chroma-magenta: #cc79a7;
+  --chroma-yellow: #f0e442;
+}
+
+[data-colorblind-mode="protanopia"] {
+  --chroma-red: #d55e00;
+  --chroma-orange: #e69f00;
+  --chroma-green: #009e73;
+  --chroma-teal: #56b4e9;
+  --chroma-blue: #0072b2;
+  --chroma-indigo: #cc79a7;
+  --chroma-magenta: #cc79a7;
+  --chroma-yellow: #f0e442;
+}
+
+[data-colorblind-mode="tritanopia"] {
+  --chroma-red: #e69f00;
+  --chroma-orange: #d55e00;
+  --chroma-green: #009e73;
+  --chroma-teal: #0072b2;
+  --chroma-blue: #cc79a7;
+  --chroma-indigo: #0072b2;
+  --chroma-magenta: #d55e00;
+  --chroma-yellow: #f0e442;
+}
+
+[data-colorblind-mode="deuteranopia"] .btn-primary,
+[data-colorblind-mode="protanopia"] .btn-primary,
+[data-colorblind-mode="tritanopia"] .btn-primary {
+  background: var(--chroma-blue) !important;
+  -webkit-text-fill-color: #fff;
+  color: #fff !important;
+}
+
+[data-colorblind-mode] .bar-meter-fill,
+[data-colorblind-mode] .xp-badge {
+  border: 1px solid var(--border);
+}
+
+[data-colorblind-mode] .bar-meter-fill {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--chroma-blue),
+    var(--chroma-blue) 6px,
+    var(--chroma-orange) 6px,
+    var(--chroma-orange) 12px
+  ) !important;
+}
+
+.access-wrap {
+  position: relative;
+}
+
+.access-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.55rem;
+  background: var(--theme-toggle-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.access-toggle:hover {
+  border-color: var(--border-hover);
+}
+
+.access-panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 120;
+  width: min(280px, 88vw);
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.access-panel-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.access-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.access-row:last-child {
+  margin-bottom: 0;
+}
+
+.access-row:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+}
+
+.access-row select {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.access-row input[type="checkbox"] {
+  accent-color: var(--chroma-teal);
+  margin-right: 0.35rem;
+}
+
+.access-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .site-nav ul {
   list-style: none;
   display: flex;

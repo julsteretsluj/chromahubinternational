@@ -86,6 +86,8 @@
     updateThemeToggle(document.documentElement.getAttribute("data-theme"));
     setSeizureSafe(document.documentElement.getAttribute("data-seizure-safe") === "true");
 
+    if (window.chromaAccessInject) window.chromaAccessInject();
+
     function closeSafetyGate() {
       const gate = document.querySelector(".safety-gate");
       if (gate) gate.remove();

@@ -70,6 +70,8 @@
     applyTheme(getTheme());
     applySeizureSafe(localStorage.getItem(seizureKey) === "true");
 
+    if (window.chromaAccessInject) window.chromaAccessInject();
+
     window.addEventListener("storage", (e) => {
       if (e.key === seizureKey) applySeizureSafe(e.newValue === "true");
       if (e.key === themeKey && e.newValue) applyTheme(e.newValue);
