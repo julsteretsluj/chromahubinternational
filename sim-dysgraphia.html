@@ -19,88 +19,103 @@
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
   <style>
-    .dg-write-zone {
+    .dg-how {
       border: 1px solid var(--border);
       border-radius: 12px;
       background: var(--bg-elevated);
-      padding: 0.85rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
     }
-    .dg-intent {
+    .dg-how ol { margin: 0.5rem 0 0 1.1rem; padding: 0; }
+    .dg-how li { margin-bottom: 0.35rem; font-size: 0.92rem; color: var(--text-secondary); }
+    .dg-target {
+      border-left: 4px solid var(--chroma-teal);
+      padding: 0.65rem 0.85rem;
+      background: color-mix(in srgb, var(--chroma-teal) 8%, var(--bg-elevated));
+      border-radius: 0 10px 10px 0;
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+    .dg-copy-input {
       width: 100%;
-      min-height: 88px;
+      min-height: 72px;
+      margin-top: 0.45rem;
+      padding: 0.7rem;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--bg-surface);
       color: var(--text-primary);
-      padding: 0.7rem;
       font: inherit;
       line-height: 1.55;
-      resize: vertical;
     }
-    .dg-mirror {
-      min-height: 88px;
+    .dg-notebook {
+      min-height: 110px;
       margin-top: 0.65rem;
-      padding: 0.7rem;
+      padding: 0.85rem 0.75rem;
       border-radius: 10px;
-      border: 1px dashed var(--chroma-orange);
-      background: color-mix(in srgb, var(--chroma-orange) 6%, var(--bg-surface));
-      line-height: 1.65;
-      font-size: 1.05rem;
+      border: 1px solid var(--border);
+      background:
+        repeating-linear-gradient(
+          transparent,
+          transparent 27px,
+          color-mix(in srgb, var(--border) 70%, transparent) 28px
+        );
+      background-color: color-mix(in srgb, var(--chroma-yellow) 5%, var(--bg-surface));
+      line-height: 28px;
+      font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+      font-size: 1.15rem;
       word-break: break-word;
     }
     .dg-char {
       display: inline-block;
-      transition: transform 0.08s ease;
+      position: relative;
     }
-    .dg-char.drift {
-      color: var(--text-primary);
-    }
-    .dg-char.swap {
-      color: var(--chroma-magenta);
-      font-weight: 700;
-    }
-    .dg-char.space-gap {
-      margin-right: 0.35rem;
-    }
-    .dg-chip {
-      border: 1px solid var(--border);
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      border-radius: 999px;
-      padding: 0.35rem 0.7rem;
-      cursor: pointer;
+    .dg-char.reversed { color: var(--chroma-magenta); font-weight: 700; }
+    .dg-char.cramped { letter-spacing: -0.12em; }
+    .dg-char.loose { margin-right: 0.2em; }
+    .dg-char.shaky { opacity: 0.88; }
+    .dg-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin: 0.75rem 0;
       font-size: 0.82rem;
+      color: var(--text-muted);
     }
-    .dg-chip.active { border-color: var(--border-hover); background: var(--bg-card); }
+    .dg-flow span { padding: 0.2rem 0.45rem; border: 1px solid var(--border); border-radius: 6px; }
+    .dg-symptom-log {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-elevated);
+      padding: 0.55rem 0.65rem;
+      font-size: 0.84rem;
+    }
+    .dg-symptom-log p {
+      margin: 0 0 0.4rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dg-symptom-log p:last-child { margin-bottom: 0; border-bottom: none; }
+    .dg-pivot-box {
+      border: 1px dashed var(--chroma-teal);
+      border-radius: 12px;
+      padding: 0.9rem;
+      background: color-mix(in srgb, var(--chroma-teal) 7%, var(--bg-elevated));
+    }
     .dg-field {
       width: 100%;
-      min-height: 100px;
+      min-height: 72px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--bg-elevated);
+      border-radius: 10px;
+      background: var(--bg-surface);
       color: var(--text-primary);
-      padding: 0.75rem;
-      font-family: inherit;
-    }
-    .dg-export {
-      white-space: pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.85rem;
-      line-height: 1.5;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.75rem;
-      min-height: 120px;
+      padding: 0.65rem;
+      font: inherit;
     }
     .dg-hidden { display: none !important; }
-    .strict-shake { animation: dgshake 220ms linear 1; }
-    @keyframes dgshake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-    [data-seizure-safe="true"] .strict-shake { animation: none; }
   </style>
 </head>
 <body>
@@ -121,7 +136,7 @@
     <header class="page-header pillar-digital">
       <div class="container">
         <h1>Dysgraphia: Beyond the Keyboard</h1>
-        <p>Challenge mode simulates hand fatigue, letter drift, and strict writing rules. The inclusive pivot unlocks dictation, node mapping, and intent-preserving export.</p>
+        <p>Ideas can be clear in your head while handwriting falls apart on the page. This module shows that gap, then offers writing paths that skip penmanship.</p>
         <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
       </div>
     </header>
@@ -129,77 +144,77 @@
     <section class="section">
       <div class="container">
         <div class="experience-shell">
+          <div class="dg-how">
+            <strong>How this simulation works</strong>
+            <ol id="howList">
+              <li>Read the <strong>target sentence</strong> on the board.</li>
+              <li><strong>Type your copy</strong> in the box — you are trying to match it.</li>
+              <li>The <strong>notebook</strong> shows how dysgraphia distorts handwriting: reversals, spacing, sloping lines.</li>
+              <li><strong>Submit</strong> — the teacher grades the notebook, not what you meant to write.</li>
+            </ol>
+          </div>
+
           <div class="experience-controls">
             <button id="pivotBtn" class="btn btn-primary">Activate Inclusive Pivot</button>
-            <button id="saveBtn" class="btn btn-secondary">Save Snapshot</button>
-            <span id="modeBadge" class="xp-badge">Challenge mode: motor friction</span>
-            <span id="frictionBadge" class="xp-badge">Hand fatigue: low</span>
+            <span id="modeBadge" class="xp-badge">Challenge: handwriting simulation on</span>
+            <span id="fatigueBadge" class="xp-badge">Hand fatigue: 0%</span>
           </div>
 
           <div class="experience-grid">
             <div class="experience-panel">
-              <h3>Scene 1: Write One Sentence</h3>
-              <p class="muted-note" id="writeHint">Type what you mean. In challenge mode, fine-motor strain changes what appears on the page.</p>
-              <div class="dg-write-zone">
-                <label for="intentInput" class="muted-note">What you intend to write</label>
-                <textarea id="intentInput" class="dg-intent" placeholder="Writing accessibility helps more people participate fully."></textarea>
-                <p class="muted-note" style="margin:0.65rem 0 0.35rem;" id="mirrorLabel">What appears on the page (motor output)</p>
-                <div id="motorMirror" class="dg-mirror muted-note">Start typing to see motor friction…</div>
+              <h3>Copy-from-board task</h3>
+              <p class="muted-note" id="taskNote">This mimics a common classroom demand: copy text exactly while fine-motor control breaks down.</p>
+
+              <p class="muted-note" style="margin-bottom:0.35rem;"><strong>Target sentence (on the board)</strong></p>
+              <div class="dg-target" id="targetText">Accessibility helps everyone participate.</div>
+
+              <div class="dg-flow" aria-hidden="true">
+                <span>Board</span> → <span>You type copy</span> → <span>Notebook page</span> → <span>Teacher grades</span>
               </div>
+
+              <label for="copyInput" class="muted-note"><strong>Your copy</strong> (type what you see on the board)</label>
+              <textarea id="copyInput" class="dg-copy-input" placeholder="Type the target sentence here…"></textarea>
+
+              <p class="muted-note" style="margin:0.75rem 0 0.35rem;"><strong>Notebook page</strong> — what the teacher actually reads</p>
+              <div id="notebook" class="dg-notebook muted-note">Start typing to see handwriting distortion…</div>
+
               <div class="experience-controls" style="margin-top:0.75rem;">
-                <button id="strictSubmit" class="btn btn-secondary">Submit to strict form</button>
-                <span id="strictFeedback" class="xp-badge">Waiting</span>
+                <button id="submitBtn" class="btn btn-secondary">Submit to teacher</button>
+                <button id="resetBtn" class="btn btn-secondary">Reset task</button>
+                <span id="gradeBadge" class="xp-badge">Not submitted</span>
               </div>
             </div>
 
             <div class="experience-panel">
-              <h3>Motor Load</h3>
-              <p class="muted-note">Fine-motor and sequencing strain while writing.</p>
-              <div class="bar-meter"><div id="frictionFill" class="bar-meter-fill" style="width:18%"></div></div>
-              <ul class="feature-list" style="margin-top:0.75rem;">
-                <li id="metricFine">Letter control: unstable</li>
-                <li id="metricSwap">Character swaps: active</li>
-                <li id="metricDrop">Dropped keystrokes: possible</li>
-                <li id="metricStrict">Form rules: rigid</li>
-              </ul>
-              <p id="fatigueNote" class="muted-note" style="margin-top:0.75rem;">Fatigue rises as you type — grip and spacing get harder to control.</p>
+              <h3>Live symptom log</h3>
+              <p class="muted-note">Each line names a dysgraphia-related writing difficulty as it appears.</p>
+              <div class="bar-meter"><div id="fatigueFill" class="bar-meter-fill" style="width:4%"></div></div>
+              <p class="muted-note" style="margin:0.5rem 0;">Hand fatigue rises as you write — errors become more likely.</p>
+              <div id="symptomLog" class="dg-symptom-log">
+                <p class="muted-note" style="margin:0;border:none;">No symptoms yet.</p>
+              </div>
             </div>
           </div>
 
-          <div id="pivotZone" class="dg-hidden">
-            <div class="experience-grid" style="margin-top:1rem;">
-              <div class="experience-panel node-canvas" id="canvas">
-                <h3>Scene 2: Node Map (Non-Linear)</h3>
-                <svg class="flow-svg" id="flowSvg"></svg>
-                <div class="experience-controls">
-                  <button id="addNode" class="btn btn-secondary">Add Node</button>
-                  <button id="clearNodes" class="btn btn-secondary">Clear</button>
+          <div id="pivotZone" class="dg-hidden" style="margin-top:1rem;">
+            <div class="dg-pivot-box">
+              <h3 style="margin-top:0;">Inclusive pivot — skip penmanship</h3>
+              <p class="muted-note">When handwriting is not the goal, these paths preserve your ideas without motor distortion.</p>
+              <div class="experience-grid" style="margin-top:0.75rem;">
+                <div class="experience-panel" style="margin:0;">
+                  <h3>Speak instead of copy</h3>
+                  <p class="muted-note">Dictation bypasses letter formation. Your words land cleanly on the page.</p>
+                  <button id="dictateBtn" class="btn btn-secondary">Use dictation</button>
+                  <p id="dictateResult" class="muted-note" style="margin-top:0.55rem;">—</p>
                 </div>
-                <p class="muted-note">Organize ideas spatially instead of forcing one clean line.</p>
-              </div>
-
-              <div class="experience-panel">
-                <h3>Scene 3: Dictation + Smoothing</h3>
-                <div class="experience-controls">
-                  <button id="dictateBtn" class="btn btn-secondary">Start Dictation</button>
-                  <button id="applySmoothing" class="btn btn-secondary">Smooth Fillers</button>
+                <div class="experience-panel" style="margin:0;">
+                  <h3>Bullet your ideas</h3>
+                  <p class="muted-note">Non-linear bullets reduce sequencing pressure.</p>
+                  <input id="bullet1" class="dg-field" type="text" placeholder="Main idea" style="min-height:auto;margin-bottom:0.45rem;">
+                  <input id="bullet2" class="dg-field" type="text" placeholder="Supporting point" style="min-height:auto;margin-bottom:0.45rem;">
+                  <input id="bullet3" class="dg-field" type="text" placeholder="Next step" style="min-height:auto;">
                 </div>
-                <div class="experience-controls">
-                  <button class="dg-chip active" data-chip="um">um</button>
-                  <button class="dg-chip active" data-chip="like">like</button>
-                  <button class="dg-chip active" data-chip="you know">you know</button>
-                </div>
-                <textarea id="dictationRaw" class="dg-field" placeholder="Spoken draft appears here…"></textarea>
-                <textarea id="dictationSmooth" class="dg-field" style="margin-top:0.6rem;" placeholder="Cleaned output…"></textarea>
               </div>
-            </div>
-
-            <div class="experience-panel" style="margin-top:1rem;">
-              <h3>Scene 4: Intent Export</h3>
-              <div class="experience-controls">
-                <button id="exportBtn" class="btn btn-primary">Generate Export</button>
-              </div>
-              <div id="exportOut" class="dg-export">No export yet.</div>
             </div>
           </div>
         </div>
@@ -209,323 +224,190 @@
 
   <script src="js/sim-common.js"></script>
   <script>
-    const intentInput = document.getElementById("intentInput");
-    const motorMirror = document.getElementById("motorMirror");
-    const strictSubmit = document.getElementById("strictSubmit");
-    const strictFeedback = document.getElementById("strictFeedback");
-    const pivotBtn = document.getElementById("pivotBtn");
-    const modeBadge = document.getElementById("modeBadge");
-    const frictionBadge = document.getElementById("frictionBadge");
-    const frictionFill = document.getElementById("frictionFill");
-    const pivotZone = document.getElementById("pivotZone");
-    const writeHint = document.getElementById("writeHint");
-    const mirrorLabel = document.getElementById("mirrorLabel");
-    const fatigueNote = document.getElementById("fatigueNote");
+    const TARGET = "Accessibility helps everyone participate.";
+    const REVERSALS = { b: "d", d: "b", p: "q", q: "p" };
 
-    const canvas = document.getElementById("canvas");
-    const svg = document.getElementById("flowSvg");
-    const addNode = document.getElementById("addNode");
-    const clearNodes = document.getElementById("clearNodes");
-    const exportBtn = document.getElementById("exportBtn");
-    const exportOut = document.getElementById("exportOut");
-    const dictateBtn = document.getElementById("dictateBtn");
-    const applySmoothing = document.getElementById("applySmoothing");
-    const raw = document.getElementById("dictationRaw");
-    const smooth = document.getElementById("dictationSmooth");
-    const saveBtn = document.getElementById("saveBtn");
+    const copyInput = document.getElementById("copyInput");
+    const notebook = document.getElementById("notebook");
+    const symptomLog = document.getElementById("symptomLog");
+    const fatigueFill = document.getElementById("fatigueFill");
+    const fatigueBadge = document.getElementById("fatigueBadge");
+    const pivotBtn = document.getElementById("pivotBtn");
+    const pivotZone = document.getElementById("pivotZone");
+    const modeBadge = document.getElementById("modeBadge");
+    const taskNote = document.getElementById("taskNote");
+    const howList = document.getElementById("howList");
+    const gradeBadge = document.getElementById("gradeBadge");
 
     let pivotOn = false;
     let fatigue = 0;
-    let dropped = 0;
-    let swaps = 0;
-    let dragNode = null;
-    let offX = 0;
-    let offY = 0;
-    let nodeCount = 0;
-    const links = [];
-    let lastMotorText = "";
-
-    const SWAP_PAIRS = [
-      ["b", "d"], ["p", "q"], ["m", "n"], ["u", "v"], ["i", "l"],
-      ["a", "o"], ["e", "c"], ["t", "f"], ["g", "q"]
-    ];
+    let notebookText = "";
+    let symptoms = [];
 
     function isSafe() {
       return window.chromaSeizureSafe?.();
     }
 
-    function seededRoll(index, ch, salt) {
-      const code = (ch && ch.charCodeAt(0)) || 32;
-      return ((index * 31 + code * 17 + salt * 13) % 997) / 997;
+    function seeded(i, ch) {
+      const c = (ch && ch.charCodeAt(0)) || 32;
+      return ((i * 29 + c * 11 + Math.floor(fatigue)) % 100) / 100;
     }
 
-    function buildMotor(text) {
-      if (pivotOn || !text) return { motor: text || "", changed: false };
-      let out = "";
-      let changed = false;
-      const salt = Math.floor(fatigue);
-      const chars = [...text];
-      for (let i = 0; i < chars.length; i++) {
-        let ch = chars[i];
-        const roll = seededRoll(i, ch, salt);
-        if (ch !== " " && roll < 0.06 + fatigue * 0.0004) {
-          const pair = SWAP_PAIRS.find((p) => p.includes(ch.toLowerCase()));
-          if (pair) {
-            const low = ch.toLowerCase();
-            const next = low === pair[0] ? pair[1] : pair[0];
-            ch = ch === ch.toUpperCase() ? next.toUpperCase() : next;
-            changed = true;
-          }
-        } else if (ch !== " " && roll > 0.9 && roll < 0.94 + fatigue * 0.0003) {
-          ch = ch + ch;
-          changed = true;
-        } else if (ch === " " && roll > 0.86 && roll < 0.98) {
-          ch = "  ";
-          changed = true;
-        }
-        out += ch;
-      }
-      return { motor: out, changed };
-    }
+    function render() {
+      const text = copyInput.value;
+      notebook.innerHTML = "";
+      symptoms = [];
 
-    function renderMirror(text) {
       if (!text) {
-        lastMotorText = "";
-        motorMirror.textContent = pivotOn
-          ? "Pivot mode: motor mirror matches your intent."
-          : "Start typing to see motor friction…";
-        motorMirror.classList.add("muted-note");
+        notebook.classList.add("muted-note");
+        notebook.textContent = pivotOn
+          ? "Pivot mode: notebook matches your typing."
+          : "Start typing to see handwriting distortion…";
+        notebookText = "";
+        renderSymptoms();
         return;
       }
-      motorMirror.classList.remove("muted-note");
-      motorMirror.innerHTML = "";
-      const motor = pivotOn ? text : buildMotor(text).motor;
-      lastMotorText = motor;
-      let swapCount = 0;
-      [...motor].forEach((ch, i) => {
+
+      notebook.classList.remove("muted-note");
+      let out = "";
+
+      [...text].forEach((ch, i) => {
+        let outCh = ch;
+        const classes = [];
+        const slope = !pivotOn && !isSafe() ? Math.sin(i * 0.08) * Math.min(8, fatigue * 0.09) : 0;
+
+        if (ch !== " " && !pivotOn && !isSafe()) {
+          const low = ch.toLowerCase();
+          const errorRate = 0.04 + fatigue * 0.0009;
+          if (REVERSALS[low] && seeded(i, ch) < errorRate) {
+            outCh = ch === low ? REVERSALS[low] : REVERSALS[low].toUpperCase();
+            classes.push("reversed");
+            symptoms.push({ msg: "Letter reversal: “" + ch + "” formed as “" + outCh + "”" });
+          }
+          if (seeded(i, ch) > 0.88 && seeded(i, ch) < 0.93) {
+            classes.push("cramped");
+            symptoms.push({ msg: "Cramped letters: spacing collapsed inside a word" });
+          }
+          if (fatigue > 35 && seeded(i, ch) > 0.55 && seeded(i, ch) < 0.62) {
+            classes.push("shaky");
+            symptoms.push({ msg: "Shaky letter forms: grip tiring" });
+          }
+        } else if (ch === " " && !pivotOn && !isSafe() && seeded(i, ch) > 0.82) {
+          classes.push("loose");
+          symptoms.push({ msg: "Uneven spacing: extra gap between words" });
+        }
+
+        if (!pivotOn && !isSafe() && i > 0 && i % 28 === 0) {
+          symptoms.push({ msg: "Line drift: baseline slopes downward on the page" });
+        }
+
         const span = document.createElement("span");
-        span.className = "dg-char";
-        const display = ch === " " ? "\u00a0" : ch;
-        const intentCh = text[i];
-        if (!pivotOn && ch !== intentCh) {
-          span.classList.add("swap");
-          swapCount++;
-        }
-        if (ch === "  ") span.classList.add("space-gap");
+        span.className = "dg-char " + classes.join(" ");
         if (!pivotOn && !isSafe()) {
-          const drift = Math.min(14, fatigue * 0.12);
-          const rot = (Math.sin(i * 1.7) * drift * 0.35).toFixed(2);
-          const tx = (Math.cos(i * 2.1) * drift * 0.25).toFixed(2);
-          const ty = (Math.sin(i * 1.3) * drift * 0.2).toFixed(2);
-          span.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`;
-          span.classList.add("drift");
+          span.style.marginLeft = (i * 0.02 + slope * 0.1) + "px";
+          span.style.transform = "rotate(" + slope.toFixed(2) + "deg) scale(" + (0.92 + seeded(i, ch) * 0.16).toFixed(2) + ")";
         }
-        span.textContent = display;
-        motorMirror.appendChild(span);
+        span.textContent = ch === " " ? "\u00a0" : outCh;
+        notebook.appendChild(span);
+        out += ch === " " ? " " : outCh;
       });
-      swaps = swapCount;
+
+      notebookText = out;
+      if (pivotOn) symptoms = [{ msg: "Pivot mode: handwriting distortion is off." }];
+      symptoms = dedupeSymptoms(symptoms);
+      renderSymptoms();
+    }
+
+    function dedupeSymptoms(list) {
+      const seen = new Set();
+      return list.filter((s) => {
+        if (seen.has(s.msg)) return false;
+        seen.add(s.msg);
+        return true;
+      });
+    }
+
+    function renderSymptoms() {
+      if (!symptoms.length) {
+        symptomLog.innerHTML = '<p class="muted-note" style="margin:0;border:none;">No symptoms yet.</p>';
+        return;
+      }
+      symptomLog.innerHTML = symptoms.map((s) => "<p>" + s.msg + "</p>").join("");
     }
 
     function updateFatigue() {
-      const pct = Math.min(95, fatigue);
-      frictionFill.style.width = pct + "%";
-      if (pct < 30) frictionBadge.textContent = "Hand fatigue: low";
-      else if (pct < 60) frictionBadge.textContent = "Hand fatigue: rising";
-      else frictionBadge.textContent = "Hand fatigue: high";
-      document.getElementById("metricSwap").textContent =
-        "Character swaps: " + (pivotOn ? "off" : swaps + " detected");
-      document.getElementById("metricDrop").textContent =
-        "Dropped keystrokes: " + (pivotOn ? "off" : dropped);
+      fatigueFill.style.width = Math.min(100, fatigue) + "%";
+      fatigueBadge.textContent = "Hand fatigue: " + Math.round(fatigue) + "%";
     }
 
     function setMode(pivot) {
       pivotOn = pivot;
       pivotZone.classList.toggle("dg-hidden", !pivot);
       pivotBtn.textContent = pivot ? "Return to Challenge Mode" : "Activate Inclusive Pivot";
-      modeBadge.textContent = pivot ? "Inclusive pivot: multimodal writing" : "Challenge mode: motor friction";
-      writeHint.textContent = pivot
-        ? "Motor friction is off. Use dictation or the node map to express ideas without strict linear typing."
-        : "Type what you mean. Fine-motor strain changes what appears on the page.";
-      mirrorLabel.textContent = pivot
-        ? "Clean output (matches intent)"
-        : "What appears on the page (motor output)";
-      fatigueNote.textContent = pivot
-        ? "Pivot tools reduce motor sequencing load."
-        : "Fatigue rises as you type — grip and spacing get harder to control.";
-      document.getElementById("metricFine").textContent =
-        "Letter control: " + (pivot ? "stable" : "unstable");
-      document.getElementById("metricStrict").textContent =
-        "Form rules: " + (pivot ? "relaxed" : "rigid");
-      renderMirror(intentInput.value);
+      modeBadge.textContent = pivot ? "Pivot: penmanship bypass on" : "Challenge: handwriting simulation on";
+      taskNote.textContent = pivot
+        ? "Pivot mode turns off handwriting distortion. Use dictation or bullets to show ideas without copying strain."
+        : "This mimics a common classroom demand: copy text exactly while fine-motor control breaks down.";
+      howList.innerHTML = pivot
+        ? "<li>Handwriting distortion is <strong>off</strong>.</li><li>Use <strong>dictation</strong> or <strong>bullets</strong> to express ideas.</li><li>Grading focuses on content, not letter formation.</li>"
+        : "<li>Read the <strong>target sentence</strong> on the board.</li><li><strong>Type your copy</strong> in the box — you are trying to match it.</li><li>The <strong>notebook</strong> shows how dysgraphia distorts handwriting.</li><li><strong>Submit</strong> — the teacher grades the notebook, not your intention.</li>";
+      render();
       updateFatigue();
     }
 
-    intentInput.addEventListener("keydown", (e) => {
-      if (pivotOn || isSafe() || e.key.length !== 1) return;
-      const missChance = 0.06 + fatigue * 0.0008;
-      if (Math.random() < missChance) {
-        e.preventDefault();
-        dropped++;
-        fatigue = Math.min(95, fatigue + 2);
-        updateFatigue();
-        strictFeedback.textContent = "Keystroke missed — hand slipped";
-      }
-    });
-
-    intentInput.addEventListener("input", () => {
-      if (!pivotOn) fatigue = Math.min(95, fatigue + 1.2);
-      renderMirror(intentInput.value);
+    copyInput.addEventListener("input", () => {
+      if (!pivotOn) fatigue = Math.min(100, fatigue + 1.4);
+      render();
       updateFatigue();
     });
 
-    strictSubmit.addEventListener("click", () => {
-      const intended = intentInput.value.trim();
-      const motor = pivotOn ? intended : lastMotorText.trim();
-      const valid = intended.length >= 40 && /[.?!]$/.test(intended) && intended === motor;
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const typed = copyInput.value.trim();
+      const onPage = notebookText.trim();
+      const target = TARGET.trim();
+
       if (pivotOn) {
-        strictFeedback.textContent = intended.length >= 20
-          ? "Accepted — intent preserved without motor penalty"
-          : "Add a bit more detail";
+        gradeBadge.textContent = typed.length > 10 ? "Accepted — content graded, not penmanship" : "Add your ideas first";
         return;
       }
-      if (valid) {
-        strictFeedback.textContent = "Accepted (rare — motor output matched)";
-      } else if (intended !== motor) {
-        strictFeedback.textContent = "Rejected: page text does not match intent";
-        if (!isSafe()) {
-          intentInput.classList.add("strict-shake");
-          setTimeout(() => intentInput.classList.remove("strict-shake"), 260);
-        }
-      } else {
-        strictFeedback.textContent = "Rejected: formatting or length mismatch";
+      if (!typed) {
+        gradeBadge.textContent = "Nothing to grade";
+        return;
       }
-      fatigue = Math.min(95, fatigue + 4);
+      if (onPage === target) {
+        gradeBadge.textContent = "Accepted — rare perfect copy";
+      } else if (typed === target && onPage !== target) {
+        gradeBadge.textContent = "Rejected — you knew it, but the page does not match";
+      } else {
+        gradeBadge.textContent = "Rejected — copy does not match board";
+      }
+      fatigue = Math.min(100, fatigue + 5);
+      updateFatigue();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      copyInput.value = "";
+      fatigue = 0;
+      gradeBadge.textContent = "Not submitted";
+      render();
+      updateFatigue();
+    });
+
+    document.getElementById("dictateBtn").addEventListener("click", () => {
+      copyInput.value = TARGET;
+      document.getElementById("dictateResult").textContent =
+        "Dictation captured: “" + TARGET + "” — no letter reversals or line drift.";
+      fatigue = Math.max(0, fatigue - 20);
+      render();
       updateFatigue();
     });
 
     pivotBtn.addEventListener("click", () => setMode(!pivotOn));
 
-    function makeNode(label) {
-      const n = document.createElement("div");
-      n.className = "mind-node";
-      n.textContent = label;
-      n.style.left = Math.random() * 70 + "%";
-      n.style.top = Math.random() * 55 + "%";
-      n.addEventListener("pointerdown", (e) => {
-        dragNode = n;
-        offX = e.offsetX;
-        offY = e.offsetY;
-        n.setPointerCapture(e.pointerId);
-      });
-      canvas.appendChild(n);
-      return n;
-    }
-
-    function drawLinks() {
-      svg.innerHTML = "";
-      links.forEach(([a, b]) => {
-        if (!a.isConnected || !b.isConnected) return;
-        const ar = a.getBoundingClientRect();
-        const br = b.getBoundingClientRect();
-        const cr = canvas.getBoundingClientRect();
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", ar.left - cr.left + ar.width / 2);
-        line.setAttribute("y1", ar.top - cr.top + ar.height / 2);
-        line.setAttribute("x2", br.left - cr.left + br.width / 2);
-        line.setAttribute("y2", br.top - cr.top + br.height / 2);
-        line.setAttribute("stroke", "currentColor");
-        line.setAttribute("stroke-opacity", "0.35");
-        line.setAttribute("stroke-width", "1.5");
-        svg.appendChild(line);
-      });
-    }
-
-    canvas.addEventListener("pointermove", (e) => {
-      if (!dragNode) return;
-      const r = canvas.getBoundingClientRect();
-      const x = Math.max(0, Math.min(r.width - 95, e.clientX - r.left - offX));
-      const y = Math.max(24, Math.min(r.height - 34, e.clientY - r.top - offY));
-      dragNode.style.left = x + "px";
-      dragNode.style.top = y + "px";
-      drawLinks();
-    });
-    canvas.addEventListener("pointerup", () => { dragNode = null; });
-
-    addNode.addEventListener("click", () => {
-      const labels = ["Idea", "Example", "Barrier", "Support", "Next step"];
-      const n = makeNode(labels[nodeCount % labels.length] + " " + (++nodeCount));
-      const nodes = [...canvas.querySelectorAll(".mind-node")];
-      if (nodes.length > 1) links.push([nodes[nodes.length - 2], n]);
-      drawLinks();
-    });
-
-    clearNodes.addEventListener("click", () => {
-      canvas.querySelectorAll(".mind-node").forEach((n) => n.remove());
-      links.length = 0;
-      nodeCount = 0;
-      drawLinks();
-    });
-
-    const fillerChips = [...document.querySelectorAll(".dg-chip")];
-    const fillerState = new Map(fillerChips.map((c) => [c.dataset.chip, true]));
-    fillerChips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        const key = chip.dataset.chip;
-        fillerState.set(key, !fillerState.get(key));
-        chip.classList.toggle("active", fillerState.get(key));
-      });
-    });
-
-    dictateBtn.addEventListener("click", () => {
-      raw.value =
-        "um I wanted to explain the barrier but like my hands keep pausing and you know the sentence breaks before the idea is done";
-      smooth.value = "";
-      intentInput.value =
-        "Writing accessibility helps more people participate fully.";
-      renderMirror(intentInput.value);
-    });
-
-    applySmoothing.addEventListener("click", () => {
-      let output = raw.value;
-      fillerState.forEach((on, token) => {
-        if (on) {
-          const esc = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          output = output.replace(new RegExp("\\b" + esc + "\\b", "gi"), "");
-        }
-      });
-      smooth.value = output.replace(/\s+/g, " ").trim();
-      if (smooth.value) intentInput.value = smooth.value;
-      renderMirror(intentInput.value);
-    });
-
-    exportBtn.addEventListener("click", () => {
-      const nodes = [...canvas.querySelectorAll(".mind-node")].map((n) => n.textContent.trim());
-      const spoken = smooth.value.trim() || raw.value.trim() || "(no dictation)";
-      exportOut.textContent =
-        "# Dysgraphia Intent Export\n\n## Core intent\n" + (intentInput.value.trim() || "(empty)") +
-        "\n\n## Spoken draft\n" + spoken +
-        "\n\n## Node map\n" + (nodes.length ? nodes.map((n) => "- " + n).join("\n") : "- (no nodes)");
-    });
-
-    saveBtn.addEventListener("click", () => {
-      localStorage.setItem(
-        "chroma-dysgraphia-snapshot",
-        JSON.stringify({
-          intent: intentInput.value,
-          fatigue,
-          pivotOn,
-          savedAt: new Date().toISOString()
-        })
-      );
-      strictFeedback.textContent = "Snapshot saved";
-    });
-
     setMode(false);
     updateFatigue();
 
-    document.addEventListener("chroma-seizure-safe-change", () => {
-      renderMirror(intentInput.value);
-    });
+    document.addEventListener("chroma-seizure-safe-change", () => render());
   </script>
 </body>
 </html>
