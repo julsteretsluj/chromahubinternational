@@ -19,6 +19,184 @@
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/chroma-access.js"></script>
+  <style>
+    .asd-how {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .asd-how ol { margin: 0.5rem 0 0 1.1rem; padding: 0; }
+    .asd-how li { margin-bottom: 0.35rem; font-size: 0.92rem; color: var(--text-secondary); }
+    .asd-workspace {
+      position: relative;
+      min-height: 340px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-surface);
+      padding: 1rem;
+      overflow: hidden;
+      transition: background 0.4s ease;
+    }
+    .asd-workspace.sensory-burst {
+      background: color-mix(in srgb, var(--chroma-magenta) 12%, var(--bg-surface));
+    }
+    [data-seizure-safe="true"] .asd-workspace.sensory-burst {
+      background: var(--bg-surface);
+    }
+    .asd-step { display: none; }
+    .asd-step.active { display: block; }
+    .asd-step.done { border-color: var(--chroma-green); }
+    .asd-step {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem;
+      background: var(--bg-elevated);
+    }
+    .asd-prompt-figurative {
+      font-size: 1.05rem;
+      line-height: 1.45;
+      color: var(--chroma-magenta);
+      font-style: italic;
+    }
+    .asd-prompt-literal {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+    .asd-input {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.65rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font: inherit;
+    }
+    .asd-choice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+    .asd-choice {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.55rem 0.75rem;
+      background: var(--bg-surface);
+      cursor: pointer;
+      font: inherit;
+      color: var(--text-primary);
+      transition: border-color 0.15s ease;
+    }
+    .asd-choice:hover { border-color: var(--chroma-orange); }
+    .asd-choice.selected {
+      border-color: var(--chroma-teal);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--chroma-teal) 28%, transparent);
+    }
+    .asd-choice.emoji-only { font-size: 1.4rem; min-width: 52px; text-align: center; }
+    .asd-controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      align-items: center;
+    }
+    .asd-controls-row.shuffled { flex-direction: row-reverse; }
+    .asd-sensory-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8;
+      overflow: hidden;
+    }
+    .asd-sparkle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.1rem;
+      opacity: 0.85;
+      animation: asdSparkle 2.2s ease forwards;
+    }
+    @keyframes asdSparkle {
+      0% { opacity: 0; transform: scale(0.6) rotate(0deg); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.3) rotate(25deg) translateY(-40px); }
+    }
+    [data-seizure-safe="true"] .asd-sparkle { animation: none; opacity: 0.5; }
+    .asd-nudge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      max-width: 220px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+      padding: 0.6rem 0.75rem;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      z-index: 12;
+      pointer-events: auto;
+      animation: asdNudge 0.3s ease;
+    }
+    @keyframes asdNudge {
+      from { transform: translateY(8px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    [data-seizure-safe="true"] .asd-nudge { animation: none; }
+    .asd-nudge-close {
+      float: right;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      margin-left: 0.35rem;
+    }
+    .asd-checklist {
+      list-style: none;
+      margin: 0.5rem 0 0;
+      padding: 0;
+      font-size: 0.88rem;
+    }
+    .asd-checklist li {
+      padding: 0.3rem 0;
+      color: var(--text-muted);
+    }
+    .asd-checklist li.done { color: var(--chroma-green); }
+    .asd-checklist li.done::before { content: "✓ "; }
+    .asd-checklist li:not(.done)::before { content: "○ "; }
+    .asd-log {
+      max-height: 240px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-elevated);
+      padding: 0.55rem 0.65rem;
+      font-size: 0.84rem;
+    }
+    .asd-log p {
+      margin: 0 0 0.4rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .asd-log p:last-child { margin-bottom: 0; border-bottom: none; }
+    .asd-pivot-box {
+      border: 1px dashed var(--chroma-teal);
+      border-radius: 12px;
+      padding: 0.9rem;
+      margin-top: 1rem;
+      background: color-mix(in srgb, var(--chroma-teal) 7%, var(--bg-elevated));
+    }
+    .asd-hidden { display: none !important; }
+    #asdShell.low-sensory .asd-workspace {
+      background: color-mix(in srgb, var(--chroma-green) 4%, var(--bg-surface));
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -28,77 +206,421 @@
         <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
         <span class="logo-text">Chroma Hub International</span>
       </a>
-      <nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav>
+      <nav class="site-nav">
+        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
+      </nav>
     </div>
   </header>
+
   <main id="main">
     <header class="page-header pillar-digital">
       <div class="container">
         <h1>ASD: Predictable, Low-Sensory Sanctuary</h1>
-        <p>This experience starts with high-sensory ambiguity and then offers a literal, low-sensory pivot.</p>
+        <p>Try to finish a simple three-step signup while figurative language, sensory noise, and shifting layout compete for clarity. The low-sensory pivot swaps in literal steps and a calm interface.</p>
         <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
       </div>
     </header>
+
     <section class="section">
       <div class="container">
         <div id="asdShell" class="experience-shell">
+          <div class="asd-how">
+            <strong>How this simulation works</strong>
+            <ol>
+              <li>Complete a <strong>3-step signup</strong> — name, path choice, submit.</li>
+              <li>In challenge mode, instructions use <strong>metaphors</strong>, the screen adds <strong>sensory bursts</strong>, and controls may <strong>shuffle</strong>.</li>
+              <li>Social nudges appear with <strong>unclear expectations</strong> — rules are not spelled out.</li>
+              <li>Use <strong>Low-Sensory Pivot</strong> for literal copy, one step at a time, and muted visuals.</li>
+            </ol>
+          </div>
+
           <div class="experience-controls">
             <button id="sensoryBtn" class="btn btn-primary">Activate Low-Sensory Pivot</button>
-            <span id="asdState" class="xp-badge">Challenge mode active</span>
+            <span id="asdState" class="xp-badge">Challenge: figurative prompts</span>
+            <span id="progressBadge" class="xp-badge">Progress: 0 / 3</span>
           </div>
-          <div class="experience-panel">
-            <h3 id="guideTitle">Ambiguous High-Sensory Prompt</h3>
-            <p id="guideLine1"><strong>Phase sparkle:</strong> Add your identity signal in the cloud field.</p>
-            <p id="guideLine2"><strong>Vibe sync:</strong> Choose your journey stream and keep momentum.</p>
-            <p id="guideLine3"><strong>Final push:</strong> Send it when your constellation feels aligned.</p>
-            <p class="muted-note" id="guideNote">Challenge mode intentionally uses figurative wording and higher sensory intensity.</p>
+
+          <div class="experience-grid">
+            <div class="experience-panel">
+              <h3 id="taskTitle">Community Hub onboarding</h3>
+              <p class="muted-note" id="taskHint">Figurative wording hides what each field actually needs. Sensory distractions and layout shifts add load.</p>
+
+              <div id="workspace" class="asd-workspace">
+                <div id="sensoryLayer" class="asd-sensory-layer" aria-live="polite"></div>
+
+                <div class="asd-step active" data-step="1">
+                  <p id="step1Prompt" class="asd-prompt-figurative"><strong>Phase sparkle:</strong> Add your identity signal in the cloud field.</p>
+                  <input id="nameInput" class="asd-input" type="text" maxlength="40" placeholder="???">
+                  <p id="nameRule" class="muted-note asd-hidden" style="margin-top:0.4rem;">Letters and spaces only. Example: Alex</p>
+                </div>
+
+                <div class="asd-step" data-step="2">
+                  <p id="step2Prompt" class="asd-prompt-figurative"><strong>Vibe sync:</strong> Choose your journey stream and keep momentum.</p>
+                  <div id="choiceGrid" class="asd-choice-grid"></div>
+                  <p id="pathRule" class="muted-note asd-hidden" style="margin-top:0.4rem;">Pick one: Events, Resources, or Chat.</p>
+                </div>
+
+                <div class="asd-step" data-step="3">
+                  <p id="step3Prompt" class="asd-prompt-figurative"><strong>Final push:</strong> Send it when your constellation feels aligned.</p>
+                  <div id="submitRow" class="asd-controls-row">
+                    <button id="submitBtn" class="btn btn-secondary">Launch signal</button>
+                    <button id="resetBtn" class="btn btn-secondary">Start over</button>
+                    <span id="submitFeedback" class="xp-badge">Not sent</span>
+                  </div>
+                  <p id="submitRule" class="muted-note asd-hidden" style="margin-top:0.4rem;">Press Submit when steps 1 and 2 are complete. Your data saves immediately.</p>
+                </div>
+              </div>
+
+              <div id="stepNav" class="experience-controls asd-hidden" style="margin-top:0.75rem;">
+                <button id="prevStep" class="btn btn-secondary">Previous</button>
+                <button id="nextStep" class="btn btn-secondary">Next step</button>
+              </div>
+
+              <ul id="pivotChecklist" class="asd-checklist asd-hidden">
+                <li data-check="1">Step 1: Enter preferred name</li>
+                <li data-check="2">Step 2: Choose one engagement path</li>
+                <li data-check="3">Step 3: Press Submit</li>
+              </ul>
+            </div>
+
+            <div class="experience-panel">
+              <h3>Sensory load</h3>
+              <p class="muted-note">How much extra input is competing with the task itself.</p>
+              <div class="bar-meter"><div id="loadFill" class="bar-meter-fill" style="width:10%"></div></div>
+              <ul class="feature-list" style="margin-top:0.75rem;font-size:0.88rem;">
+                <li id="loadFigurative">Figurative language: on</li>
+                <li id="loadSensory">Sensory bursts: active</li>
+                <li id="loadLayout">Layout stability: low</li>
+              </ul>
+
+              <h3 style="margin-top:1rem;">Symptom log</h3>
+              <p class="muted-note">Friction points that can appear during autistic sensory and communication overload.</p>
+              <div id="symptomLog" class="asd-log" style="margin-top:0.5rem;">
+                <p class="muted-note" style="margin:0;border:none;">Interact to see symptoms…</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="pivotZone" class="asd-pivot-box asd-hidden">
+            <h3 style="margin-top:0;">Low-sensory sanctuary</h3>
+            <p class="muted-note">Literal steps, muted palette, no decorative motion. One task block visible at a time.</p>
+            <p class="muted-note" id="pivotStatus">All three steps use plain language and fixed layout.</p>
           </div>
         </div>
       </div>
     </section>
   </main>
+
   <script src="js/sim-common.js"></script>
   <script>
-    const shell = document.getElementById("asdShell");
-    const btn = document.getElementById("sensoryBtn");
-    const state = document.getElementById("asdState");
+    const SYMPTOMS = {
+      figurative: "Figurative instruction: metaphor replaces clear task wording",
+      sensory: "Sensory burst: extra color and motion flood the workspace",
+      layout: "Layout shift: controls moved without warning",
+      social: "Social ambiguity: unclear expectation from others",
+      hidden: "Hidden rule: validation failed because requirement was never stated"
+    };
 
-    function applyAsdFilter() {
-      if (window.chromaSeizureSafe?.()) {
+    const FIGURATIVE_CHOICES = [
+      { emoji: "🌊", label: "Flow stream" },
+      { emoji: "✨", label: "Spark lane" },
+      { emoji: "🔮", label: "Orbit path" },
+      { emoji: "🌀", label: "Drift channel" }
+    ];
+    const LITERAL_CHOICES = [
+      { emoji: "📅", label: "Events" },
+      { emoji: "📚", label: "Resources" },
+      { emoji: "💬", label: "Chat" }
+    ];
+    const NUDGES = [
+      "Everyone else synced already — what's taking so long?",
+      "Just vibe with it! You don't need exact instructions.",
+      "The community is watching your constellation align…",
+      "Quick tip: most people just guess and fix it later.",
+      "Are you sure you're reading the room correctly?"
+    ];
+    const SPARKLES = ["✨", "🌟", "💫", "⭐", "🔆", "🎆"];
+
+    let pivotOn = false;
+    let step = 1;
+    let load = 10;
+    let pathPick = null;
+    let submitted = false;
+    let sparkleTimer = null;
+    let nudgeTimer = null;
+    let shuffleTimer = null;
+    let burstTimer = null;
+    const logged = new Set();
+
+    function isSafe() {
+      return window.chromaSeizureSafe?.();
+    }
+
+    function logSymptom(key) {
+      if (logged.has(key)) return;
+      logged.add(key);
+      const log = document.getElementById("symptomLog");
+      if (log.querySelector(".muted-note")) log.innerHTML = "";
+      const p = document.createElement("p");
+      p.textContent = SYMPTOMS[key];
+      log.appendChild(p);
+      load = Math.min(100, load + 14);
+      document.getElementById("loadFill").style.width = load + "%";
+    }
+
+    function applyBodyFilter() {
+      if (isSafe()) {
         document.body.style.filter = "";
         return;
       }
-      const on = shell.classList.contains("low-sensory");
-      document.body.style.filter = on
+      document.body.style.filter = pivotOn
         ? "saturate(0.55) contrast(0.95)"
-        : "saturate(1.15) contrast(1.06)";
+        : "saturate(1.18) contrast(1.08)";
     }
 
-    btn.onclick = () => {
-      shell.classList.toggle("low-sensory");
-      const on = shell.classList.contains("low-sensory");
-      btn.textContent = on ? "Return to Challenge Mode" : "Activate Low-Sensory Pivot";
-      state.textContent = on ? "Inclusive pivot active" : "Challenge mode active";
-      document.getElementById("guideTitle").textContent = on
-        ? "Literal Step Guide"
-        : "Ambiguous High-Sensory Prompt";
-      document.getElementById("guideLine1").innerHTML = on
-        ? "<strong>Step 1 of 3:</strong> Enter your preferred name. This field accepts letters only."
+    function renderChoices() {
+      const grid = document.getElementById("choiceGrid");
+      grid.innerHTML = "";
+      pathPick = null;
+      const options = pivotOn ? LITERAL_CHOICES : FIGURATIVE_CHOICES;
+      options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "asd-choice" + (pivotOn ? "" : " emoji-only");
+        btn.textContent = pivotOn ? opt.emoji + " " + opt.label : opt.emoji;
+        btn.title = pivotOn ? opt.label : opt.label;
+        btn.onclick = () => {
+          grid.querySelectorAll(".asd-choice").forEach((c) => c.classList.remove("selected"));
+          btn.classList.add("selected");
+          pathPick = i;
+          checkProgress();
+          if (!pivotOn) logSymptom("figurative");
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function showStep(n) {
+      step = Math.max(1, Math.min(3, n));
+      document.querySelectorAll(".asd-step").forEach((el) => {
+        el.classList.toggle("active", pivotOn && +el.dataset.step === step);
+      });
+      if (!pivotOn) {
+        document.querySelectorAll(".asd-step").forEach((el) => el.classList.add("active"));
+      }
+    }
+
+    function validName() {
+      const v = document.getElementById("nameInput").value.trim();
+      return /^[A-Za-z][A-Za-z\s'-]{1,38}$/.test(v);
+    }
+
+    function checkProgress() {
+      let done = 0;
+      const checks = document.querySelectorAll("#pivotChecklist li");
+      if (validName()) {
+        done++;
+        document.querySelector('.asd-step[data-step="1"]').classList.add("done");
+        checks[0]?.classList.add("done");
+      } else {
+        document.querySelector('.asd-step[data-step="1"]').classList.remove("done");
+        checks[0]?.classList.remove("done");
+      }
+      if (pathPick !== null && (pivotOn ? pathPick < 3 : pathPick >= 0)) {
+        done++;
+        document.querySelector('.asd-step[data-step="2"]').classList.add("done");
+        checks[1]?.classList.add("done");
+      } else {
+        document.querySelector('.asd-step[data-step="2"]').classList.remove("done");
+        checks[1]?.classList.remove("done");
+      }
+      const fb = document.getElementById("submitFeedback");
+      if (submitted && done >= 2) {
+        done = 3;
+        document.querySelector('.asd-step[data-step="3"]').classList.add("done");
+        checks[2]?.classList.add("done");
+        fb.textContent = pivotOn ? "Submitted — saved" : "Signal launched!";
+      } else if (done >= 2) {
+        document.querySelector('.asd-step[data-step="3"]').classList.remove("done");
+        checks[2]?.classList.remove("done");
+        fb.textContent = pivotOn ? "Ready to submit" : "Constellation aligned?";
+      } else {
+        document.querySelector('.asd-step[data-step="3"]').classList.remove("done");
+        checks[2]?.classList.remove("done");
+        fb.textContent = pivotOn ? "Complete steps 1–2 first" : "Not sent";
+      }
+      document.getElementById("progressBadge").textContent = "Progress: " + done + " / 3";
+      if (pivotOn && done === 1) showStep(2);
+      if (pivotOn && done >= 2 && !submitted) showStep(3);
+      return done;
+    }
+
+    function spawnSparkle() {
+      if (pivotOn || isSafe()) return;
+      const layer = document.getElementById("sensoryLayer");
+      const el = document.createElement("span");
+      el.className = "asd-sparkle";
+      el.textContent = SPARKLES[Math.floor(Math.random() * SPARKLES.length)];
+      el.style.left = Math.floor(Math.random() * 85) + "%";
+      el.style.top = Math.floor(Math.random() * 80) + "%";
+      layer.appendChild(el);
+      setTimeout(() => el.remove(), 2400);
+      logSymptom("sensory");
+    }
+
+    function sensoryBurst() {
+      if (pivotOn || isSafe()) return;
+      const ws = document.getElementById("workspace");
+      ws.classList.add("sensory-burst");
+      setTimeout(() => ws.classList.remove("sensory-burst"), 600);
+      for (let i = 0; i < 3; i++) setTimeout(spawnSparkle, i * 120);
+    }
+
+    function spawnNudge() {
+      if (pivotOn) return;
+      const layer = document.getElementById("sensoryLayer");
+      if (layer.querySelector(".asd-nudge")) return;
+      const el = document.createElement("div");
+      el.className = "asd-nudge";
+      el.setAttribute("role", "status");
+      const text = NUDGES[Math.floor(Math.random() * NUDGES.length)];
+      el.innerHTML = text + '<button type="button" class="asd-nudge-close" aria-label="Dismiss">×</button>';
+      el.querySelector(".asd-nudge-close").onclick = () => el.remove();
+      layer.appendChild(el);
+      logSymptom("social");
+      setTimeout(() => el.remove(), 5000);
+    }
+
+    function shuffleControls() {
+      if (pivotOn) return;
+      const row = document.getElementById("submitRow");
+      row.classList.toggle("shuffled");
+      logSymptom("layout");
+    }
+
+    function startChallengeFx() {
+      clearInterval(sparkleTimer);
+      clearInterval(nudgeTimer);
+      clearInterval(shuffleTimer);
+      clearInterval(burstTimer);
+      if (pivotOn || isSafe()) return;
+      sparkleTimer = setInterval(spawnSparkle, 2200);
+      nudgeTimer = setInterval(spawnNudge, 6500);
+      shuffleTimer = setInterval(shuffleControls, 9000);
+      burstTimer = setInterval(sensoryBurst, 11000);
+    }
+
+    function stopChallengeFx() {
+      clearInterval(sparkleTimer);
+      clearInterval(nudgeTimer);
+      clearInterval(shuffleTimer);
+      clearInterval(burstTimer);
+      document.getElementById("sensoryLayer").innerHTML = "";
+      document.getElementById("submitRow").classList.remove("shuffled");
+    }
+
+    function setMode(on) {
+      pivotOn = on;
+      const shell = document.getElementById("asdShell");
+      shell.classList.toggle("low-sensory", on);
+
+      document.getElementById("sensoryBtn").textContent = on
+        ? "Return to Challenge Mode"
+        : "Activate Low-Sensory Pivot";
+      document.getElementById("asdState").textContent = on
+        ? "Inclusive pivot: literal & calm"
+        : "Challenge: figurative prompts";
+      document.getElementById("taskHint").textContent = on
+        ? "One step at a time. Plain language, muted visuals, and rules stated upfront."
+        : "Figurative wording hides what each field actually needs. Sensory distractions and layout shifts add load.";
+      document.getElementById("taskTitle").textContent = on
+        ? "Step-by-step signup (literal)"
+        : "Community Hub onboarding";
+
+      document.getElementById("step1Prompt").className = on ? "asd-prompt-literal" : "asd-prompt-figurative";
+      document.getElementById("step1Prompt").innerHTML = on
+        ? "<strong>Step 1 of 3:</strong> Enter your preferred name. Letters and spaces only."
         : "<strong>Phase sparkle:</strong> Add your identity signal in the cloud field.";
-      document.getElementById("guideLine2").innerHTML = on
+      document.getElementById("step2Prompt").className = on ? "asd-prompt-literal" : "asd-prompt-figurative";
+      document.getElementById("step2Prompt").innerHTML = on
         ? "<strong>Step 2 of 3:</strong> Choose one engagement path. You may change this later."
         : "<strong>Vibe sync:</strong> Choose your journey stream and keep momentum.";
-      document.getElementById("guideLine3").innerHTML = on
+      document.getElementById("step3Prompt").className = on ? "asd-prompt-literal" : "asd-prompt-figurative";
+      document.getElementById("step3Prompt").innerHTML = on
         ? "<strong>Step 3 of 3:</strong> Press Submit. Your response is saved immediately."
         : "<strong>Final push:</strong> Send it when your constellation feels aligned.";
-      document.getElementById("guideNote").textContent = on
-        ? "Literal language and lower sensory output support predictability."
-        : "Challenge mode intentionally uses figurative wording and higher sensory intensity.";
-      applyAsdFilter();
+
+      document.getElementById("nameInput").placeholder = on ? "e.g. Alex" : "???";
+      document.getElementById("submitBtn").textContent = on ? "Submit" : "Launch signal";
+      document.getElementById("nameRule").classList.toggle("asd-hidden", !on);
+      document.getElementById("pathRule").classList.toggle("asd-hidden", !on);
+      document.getElementById("submitRule").classList.toggle("asd-hidden", !on);
+      document.getElementById("stepNav").classList.toggle("asd-hidden", !on);
+      document.getElementById("pivotChecklist").classList.toggle("asd-hidden", !on);
+      document.getElementById("pivotZone").classList.toggle("asd-hidden", !on);
+
+      document.getElementById("loadFigurative").textContent = "Figurative language: " + (on ? "off" : "on");
+      document.getElementById("loadSensory").textContent = "Sensory bursts: " + (on ? "muted" : "active");
+      document.getElementById("loadLayout").textContent = "Layout stability: " + (on ? "high" : "low");
+
+      renderChoices();
+      stopChallengeFx();
+      if (!on) startChallengeFx();
+      applyBodyFilter();
+      showStep(on ? 1 : 1);
+      checkProgress();
+    }
+
+    document.getElementById("sensoryBtn").onclick = () => setMode(!pivotOn);
+
+    document.getElementById("nameInput").addEventListener("input", () => {
+      checkProgress();
+      if (!pivotOn && document.getElementById("nameInput").value.length > 2) {
+        logSymptom("figurative");
+      }
+    });
+
+    document.getElementById("submitBtn").onclick = () => {
+      const done = checkProgress();
+      const fb = document.getElementById("submitFeedback");
+      if (done < 2) {
+        if (!validName() && document.getElementById("nameInput").value.trim()) {
+          logSymptom("hidden");
+          fb.textContent = pivotOn
+            ? "Name must be letters only"
+            : "Signal rejected — try aligning your essence differently";
+        } else {
+          fb.textContent = pivotOn ? "Finish steps 1 and 2" : "Constellation not aligned";
+        }
+        if (!pivotOn) spawnNudge();
+        return;
+      }
+      submitted = true;
+      checkProgress();
     };
 
-    applyAsdFilter();
-    document.addEventListener("chroma-seizure-safe-change", applyAsdFilter);
+    document.getElementById("resetBtn").onclick = () => {
+      document.getElementById("nameInput").value = "";
+      pathPick = null;
+      submitted = false;
+      renderChoices();
+      document.getElementById("submitFeedback").textContent = pivotOn ? "Not submitted" : "Not sent";
+      checkProgress();
+      if (pivotOn) showStep(1);
+    };
+
+    document.getElementById("prevStep").onclick = () => showStep(step - 1);
+    document.getElementById("nextStep").onclick = () => showStep(step + 1);
+
+    renderChoices();
+    setMode(false);
+    setTimeout(sensoryBurst, 1200);
+
+    document.addEventListener("chroma-seizure-safe-change", () => {
+      stopChallengeFx();
+      if (!pivotOn) startChallengeFx();
+      applyBodyFilter();
+    });
   </script>
 </body>
 </html>
