@@ -20,121 +20,97 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/chroma-access.js"></script>
   <style>
-    .dc-num {
-      display: inline-block;
-      font-weight: 700;
-      padding: 0.35rem 0.65rem;
-      border-radius: 8px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      margin: 0.2rem;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-    .dc-num.scramble {
-      animation: dcscramble 0.4s ease infinite alternate;
-    }
-    @keyframes dcscramble {
-      0% { transform: translateX(-2px) rotate(-1deg); opacity: 0.85; }
-      100% { transform: translateX(2px) rotate(1deg); opacity: 1; }
-    }
-    .dc-pile {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      min-height: 100px;
-      align-content: flex-end;
-      padding: 0.5rem;
-      background: var(--bg-elevated);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-    .dc-block {
-      width: 14px;
-      border-radius: 3px;
-      background: linear-gradient(180deg, var(--chroma-teal), var(--chroma-blue));
-    }
-    .dc-vessel {
-      height: 140px;
+    .dc-how {
       border: 1px solid var(--border);
       border-radius: 12px;
       background: var(--bg-elevated);
-      display: flex;
-      align-items: flex-end;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .dc-how ol { margin: 0.5rem 0 0 1.1rem; padding: 0; }
+    .dc-how li { margin-bottom: 0.35rem; font-size: 0.92rem; color: var(--text-secondary); }
+    .dc-workspace {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-surface);
+      padding: 1rem;
+      min-height: 280px;
+      position: relative;
       overflow: hidden;
     }
+    .dc-step { display: none; }
+    .dc-step.active { display: block; }
+    .dc-num {
+      display: inline-block;
+      font-weight: 700;
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .dc-num.scramble { animation: dcscramble 0.45s ease infinite alternate; }
+    @keyframes dcscramble {
+      0% { transform: translateX(-2px) rotate(-2deg); }
+      100% { transform: translateX(2px) rotate(2deg); }
+    }
+    [data-seizure-safe="true"] .dc-num.scramble { animation: none; }
+    .dc-num.pickable:hover { border-color: var(--chroma-orange); }
+    .dc-num.selected { border-color: var(--chroma-orange); box-shadow: 0 0 0 3px color-mix(in srgb, var(--chroma-orange) 30%, transparent); }
+    .dc-pile {
+      display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-end;
+      min-height: 110px; padding: 0.6rem; border-radius: 10px;
+      border: 2px solid var(--border); background: var(--bg-elevated);
+      cursor: pointer;
+    }
+    .dc-pile.selected { border-color: var(--chroma-teal); }
+    .dc-block {
+      width: 14px; border-radius: 3px;
+      background: linear-gradient(180deg, var(--chroma-teal), var(--chroma-blue));
+    }
+    .dc-vessel {
+      height: 130px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--bg-elevated); display: flex; align-items: flex-end; overflow: hidden;
+    }
     .dc-vessel-fill {
-      width: 100%;
-      height: 30%;
+      width: 100%; height: 30%;
       background: linear-gradient(180deg, var(--chroma-green), var(--chroma-teal));
       transition: height 0.2s ease;
     }
     .dc-price-bar {
-      height: 28px;
-      border-radius: 6px;
+      height: 26px; border-radius: 6px; margin-bottom: 0.5rem;
       background: linear-gradient(90deg, var(--chroma-orange), var(--chroma-rose));
-      transition: width 0.25s ease;
     }
+    .dc-symbol-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    .dc-float-layer {
+      position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    }
+    .dc-float {
+      position: absolute; pointer-events: none;
+      padding: 0.3rem 0.55rem; border-radius: 8px;
+      background: color-mix(in srgb, var(--chroma-magenta) 15%, var(--bg-card));
+      border: 1px solid var(--border); font-weight: 700; font-size: 0.85rem;
+      animation: dcfloat 2.5s ease forwards;
+    }
+    @keyframes dcfloat {
+      0% { opacity: 0; transform: translateY(8px); }
+      15% { opacity: 0.9; }
+      100% { opacity: 0; transform: translateY(-30px); }
+    }
+    [data-seizure-safe="true"] .dc-float { animation: none; opacity: 0.7; }
+    .dc-log {
+      max-height: 240px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--bg-elevated); padding: 0.55rem 0.65rem; font-size: 0.84rem;
+    }
+    .dc-log p { margin: 0 0 0.4rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+    .dc-log p:last-child { border-bottom: none; margin-bottom: 0; }
     .dc-hidden { display: none !important; }
-    .dc-symbol-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      min-height: 80px;
-      align-items: stretch;
-    }
-    .dc-symbol-btn {
-      flex: 1 1 40%;
-      min-width: 110px;
-      font: inherit;
-      font-weight: 700;
-      padding: 0.75rem 0.65rem;
-      border-radius: 10px;
-      background: var(--bg-elevated);
-      border: 2px solid var(--border);
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .dc-symbol-btn:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-1px);
-    }
-    .dc-symbol-btn.selected {
-      border-color: var(--chroma-orange);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--chroma-orange) 25%, transparent);
-    }
-    .dc-symbol-btn.pivot-card {
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.88rem;
-    }
-    .dc-symbol-fill {
-      height: 10px;
-      border-radius: 999px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      margin-top: 0.55rem;
-      overflow: hidden;
-    }
-    .dc-symbol-fill span {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, var(--chroma-teal), var(--chroma-blue));
-      border-radius: 999px;
-    }
-    .dc-clock {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      font-variant-numeric: tabular-nums;
-    }
-    .dc-arc {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 8px solid var(--border);
-      border-top-color: var(--chroma-teal);
-      transform: rotate(-45deg);
+    .dc-pivot-box {
+      border: 1px dashed var(--chroma-teal); border-radius: 12px;
+      padding: 0.9rem; margin-top: 1rem;
+      background: color-mix(in srgb, var(--chroma-teal) 7%, var(--bg-elevated));
     }
   </style>
 </head>
@@ -156,7 +132,7 @@
     <header class="page-header pillar-digital">
       <div class="container">
         <h1>Dyscalculia: Visualizing Magnitude</h1>
-        <p>Challenge mode shows how raw numbers and symbols break magnitude sense. The inclusive pivot replaces digits with space, sound, and relative visuals.</p>
+        <p>Work through four number tasks while symbols fight your sense of quantity. The spatial pivot replaces digits with fill, sound, and relative size.</p>
         <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
       </div>
     </header>
@@ -164,102 +140,113 @@
     <section class="section">
       <div class="container">
         <div class="experience-shell">
+          <div class="dc-how">
+            <strong>How this simulation works</strong>
+            <ol id="howList">
+              <li>Complete <strong>4 steps</strong> — each one asks you to judge quantity using numbers or symbols.</li>
+              <li>In challenge mode, digits <strong>scramble</strong>, labels <strong>lie</strong>, and random symbols <strong>float across</strong> the screen.</li>
+              <li>The <strong>symptom log</strong> names what breaks magnitude sense as you interact.</li>
+              <li>Use <strong>Spatial Pivot</strong> to redo tasks with containers, pitch, and bars — no raw numbers.</li>
+            </ol>
+          </div>
+
           <div class="experience-controls">
             <button id="pivotBtn" class="btn btn-primary">Activate Spatial Pivot</button>
-            <span id="modeBadge" class="xp-badge">Challenge mode: symbols active</span>
+            <span id="modeBadge" class="xp-badge">Challenge: step 1 of 4</span>
+            <span id="stressBadge" class="xp-badge">Magnitude stress: low</span>
           </div>
 
           <div class="experience-grid">
             <div class="experience-panel">
-              <h3>Scene 1: Which Is Larger?</h3>
-              <p class="muted-note" id="scene1Hint">Digits appear with no visual size cue — magnitude must be decoded from symbols alone.</p>
-              <div id="compareNums" style="display:flex;gap:1rem;align-items:center;justify-content:center;min-height:70px;margin:0.75rem 0;"></div>
-              <div class="experience-controls">
-                <button id="pickLeft" class="btn btn-secondary">Left is larger</button>
-                <button id="pickRight" class="btn btn-secondary">Right is larger</button>
-                <button id="newCompare" class="btn btn-secondary">New pair</button>
-                <span id="compareResult" class="xp-badge">—</span>
-              </div>
-            </div>
+              <div id="workspace" class="dc-workspace">
+                <div id="floatLayer" class="dc-float-layer" aria-live="polite"></div>
 
-            <div class="experience-panel">
-              <h3>Scene 2: Symbol Flood</h3>
-              <p class="muted-note">Mixed units and formats compete — which value feels biggest?</p>
-              <div id="symbolFlood" class="dc-symbol-grid"></div>
-              <div id="floodSpatial" class="dc-symbol-grid dc-hidden"></div>
-              <p id="floodQuestion" class="muted-note" style="margin-top:0.5rem;"></p>
-              <div class="experience-controls">
-                <button id="floodBtn" class="btn btn-secondary">Show new symbols</button>
-                <button id="floodConfirm" class="btn btn-secondary">Confirm largest</button>
-                <span id="floodFeedback" class="xp-badge">Tap a symbol</span>
-              </div>
-            </div>
-          </div>
+                <div class="dc-step active" data-step="1">
+                  <h3 style="margin-top:0;">Step 1: Which number is larger?</h3>
+                  <p class="muted-note">Tap the number you think is bigger. Digits may not look the size they represent.</p>
+                  <div id="compareBox" style="display:flex;gap:1rem;justify-content:center;margin:1rem 0;"></div>
+                  <div class="experience-controls">
+                    <button id="retryCompare" class="btn btn-secondary">New pair</button>
+                    <span id="compareFeedback" class="xp-badge">Tap a number</span>
+                  </div>
+                </div>
 
-          <div class="experience-grid" style="margin-top:1rem;">
-            <div class="experience-panel">
-              <h3>Scene 3: Compare Quantities</h3>
-              <p class="muted-note" id="pileHint">In challenge mode, digit labels appear on piles and can mislead judgment.</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-                <div>
-                  <p class="muted-note">Pile A <span id="labelA" class="dc-num">12</span></p>
-                  <div id="pileA" class="dc-pile"></div>
+                <div class="dc-step" data-step="2">
+                  <h3 style="margin-top:0;">Step 2: Symbol flood</h3>
+                  <p class="muted-note">Mixed units appear. Tap the one that <em>feels</em> largest, then confirm.</p>
+                  <div id="symbolGrid" class="dc-symbol-grid"></div>
+                  <div class="experience-controls">
+                    <button id="reshuffleSymbols" class="btn btn-secondary">Shuffle symbols</button>
+                    <button id="confirmSymbol" class="btn btn-secondary">Confirm choice</button>
+                    <span id="symbolFeedback" class="xp-badge">Tap a symbol</span>
+                  </div>
                 </div>
-                <div>
-                  <p class="muted-note">Pile B <span id="labelB" class="dc-num">19</span></p>
-                  <div id="pileB" class="dc-pile"></div>
+
+                <div class="dc-step" data-step="3">
+                  <h3 style="margin-top:0;">Step 3: Which pile has more?</h3>
+                  <p class="muted-note" id="pileHint">Digit labels may disagree with the blocks you see.</p>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem;">
+                    <div>
+                      <p class="muted-note">Pile A <span id="labelA" class="dc-num">0</span></p>
+                      <div id="pileA" class="dc-pile" data-pile="a"></div>
+                    </div>
+                    <div>
+                      <p class="muted-note">Pile B <span id="labelB" class="dc-num">0</span></p>
+                      <div id="pileB" class="dc-pile" data-pile="b"></div>
+                    </div>
+                  </div>
+                  <div class="experience-controls" style="margin-top:0.75rem;">
+                    <button id="newPiles" class="btn btn-secondary">New piles</button>
+                    <span id="pileFeedback" class="xp-badge">Tap a pile</span>
+                  </div>
+                </div>
+
+                <div class="dc-step" data-step="4">
+                  <h3 style="margin-top:0;">Step 4: Mark halfway</h3>
+                  <p class="muted-note" id="progressHint">Set the marker to about halfway using the control below.</p>
+                  <div id="challengeProgress">
+                    <label for="pctSlider" class="muted-note">Progress slider (numeric)</label>
+                    <input id="pctSlider" type="range" min="0" max="100" value="10" style="width:100%;margin:0.5rem 0;">
+                    <p id="pctLabel" class="dc-num" style="font-size:1.2rem;">10%</p>
+                  </div>
+                  <div id="pivotProgress" class="dc-hidden">
+                    <input id="spatialSlider" type="range" min="0" max="100" value="50" style="width:100%;margin:0.5rem 0;">
+                    <div class="dc-vessel"><div id="vesselFill" class="dc-vessel-fill"></div></div>
+                    <p id="qualLabel" class="muted-note">About halfway</p>
+                    <p id="pitchLabel" class="muted-note">Pitch: medium</p>
+                  </div>
+                  <div class="experience-controls">
+                    <button id="submitProgress" class="btn btn-secondary">Submit answer</button>
+                    <span id="progressFeedback" class="xp-badge">Waiting</span>
+                  </div>
                 </div>
               </div>
+
               <div class="experience-controls" style="margin-top:0.75rem;">
-                <button id="guessPileA" class="btn btn-secondary">A has more</button>
-                <button id="guessPileB" class="btn btn-secondary">B has more</button>
-                <button id="newPiles" class="btn btn-secondary">New piles</button>
-                <span id="pileResult" class="xp-badge">—</span>
+                <button id="prevStep" class="btn btn-secondary">Previous</button>
+                <button id="nextStep" class="btn btn-secondary">Next step</button>
               </div>
             </div>
 
             <div class="experience-panel">
-              <h3>Scene 4: Progress Without Percentages</h3>
-              <p class="muted-note" id="progressHint">Challenge mode ties control to a number scale.</p>
-              <div id="numericProgress" class="dc-hidden">
-                <label for="pctSlider" class="muted-note">Set progress (numeric)</label>
-                <input id="pctSlider" type="range" min="0" max="100" value="40" style="width:100%;margin:0.5rem 0;">
-                <p id="pctLabel" class="dc-num" style="font-size:1.25rem;">40%</p>
-              </div>
-              <div id="spatialProgress">
-                <p class="muted-note">Drag lever to feel amount — no digits shown.</p>
-                <input id="spatialSlider" type="range" min="0" max="100" value="40" style="width:100%;margin:0.5rem 0;">
-                <div class="dc-vessel"><div id="vesselFill" class="dc-vessel-fill"></div></div>
-                <p id="qualLabel" class="muted-note" style="margin-top:0.5rem;">About halfway</p>
-                <p id="pitchLabel" class="muted-note">Pitch: medium</p>
+              <h3>Symptom log</h3>
+              <p class="muted-note">What dyscalculia friction looks like during this task.</p>
+              <div class="bar-meter"><div id="stressFill" class="bar-meter-fill" style="width:12%"></div></div>
+              <div id="symptomLog" class="dc-log" style="margin-top:0.75rem;">
+                <p class="muted-note" style="margin:0;border:none;">Interact to see symptoms…</p>
               </div>
             </div>
           </div>
 
-          <div class="experience-panel" style="margin-top:1rem;">
-            <h3>Scene 5: Which Costs More?</h3>
-            <p class="muted-note" id="priceHint">Challenge mode shows dollar strings. Pivot mode shows relative bar length only.</p>
-            <div id="priceChallenge">
-              <div style="display:flex;gap:1rem;align-items:center;margin:0.75rem 0;">
-                <span id="priceA" class="dc-num" style="font-size:1.1rem;">$12.99</span>
-                <span class="muted-note">vs</span>
-                <span id="priceB" class="dc-num" style="font-size:1.1rem;">$8.50</span>
-              </div>
-              <div class="experience-controls">
-                <button id="pricePickA" class="btn btn-secondary">Left costs more</button>
-                <button id="pricePickB" class="btn btn-secondary">Right costs more</button>
-                <span id="priceResult" class="xp-badge">—</span>
-              </div>
-            </div>
-            <div id="pricePivot" class="dc-hidden">
-              <p class="muted-note">Relative cost (longer bar = more expensive)</p>
-              <div style="margin:0.5rem 0;"><div id="barA" class="dc-price-bar" style="width:65%;margin-bottom:0.5rem;"></div></div>
-              <div style="margin:0.5rem 0;"><div id="barB" class="dc-price-bar" style="width:42%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>
-              <div class="experience-controls">
-                <button id="barPickA" class="btn btn-secondary">Top bar costs more</button>
-                <button id="barPickB" class="btn btn-secondary">Bottom costs more</button>
-                <span id="barResult" class="xp-badge">No symbols needed</span>
-              </div>
+          <div id="pivotTools" class="dc-pivot-box dc-hidden">
+            <h3 style="margin-top:0;">Spatial pivot tools</h3>
+            <p class="muted-note">Step 5 bonus: compare prices by bar length only.</p>
+            <div style="margin:0.6rem 0;"><div id="barA" class="dc-price-bar" style="width:70%;"></div></div>
+            <div style="margin:0.6rem 0;"><div id="barB" class="dc-price-bar" style="width:45%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>
+            <div class="experience-controls">
+              <button id="barPickA" class="btn btn-secondary">Top costs more</button>
+              <button id="barPickB" class="btn btn-secondary">Bottom costs more</button>
+              <span id="barFeedback" class="xp-badge">No digits needed</span>
             </div>
           </div>
         </div>
@@ -269,49 +256,188 @@
 
   <script src="js/sim-common.js"></script>
   <script>
+    const SYMBOL_POOL = ["75%", "$45", "100 mi", "3/8", "0.92", "2,400", "⅔", "19°C", "4:30", "€120"];
+    const FLOAT_SYMBOLS = ["47%", "3/8", "$12", "⅔", "0.07", "2,400", "19°", "500ms"];
+    const SYMPTOMS = {
+      scramble: "Symbol scramble: digit size does not match magnitude",
+      flood: "Incomparable units: values cannot be ranked on one scale",
+      label: "Label mismatch: number on pile disagrees with blocks shown",
+      percent: "Percent overload: abstract scale replaces visible quantity",
+      float: "Number intrusion: extra symbols pull attention away"
+    };
+
     let pivotOn = false;
+    let step = 1;
+    let stress = 12;
     let leftVal = 0;
     let rightVal = 0;
     let pileA = 0;
     let pileB = 0;
+    let symbolPick = null;
+    let floatTimer = null;
+    let scrambleTimer = null;
     let priceA = 12.99;
     let priceB = 8.5;
-    let floodPick = null;
-    let floodLevels = [];
-    let floodSymbols = [];
 
-    const SYMBOL_POOL = [
-      "75%", "$45", "100 miles", "3/8", "0.92", "2,400", "⅔", "19°C",
-      "1.2 kg", "500 ms", "4:30", "€120", "⅓ cup", "0.07", "9,999"
-    ];
+    const symptomLog = document.getElementById("symptomLog");
+    const floatLayer = document.getElementById("floatLayer");
 
-    const FLOOD_RESPONSES = [
-      "That symbol looks big — but the units don't match anything else.",
-      "Hard to be sure. Another format might feel larger depending on context.",
-      "You chose one, but magnitude sense keeps shifting.",
-      "No single correct answer — that's the dyscalculia friction.",
-      "Digits and units compete; comparison breaks down."
-    ];
+    function isSafe() { return window.chromaSeizureSafe?.(); }
 
-    const modeBadge = document.getElementById("modeBadge");
-    const pivotBtn = document.getElementById("pivotBtn");
-    const labelA = document.getElementById("labelA");
-    const labelB = document.getElementById("labelB");
-    const numericProgress = document.getElementById("numericProgress");
-    const spatialProgress = document.getElementById("spatialProgress");
-    const priceChallenge = document.getElementById("priceChallenge");
-    const pricePivot = document.getElementById("pricePivot");
-    const pileHint = document.getElementById("pileHint");
-    const progressHint = document.getElementById("progressHint");
-    const priceHint = document.getElementById("priceHint");
-    const scene1Hint = document.getElementById("scene1Hint");
-
-    function isSafe() {
-      return window.chromaSeizureSafe?.();
+    function logSymptom(key) {
+      const msg = SYMPTOMS[key];
+      if (!msg) return;
+      const existing = [...symptomLog.querySelectorAll("p")].map((p) => p.textContent);
+      if (existing.includes(msg)) return;
+      if (symptomLog.querySelector(".muted-note")) symptomLog.innerHTML = "";
+      const p = document.createElement("p");
+      p.textContent = msg;
+      symptomLog.appendChild(p);
+      symptomLog.scrollTop = symptomLog.scrollHeight;
     }
 
-    function scrambleClass(base) {
-      return base + (isSafe() || pivotOn ? "" : " scramble");
+    function addStress(n) {
+      stress = Math.min(100, stress + n);
+      document.getElementById("stressFill").style.width = stress + "%";
+      document.getElementById("stressBadge").textContent =
+        stress < 35 ? "Magnitude stress: low" : stress < 65 ? "Magnitude stress: rising" : "Magnitude stress: high";
+    }
+
+    function showStep(n) {
+      step = Math.max(1, Math.min(4, n));
+      document.querySelectorAll(".dc-step").forEach((el) => {
+        el.classList.toggle("active", +el.dataset.step === step);
+      });
+      document.getElementById("modeBadge").textContent = pivotOn
+        ? "Pivot: step " + step + " of 4 (spatial)"
+        : "Challenge: step " + step + " of 4";
+    }
+
+    function newCompare() {
+      leftVal = 15 + Math.floor(Math.random() * 80);
+      rightVal = 15 + Math.floor(Math.random() * 80);
+      while (leftVal === rightVal) rightVal = 15 + Math.floor(Math.random() * 80);
+      const box = document.getElementById("compareBox");
+      box.innerHTML = "";
+      [leftVal, rightVal].forEach((val, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dc-num pickable" + (pivotOn || isSafe() ? "" : " scramble");
+        btn.textContent = val;
+        if (!pivotOn && !isSafe()) {
+          btn.style.fontSize = (0.85 + Math.random() * 0.9) + "rem";
+        }
+        btn.onclick = () => {
+          box.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
+          btn.classList.add("selected");
+          const chosen = val;
+          const ok = (chosen === leftVal && leftVal > rightVal) || (chosen === rightVal && rightVal > leftVal);
+          document.getElementById("compareFeedback").textContent = ok
+            ? "Correct — but hard to read from symbols alone"
+            : "Incorrect — magnitude was unclear";
+          if (!ok) logSymptom("scramble");
+          addStress(8);
+        };
+        box.appendChild(btn);
+      });
+      document.getElementById("compareFeedback").textContent = "Tap a number";
+      if (!pivotOn) logSymptom("scramble");
+    }
+
+    function renderSymbols() {
+      const grid = document.getElementById("symbolGrid");
+      grid.innerHTML = "";
+      symbolPick = null;
+      if (pivotOn) {
+        const levels = Array.from({ length: 4 }, () => 20 + Math.floor(Math.random() * 70));
+        ["A", "B", "C", "D"].forEach((label, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "dc-num pickable";
+          btn.style.textAlign = "left";
+          btn.style.width = "46%";
+          btn.innerHTML = "Container " + label +
+            '<div style="height:10px;border-radius:999px;background:var(--bg-surface);border:1px solid var(--border);margin-top:0.45rem;overflow:hidden;">' +
+            '<div style="height:100%;width:' + levels[i] + '%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>';
+          btn.onclick = () => {
+            grid.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
+            btn.classList.add("selected");
+            symbolPick = i;
+            const max = Math.max(...levels);
+            document.getElementById("symbolFeedback").textContent = levels[i] === max
+              ? "Correct — fullest container"
+              : "Try again — compare fill length";
+          };
+          grid.appendChild(btn);
+        });
+        document.getElementById("symbolFeedback").textContent = "Tap the fullest container";
+        return;
+      }
+      const pick = SYMBOL_POOL.slice().sort(() => Math.random() - 0.5).slice(0, 4);
+      pick.forEach((sym, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "dc-num pickable" + (isSafe() ? "" : " scramble");
+        btn.textContent = sym;
+        btn.onclick = () => {
+          grid.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
+          btn.classList.add("selected");
+          symbolPick = i;
+          document.getElementById("symbolFeedback").textContent = "Selected: " + sym;
+        };
+        grid.appendChild(btn);
+      });
+      document.getElementById("symbolFeedback").textContent = "Tap a symbol";
+      logSymptom("flood");
+    }
+
+    function buildPile(el, count) {
+      el.innerHTML = "";
+      for (let i = 0; i < count; i++) {
+        const b = document.createElement("div");
+        b.className = "dc-block";
+        b.style.height = (12 + (i % 5) * 4) + "px";
+        el.appendChild(b);
+      }
+    }
+
+    function newPiles() {
+      pileA = 5 + Math.floor(Math.random() * 16);
+      pileB = 5 + Math.floor(Math.random() * 16);
+      while (pileA === pileB) pileB = 5 + Math.floor(Math.random() * 16);
+      buildPile(document.getElementById("pileA"), pileA);
+      buildPile(document.getElementById("pileB"), pileB);
+      const labelA = document.getElementById("labelA");
+      const labelB = document.getElementById("labelB");
+      if (pivotOn) {
+        labelA.classList.add("dc-hidden");
+        labelB.classList.add("dc-hidden");
+      } else {
+        labelA.classList.remove("dc-hidden");
+        labelB.classList.remove("dc-hidden");
+        let fakeA = pileA + (Math.random() > 0.5 ? 4 : -4);
+        let fakeB = pileB + (Math.random() > 0.5 ? 4 : -4);
+        if (fakeA < 1) fakeA = pileA + 5;
+        if (fakeB < 1) fakeB = pileB + 5;
+        labelA.textContent = fakeA;
+        labelB.textContent = fakeB;
+        logSymptom("label");
+      }
+      document.getElementById("pileFeedback").textContent = "Tap a pile";
+    }
+
+    function wirePiles() {
+      ["pileA", "pileB"].forEach((id) => {
+        document.getElementById(id).onclick = (e) => {
+          document.querySelectorAll(".dc-pile").forEach((p) => p.classList.remove("selected"));
+          e.currentTarget.classList.add("selected");
+          const isA = id === "pileA";
+          const ok = isA ? pileA > pileB : pileB > pileA;
+          document.getElementById("pileFeedback").textContent = ok ? "Correct — you compared blocks" : "Incorrect — label may have misled you";
+          if (!ok && !pivotOn) logSymptom("label");
+          addStress(6);
+        };
+      });
     }
 
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -320,288 +446,159 @@
     let toneGain = null;
 
     function qualLabel(v) {
-      if (v < 20) return "Just starting";
-      if (v < 45) return "A little";
-      if (v < 70) return "About halfway";
-      if (v < 90) return "Mostly full";
+      if (v < 30) return "A little";
+      if (v < 55) return "About halfway";
+      if (v < 80) return "Mostly full";
       return "Nearly complete";
-    }
-
-    function pitchLabel(v) {
-      if (v < 25) return "Low pitch";
-      if (v < 55) return "Medium pitch";
-      if (v < 80) return "Rising pitch";
-      return "High pitch";
     }
 
     function setTone(v) {
       if (!ctx || !toneOsc) return;
       if (ctx.state !== "running") ctx.resume();
-      toneOsc.frequency.value = 140 + v * 5.5;
+      toneOsc.frequency.value = 140 + v * 5.2;
     }
 
-    function buildPile(el, count) {
-      el.innerHTML = "";
-      const maxH = 90;
-      for (let i = 0; i < count; i++) {
-        const b = document.createElement("div");
-        b.className = "dc-block";
-        b.style.height = `${12 + (i % 5) * 4}px`;
-        b.style.width = "14px";
-        el.appendChild(b);
-      }
-    }
-
-    function newNumberCompare() {
-      leftVal = 10 + Math.floor(Math.random() * 90);
-      rightVal = 10 + Math.floor(Math.random() * 90);
-      while (leftVal === rightVal) rightVal = 10 + Math.floor(Math.random() * 90);
-      const box = document.getElementById("compareNums");
-      box.innerHTML = "";
-      const a = document.createElement("span");
-      const b = document.createElement("span");
-      a.className = scrambleClass("dc-num");
-      b.className = scrambleClass("dc-num");
-      a.textContent = leftVal;
-      b.textContent = rightVal;
-      a.style.fontSize = pivotOn ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
-      b.style.fontSize = pivotOn ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
-      box.append(a, b);
-      document.getElementById("compareResult").textContent = "—";
-    }
-
-    function pickFloodSymbol(idx, el) {
-      floodPick = idx;
-      document.querySelectorAll("#symbolFlood .dc-symbol-btn").forEach((btn) => {
-        btn.classList.toggle("selected", btn === el);
-      });
-      document.getElementById("floodFeedback").textContent = "Selected: " + floodSymbols[idx];
-    }
-
-    function pickFloodSpatial(idx, el) {
-      floodPick = idx;
-      document.querySelectorAll("#floodSpatial .dc-symbol-btn").forEach((btn) => {
-        btn.classList.toggle("selected", btn === el);
-      });
-      const max = Math.max(...floodLevels);
-      const ok = floodLevels[idx] === max;
-      document.getElementById("floodFeedback").textContent = ok
-        ? "Correct — spatial fill made magnitude clear"
-        : "Try again — compare bar length, not symbols";
-    }
-
-    function renderFloodChallenge(pick) {
-      floodSymbols = pick;
-      floodPick = null;
-      const box = document.getElementById("symbolFlood");
-      box.innerHTML = "";
-      pick.forEach((sym, idx) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = scrambleClass("dc-symbol-btn");
-        btn.textContent = sym;
-        btn.onclick = () => pickFloodSymbol(idx, btn);
-        box.appendChild(btn);
-      });
-      document.getElementById("floodFeedback").textContent = "Tap a symbol";
-    }
-
-    function renderFloodPivot() {
-      floodLevels = Array.from({ length: 4 }, () => 20 + Math.floor(Math.random() * 75));
-      floodPick = null;
-      const box = document.getElementById("floodSpatial");
-      box.innerHTML = "";
-      const labels = ["Container A", "Container B", "Container C", "Container D"];
-      floodLevels.forEach((level, idx) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "dc-symbol-btn pivot-card";
-        btn.innerHTML =
-          labels[idx] +
-          '<div class="dc-symbol-fill"><span style="width:' + level + '%"></span></div>';
-        btn.onclick = () => pickFloodSpatial(idx, btn);
-        box.appendChild(btn);
-      });
-      document.getElementById("floodFeedback").textContent = "Tap the fullest container";
-    }
-
-    function newSymbolFlood() {
-      const pick = SYMBOL_POOL.slice().sort(() => Math.random() - 0.5).slice(0, 4);
-      if (pivotOn) {
-        renderFloodPivot();
-      } else {
-        renderFloodChallenge(pick);
-      }
-      document.getElementById("floodQuestion").textContent = pivotOn
-        ? "Pivot mode: symbols removed — which container looks fullest?"
-        : "Which symbol feels like the largest amount? Tap one, then confirm.";
-      document.getElementById("floodFeedback").textContent = pivotOn
-        ? "Tap the fullest container"
-        : "Tap a symbol";
-    }
-
-    function confirmFloodPick() {
-      const fb = document.getElementById("floodFeedback");
-      if (pivotOn) {
-        if (floodPick === null) {
-          fb.textContent = "Select a container first";
-          return;
-        }
-        const max = Math.max(...floodLevels);
-        fb.textContent = floodLevels[floodPick] === max
-          ? "Confirmed — spatial comparison works"
-          : "Still unsure — look at fill length only";
-        return;
-      }
-      if (floodPick === null) {
-        fb.textContent = "Select a symbol first";
-        return;
-      }
-      const msg = FLOOD_RESPONSES[Math.floor(Math.random() * FLOOD_RESPONSES.length)];
-      fb.textContent = msg;
-      if (!isSafe()) {
-        document.querySelectorAll("#symbolFlood .dc-symbol-btn").forEach((btn, idx) => {
-          if (idx !== floodPick) {
-            btn.style.fontSize = (0.85 + Math.random() * 0.9) + "rem";
-          }
-        });
-      }
-    }
-
-    function newPiles() {
-      pileA = 4 + Math.floor(Math.random() * 18);
-      pileB = 4 + Math.floor(Math.random() * 18);
-      while (pileA === pileB) pileB = 4 + Math.floor(Math.random() * 18);
-      buildPile(document.getElementById("pileA"), pileA);
-      buildPile(document.getElementById("pileB"), pileB);
-      if (pivotOn) {
-        labelA.classList.add("dc-hidden");
-        labelB.classList.add("dc-hidden");
-      } else {
-        labelA.classList.remove("dc-hidden");
-        labelB.classList.remove("dc-hidden");
-        let fakeA = pileA + (Math.random() > 0.5 ? 3 : -3);
-        let fakeB = pileB + (Math.random() > 0.5 ? 3 : -3);
-        if (fakeA < 1) fakeA = pileA + 4;
-        if (fakeB < 1) fakeB = pileB + 4;
-        if (fakeA === pileA) fakeA += 5;
-        if (fakeB === pileB) fakeB += 5;
-        labelA.textContent = fakeA;
-        labelB.textContent = fakeB;
-      }
-      document.getElementById("pileResult").textContent = "—";
-    }
-
-    function updateProgress(v) {
-      document.getElementById("vesselFill").style.height = `${v}%`;
+    function updateSpatial(v) {
+      document.getElementById("vesselFill").style.height = v + "%";
       document.getElementById("qualLabel").textContent = qualLabel(v);
-      document.getElementById("pitchLabel").textContent = pitchLabel(v);
-      document.getElementById("pctLabel").textContent = `${v}%`;
-      document.getElementById("pctSlider").value = v;
-      document.getElementById("spatialSlider").value = v;
+      document.getElementById("pitchLabel").textContent = v < 40 ? "Low pitch" : v < 70 ? "Medium pitch" : "High pitch";
       setTone(v);
+    }
+
+    function spawnFloat() {
+      if (pivotOn || isSafe()) return;
+      const el = document.createElement("div");
+      el.className = "dc-float";
+      el.textContent = FLOAT_SYMBOLS[Math.floor(Math.random() * FLOAT_SYMBOLS.length)];
+      el.style.left = (10 + Math.random() * 70) + "%";
+      el.style.top = (20 + Math.random() * 55) + "%";
+      floatLayer.appendChild(el);
+      logSymptom("float");
+      addStress(4);
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 2600);
+      while (floatLayer.children.length > 4) floatLayer.removeChild(floatLayer.firstChild);
+    }
+
+    function startChallengeFx() {
+      clearInterval(floatTimer);
+      clearInterval(scrambleTimer);
+      if (pivotOn || isSafe()) return;
+      floatTimer = setInterval(spawnFloat, isSafe() ? 6000 : 2800);
+      scrambleTimer = setInterval(() => {
+        document.querySelectorAll(".dc-num.scramble").forEach((n) => {
+          n.style.fontSize = (0.8 + Math.random() * 1) + "rem";
+        });
+      }, 1800);
+    }
+
+    function stopChallengeFx() {
+      clearInterval(floatTimer);
+      clearInterval(scrambleTimer);
+      floatLayer.innerHTML = "";
     }
 
     function setMode(pivot) {
       pivotOn = pivot;
       pivotBtn.textContent = pivot ? "Return to Challenge Mode" : "Activate Spatial Pivot";
-      modeBadge.textContent = pivot ? "Inclusive pivot: symbols hidden" : "Challenge mode: symbols active";
-
-      labelA.classList.toggle("dc-hidden", pivot);
-      labelB.classList.toggle("dc-hidden", pivot);
-      numericProgress.classList.toggle("dc-hidden", pivot);
-      spatialProgress.classList.toggle("dc-hidden", !pivot);
-      priceChallenge.classList.toggle("dc-hidden", pivot);
-      pricePivot.classList.toggle("dc-hidden", !pivot);
-      document.getElementById("symbolFlood").classList.toggle("dc-hidden", pivot);
-      document.getElementById("floodSpatial").classList.toggle("dc-hidden", !pivot);
-
-      pileHint.textContent = pivot
-        ? "Numbers removed — compare pile area only."
-        : "Digit labels on piles often disagree with what you see — symbols and quantity feel disconnected.";
-      if (!pivot) newPiles();
-      progressHint.textContent = pivot
-        ? "Control amount by vessel fill and pitch — no percentage shown."
-        : "Progress is tied to a numeric percentage scale.";
-      priceHint.textContent = pivot
-        ? "Relative bar length replaces dollar notation."
-        : "Price strings force symbolic decoding.";
-      scene1Hint.textContent = pivot
-        ? "Pivot adds consistent sizing; still practice comparison without stress scoring."
-        : "Digits appear with uneven visual weight — symbol decoding breaks down.";
-
-      document.querySelectorAll("#compareNums .dc-num").forEach((n) => {
-        n.classList.toggle("scramble", !pivot && !isSafe());
-        n.style.fontSize = pivot || isSafe() ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
-      });
+      document.getElementById("pivotTools").classList.toggle("dc-hidden", !pivot);
+      document.getElementById("challengeProgress").classList.toggle("dc-hidden", pivot);
+      document.getElementById("pivotProgress").classList.toggle("dc-hidden", !pivot);
+      document.getElementById("pileHint").textContent = pivot
+        ? "Numbers hidden — tap the pile with more blocks."
+        : "Digit labels may disagree with the blocks you see.";
+      document.getElementById("progressHint").textContent = pivot
+        ? "Drag until the vessel feels about halfway. Listen to pitch rise and fall."
+        : "Set the slider to about 50% — no visual container, only a number.";
+      document.getElementById("howList").innerHTML = pivot
+        ? "<li>Numbers and symbols are <strong>hidden or reduced</strong>.</li><li>Compare using <strong>fill level</strong>, <strong>pitch</strong>, and <strong>bar length</strong>.</li><li>Complete all 4 steps in pivot mode.</li>"
+        : "<li>Complete <strong>4 steps</strong> — each one asks you to judge quantity using numbers or symbols.</li><li>Digits <strong>scramble</strong>, labels <strong>lie</strong>, and symbols <strong>float across</strong> the screen.</li><li>Check the <strong>symptom log</strong> as you interact.</li><li>Use <strong>Spatial Pivot</strong> for non-numeric alternatives.</li>";
 
       if (pivot && ctx && !toneOsc) {
         toneOsc = ctx.createOscillator();
         toneGain = ctx.createGain();
         toneOsc.type = "sine";
-        toneOsc.frequency.value = 200;
-        toneGain.gain.value = 0.04;
+        toneGain.gain.value = 0.035;
         toneOsc.connect(toneGain).connect(ctx.destination);
         toneOsc.start();
+        updateSpatial(+document.getElementById("spatialSlider").value);
       }
-      updateProgress(+document.getElementById("spatialSlider").value);
-      newSymbolFlood();
+
+      newCompare();
+      renderSymbols();
+      newPiles();
+      stopChallengeFx();
+      if (!pivot) startChallengeFx();
+      showStep(step);
     }
 
-    document.getElementById("pickLeft").onclick = () => {
-      const ok = leftVal > rightVal;
-      document.getElementById("compareResult").textContent = ok ? "Correct" : "Incorrect — magnitude was hard to read from symbols";
-    };
-    document.getElementById("pickRight").onclick = () => {
-      const ok = rightVal > leftVal;
-      document.getElementById("compareResult").textContent = ok ? "Correct" : "Incorrect — magnitude was hard to read from symbols";
-    };
-    document.getElementById("newCompare").onclick = newNumberCompare;
-
-    document.getElementById("floodBtn").onclick = newSymbolFlood;
-    document.getElementById("floodConfirm").onclick = confirmFloodPick;
-
-    document.getElementById("guessPileA").onclick = () => {
-      const ok = pileA > pileB;
-      document.getElementById("pileResult").textContent = ok ? "Correct" : "Incorrect";
-    };
-    document.getElementById("guessPileB").onclick = () => {
-      const ok = pileB > pileA;
-      document.getElementById("pileResult").textContent = ok ? "Correct" : "Incorrect";
+    document.getElementById("pivotBtn").onclick = () => setMode(!pivotOn);
+    document.getElementById("retryCompare").onclick = newCompare;
+    document.getElementById("reshuffleSymbols").onclick = renderSymbols;
+    document.getElementById("confirmSymbol").onclick = () => {
+      if (symbolPick === null) {
+        document.getElementById("symbolFeedback").textContent = "Select a symbol first";
+        return;
+      }
+      document.getElementById("symbolFeedback").textContent = pivotOn
+        ? "Spatial mode: compare containers in step 2 when pivot is on"
+        : "No single right answer — incomparable units create confusion";
+      logSymptom("flood");
+      addStress(10);
     };
     document.getElementById("newPiles").onclick = newPiles;
 
-    document.getElementById("pctSlider").oninput = (e) => updateProgress(+e.target.value);
-    document.getElementById("spatialSlider").oninput = (e) => updateProgress(+e.target.value);
+    document.getElementById("pctSlider").oninput = (e) => {
+      document.getElementById("pctLabel").textContent = e.target.value + "%";
+      logSymptom("percent");
+      addStress(3);
+    };
 
-    document.getElementById("pricePickA").onclick = () => {
-      document.getElementById("priceResult").textContent = priceA > priceB ? "Correct" : "Incorrect";
+    document.getElementById("spatialSlider").oninput = (e) => updateSpatial(+e.target.value);
+
+    document.getElementById("submitProgress").onclick = () => {
+      if (pivotOn) {
+        const v = +document.getElementById("spatialSlider").value;
+        const ok = v >= 40 && v <= 60;
+        document.getElementById("progressFeedback").textContent = ok
+          ? "Correct — vessel and pitch showed halfway"
+          : "Adjust until fill feels halfway";
+      } else {
+        const v = +document.getElementById("pctSlider").value;
+        const ok = v >= 40 && v <= 60;
+        document.getElementById("progressFeedback").textContent = ok
+          ? "Correct — but % is hard to picture without a visual"
+          : "Target is about 50% — abstract scale is difficult";
+        logSymptom("percent");
+      }
+      addStress(5);
     };
-    document.getElementById("pricePickB").onclick = () => {
-      document.getElementById("priceResult").textContent = priceB > priceA ? "Correct" : "Incorrect";
-    };
+
+    document.getElementById("prevStep").onclick = () => showStep(step - 1);
+    document.getElementById("nextStep").onclick = () => showStep(step + 1);
+
     document.getElementById("barPickA").onclick = () => {
-      document.getElementById("barResult").textContent = priceA > priceB ? "Correct — no digits needed" : "Try again";
+      document.getElementById("barFeedback").textContent = priceA > priceB ? "Correct — bar length only" : "Try again";
     };
     document.getElementById("barPickB").onclick = () => {
-      document.getElementById("barResult").textContent = priceB > priceA ? "Correct — no digits needed" : "Try again";
+      document.getElementById("barFeedback").textContent = priceB > priceA ? "Correct — bar length only" : "Try again";
     };
 
-    pivotBtn.onclick = () => setMode(!pivotOn);
-
     const maxBar = Math.max(priceA, priceB);
-    document.getElementById("barA").style.width = `${(priceA / maxBar) * 100}%`;
-    document.getElementById("barB").style.width = `${(priceB / maxBar) * 100}%`;
+    document.getElementById("barA").style.width = (priceA / maxBar * 100) + "%";
+    document.getElementById("barB").style.width = (priceB / maxBar * 100) + "%";
 
-    newNumberCompare();
-    newSymbolFlood();
+    wirePiles();
+    newCompare();
+    renderSymbols();
     newPiles();
-    updateProgress(40);
+    showStep(1);
     setMode(false);
 
     document.addEventListener("chroma-seizure-safe-change", () => {
-      newNumberCompare();
-      newSymbolFlood();
+      stopChallengeFx();
+      if (!pivotOn) startChallengeFx();
+      newCompare();
+      renderSymbols();
     });
   </script>
 </body>
