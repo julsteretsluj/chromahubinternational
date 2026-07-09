@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaHorizon Connect — peer mentorship matching, career playbooks, accommodation coaching, and community support.">
+  <title>ChromaHorizon Connect — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-horizon.css">
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html">Digital</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="ally.html" class="active">Ally</a></li>
+          <li><a href="arts.html">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-ally">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="ally.html">Chroma Ally</a>
+          <span aria-hidden="true">/</span>
+          <a href="chroma-horizon.html">ChromaHorizon</a>
+          <span aria-hidden="true">/</span>
+          <span>Connect</span>
+        </nav>
+        <span class="pillar-tag">ChromaHorizon Platform</span>
+        <h1>ChromaHorizon Connect</h1>
+        <p>Match with peer mentors, work through career playbooks, draft accommodation requests, join support circles, and learn from success stories. Pilot progress saves in your browser.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="ch-profile-grid" id="profileForm">
+          <label>Your name<input type="text" id="profileName" maxlength="60" placeholder="First name or nickname"></label>
+          <label>Transition path
+            <select id="profilePath">
+              <option value="entering">Entering the workforce</option>
+              <option value="changing">Changing roles</option>
+              <option value="advocating">Advocating at work</option>
+            </select>
+          </label>
+          <label>Industry
+            <select id="profileIndustry">
+              <option value="tech">Technology</option>
+              <option value="education">Education</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="government">Government</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label>Communication preference
+            <select id="profileComm">
+              <option value="async">Async messaging preferred</option>
+              <option value="video-optional">Video optional</option>
+              <option value="text-only">Text-only sessions</option>
+            </select>
+          </label>
+          <label class="span-full">Goals (optional)<textarea id="profileGoals" maxlength="300" placeholder="e.g. First dev role, negotiate remote days, plan exit from toxic team"></textarea></label>
+        </div>
+
+        <div class="ch-app" id="horizonApp">
+          <div class="ch-toolbar">
+            <div class="ch-tabs" role="tablist" aria-label="ChromaHorizon sections">
+              <button type="button" class="ch-tab active" data-panel="dashboard" role="tab" aria-selected="true">Dashboard</button>
+              <button type="button" class="ch-tab" data-panel="match" role="tab" aria-selected="false">Match</button>
+              <button type="button" class="ch-tab" data-panel="playbooks" role="tab" aria-selected="false">Playbooks</button>
+              <button type="button" class="ch-tab" data-panel="advocacy" role="tab" aria-selected="false">Advocacy</button>
+              <button type="button" class="ch-tab" data-panel="community" role="tab" aria-selected="false">Community</button>
+              <button type="button" class="ch-tab" data-panel="stories" role="tab" aria-selected="false">Stories</button>
+            </div>
+          </div>
+
+          <div class="ch-panel active" id="panel-dashboard" role="tabpanel">
+            <p class="ch-note">Your horizon journey at a glance. Complete milestones at your own pace — no fixed curriculum schedule.</p>
+            <div class="ch-dash-grid">
+              <div class="ch-card" id="dashMentor">
+                <h3>Your mentor</h3>
+                <p id="dashMentorText">No mentor matched yet. Visit the Match tab.</p>
+              </div>
+              <div class="ch-card">
+                <h3>Journey progress</h3>
+                <p id="dashProgressText">0 / 6 milestones</p>
+                <div class="ch-progress-bar"><div class="ch-progress-fill" id="dashProgressBar" style="width:0%"></div></div>
+                <button type="button" class="btn btn-secondary btn-sm" id="exportPlanBtn" style="margin-top:0.5rem;">Export transition plan</button>
+              </div>
+            </div>
+            <h3 style="font-size:0.95rem;margin:0 0 0.5rem;">Milestones</h3>
+            <div id="milestoneList"></div>
+          </div>
+
+          <div class="ch-panel" id="panel-match" role="tabpanel" hidden>
+            <p class="ch-note">Mentors ranked by path, industry, and communication fit. All mentors are neurodivergent professionals with lived experience — not generic HR coaches.</p>
+            <div class="ch-grid" id="mentorGrid"></div>
+          </div>
+
+          <div class="ch-panel" id="panel-playbooks" role="tabpanel" hidden>
+            <p class="ch-note">Industry-specific transition guides with timelines, steps, and employer red/green flags. Filtered to your path and industry.</p>
+            <div class="ch-filters">
+              <select id="pbPath" aria-label="Filter playbooks by path">
+                <option value="">All paths</option>
+                <option value="entering">Entering workforce</option>
+                <option value="changing">Changing roles</option>
+                <option value="advocating">Advocating at work</option>
+              </select>
+              <select id="pbIndustry" aria-label="Filter playbooks by industry">
+                <option value="">All industries</option>
+                <option value="tech">Technology</option>
+                <option value="education">Education</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="government">Government</option>
+                <option value="other">Cross-sector</option>
+              </select>
+            </div>
+            <div id="playbookList"></div>
+          </div>
+
+          <div class="ch-panel" id="panel-advocacy" role="tabpanel" hidden>
+            <p class="ch-note">Templates and scripts for accommodation requests, manager conversations, and escalation. Copy, adapt, and practice with your mentor.</p>
+            <div class="ch-template-list" id="templateBtns"></div>
+            <div class="ch-template-body" id="templateBody" hidden></div>
+            <div class="experience-controls" style="margin-top:0.75rem;">
+              <button type="button" class="btn btn-primary" id="markDraftBtn">Mark draft complete</button>
+              <button type="button" class="btn btn-secondary" id="copyTemplateBtn">Copy to clipboard</button>
+            </div>
+          </div>
+
+          <div class="ch-panel" id="panel-community" role="tabpanel" hidden>
+            <p class="ch-note">Support circles with flexible participation — text-only, async, or optional voice. No camera required.</p>
+            <div class="ch-grid" id="roomGrid"></div>
+          </div>
+
+          <div class="ch-panel" id="panel-stories" role="tabpanel" hidden>
+            <p class="ch-note">Anonymized success stories from neurodivergent professionals. Save stories to revisit before your next move.</p>
+            <div class="ch-filters">
+              <input type="search" id="storySearch" placeholder="Search stories…" aria-label="Search stories">
+              <select id="storyPath" aria-label="Filter stories by path">
+                <option value="">All paths</option>
+                <option value="entering">Entering workforce</option>
+                <option value="changing">Changing roles</option>
+                <option value="advocating">Advocating at work</option>
+              </select>
+              <select id="storyIndustry" aria-label="Filter stories by industry">
+                <option value="">All industries</option>
+                <option value="tech">Technology</option>
+                <option value="education">Education</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="government">Government</option>
+              </select>
+            </div>
+            <div class="ch-grid" id="storyGrid"></div>
+          </div>
+        </div>
+
+        <p class="muted-note" style="margin-top:1rem;text-align:center;">
+          <a href="chroma-horizon.html">← About ChromaHorizon</a>
+          &nbsp;·&nbsp;
+          <a href="chroma-index-benchmark.html">ChromaIndex employer benchmarks</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:1.5rem;">
+        <p>&copy; 2026 Chroma Hub International. ChromaHorizon pilot — progress stored in your browser.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chroma-horizon.js"></script>
+  <script>
+    (function () {
+      const CH = window.ChromaHorizon;
+      let activeTemplate = CH.ACCOMMODATION_TEMPLATES[0];
+
+      function toast(msg) {
+        const el = document.createElement("div");
+        el.className = "ch-toast";
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      }
+
+      function escapeHtml(s) {
+        const d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function switchPanel(name) {
+        document.querySelectorAll(".ch-tab").forEach((t) => {
+          const on = t.dataset.panel === name;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        document.querySelectorAll(".ch-panel").forEach((p) => {
+          const on = p.id === "panel-" + name;
+          p.classList.toggle("active", on);
+          p.hidden = !on;
+        });
+        if (name === "match") renderMentors();
+        if (name === "playbooks") renderPlaybooks();
+        if (name === "community") renderRooms();
+        if (name === "stories") renderStories();
+        if (name === "dashboard") renderDashboard();
+      }
+
+      document.querySelectorAll(".ch-tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchPanel(tab.dataset.panel));
+      });
+
+      function saveProfileFromForm() {
+        CH.saveProfile({
+          name: document.getElementById("profileName").value.trim(),
+          path: document.getElementById("profilePath").value,
+          industry: document.getElementById("profileIndustry").value,
+          comm: document.getElementById("profileComm").value,
+          goals: document.getElementById("profileGoals").value.trim(),
+        });
+        renderDashboard();
+      }
+
+      function loadProfile() {
+        const p = CH.getProfile();
+        document.getElementById("profileName").value = p.name || "";
+        document.getElementById("profilePath").value = p.path || "entering";
+        document.getElementById("profileIndustry").value = p.industry || "tech";
+        document.getElementById("profileComm").value = p.comm || "async";
+        document.getElementById("profileGoals").value = p.goals || "";
+      }
+
+      ["profileName", "profilePath", "profileIndustry", "profileComm", "profileGoals"].forEach((id) => {
+        document.getElementById(id).addEventListener("change", saveProfileFromForm);
+      });
+
+      function renderDashboard() {
+        const mentor = CH.getMentor();
+        const mp = CH.milestoneProgress();
+        const milestones = CH.getMilestones();
+
+        document.getElementById("dashMentorText").textContent = mentor
+          ? mentor.name + " · " + mentor.neurotype + " — " + mentor.style
+          : "No mentor matched yet. Visit the Match tab.";
+        document.getElementById("dashProgressText").textContent = mp.done + " / " + mp.total + " milestones";
+        document.getElementById("dashProgressBar").style.width = mp.percent + "%";
+
+        const list = document.getElementById("milestoneList");
+        list.innerHTML = "";
+        CH.MILESTONE_DEFS.forEach((m) => {
+          const row = document.createElement("div");
+          row.className = "ch-milestone" + (milestones[m.id] ? " done" : "");
+          row.textContent = (milestones[m.id] ? "✓ " : "○ ") + m.label;
+          list.appendChild(row);
+        });
+      }
+
+      function renderMentors() {
+        const current = CH.getMentor();
+        const ranked = CH.rankMentors();
+        const grid = document.getElementById("mentorGrid");
+        grid.innerHTML = "";
+        ranked.forEach(({ mentor, score }) => {
+          const card = document.createElement("article");
+          card.className = "ch-mentor-card" + (current && current.id === mentor.id ? " matched" : "");
+          card.innerHTML =
+            "<span class=\"ch-match-score\">" + score + "% match</span>" +
+            "<h4 style=\"margin:0\">" + escapeHtml(mentor.name) + "</h4>" +
+            "<p style=\"margin:0;font-size:0.84rem;color:var(--text-muted)\">" + escapeHtml(mentor.neurotype) + "</p>" +
+            "<p style=\"margin:0;font-size:0.88rem;line-height:1.45\">" + escapeHtml(mentor.bio) + "</p>" +
+            "<p style=\"margin:0;font-size:0.82rem\"><strong>Style:</strong> " + escapeHtml(mentor.style) + "</p>" +
+            "<div class=\"ch-tags\">" +
+            mentor.expertise.map((e) => "<span class=\"ch-tag\">" + escapeHtml(e) + "</span>").join("") +
+            "</div>";
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-primary btn-sm";
+          btn.style.marginTop = "0.35rem";
+          btn.textContent = current && current.id === mentor.id ? "Matched ✓" : "Select mentor";
+          btn.disabled = !!(current && current.id === mentor.id);
+          btn.onclick = () => {
+            CH.setMentor(mentor.id);
+            toast("Matched with " + mentor.name + ". Check your dashboard.");
+            renderMentors();
+            renderDashboard();
+          };
+          card.appendChild(btn);
+          grid.appendChild(card);
+        });
+      }
+
+      function renderPlaybooks() {
+        const path = document.getElementById("pbPath").value || CH.getProfile().path;
+        const industry = document.getElementById("pbIndustry").value || CH.getProfile().industry;
+        const list = CH.filterPlaybooks(path, industry);
+        const prog = CH.getPlaybookProgress();
+        const area = document.getElementById("playbookList");
+        area.innerHTML = "";
+        if (!list.length) {
+          area.innerHTML = "<p class=\"muted-note\">No playbooks for this filter. Try broadening your selection.</p>";
+          return;
+        }
+        list.forEach((pb) => {
+          const done = prog[pb.id]?.done;
+          const el = document.createElement("article");
+          el.className = "ch-playbook";
+          el.innerHTML =
+            "<h4>" + escapeHtml(pb.title) + (done ? " ✓" : "") + "</h4>" +
+            "<p class=\"muted-note\" style=\"margin:0 0 0.35rem\">" + CH.PATHS[pb.path] + " · " + CH.INDUSTRIES[pb.industry] + " · " + pb.duration + "</p>" +
+            "<ol>" + pb.steps.map((s) => "<li>" + escapeHtml(s) + "</li>").join("") + "</ol>" +
+            "<div class=\"ch-flags\">" +
+            "<div><strong class=\"ch-red\">Red flags</strong><ul style=\"margin:0.25rem 0;padding-left:1rem\">" +
+            pb.redFlags.map((f) => "<li>" + escapeHtml(f) + "</li>").join("") + "</ul></div>" +
+            "<div><strong class=\"ch-green\">Green flags</strong><ul style=\"margin:0.25rem 0;padding-left:1rem\">" +
+            pb.greenFlags.map((f) => "<li>" + escapeHtml(f) + "</li>").join("") + "</ul></div></div>";
+          const btnRow = document.createElement("div");
+          btnRow.className = "experience-controls";
+          btnRow.style.marginTop = "0.5rem";
+          const readBtn = document.createElement("button");
+          readBtn.type = "button";
+          readBtn.className = "btn btn-secondary btn-sm";
+          readBtn.textContent = "Mark in progress";
+          readBtn.onclick = () => {
+            CH.markPlaybookRead(pb.id);
+            toast("Playbook saved as in progress.");
+          };
+          const doneBtn = document.createElement("button");
+          doneBtn.type = "button";
+          doneBtn.className = "btn btn-primary btn-sm";
+          doneBtn.textContent = done ? "Completed" : "Mark complete";
+          doneBtn.disabled = !!done;
+          doneBtn.onclick = () => {
+            CH.markPlaybookDone(pb.id);
+            toast("Playbook marked complete.");
+            renderPlaybooks();
+            renderDashboard();
+          };
+          btnRow.append(readBtn, doneBtn);
+          el.appendChild(btnRow);
+          area.appendChild(el);
+        });
+      }
+
+      document.getElementById("pbPath").addEventListener("change", renderPlaybooks);
+      document.getElementById("pbIndustry").addEventListener("change", renderPlaybooks);
+
+      function renderTemplates() {
+        const btns = document.getElementById("templateBtns");
+        btns.innerHTML = "";
+        CH.ACCOMMODATION_TEMPLATES.forEach((t) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ch-template-btn" + (activeTemplate.id === t.id ? " active" : "");
+          btn.textContent = t.title + " (" + t.type + ")";
+          btn.onclick = () => {
+            activeTemplate = t;
+            renderTemplates();
+            showTemplate();
+          };
+          btns.appendChild(btn);
+        });
+      }
+
+      function showTemplate() {
+        const body = document.getElementById("templateBody");
+        body.hidden = false;
+        body.textContent = activeTemplate.body;
+      }
+
+      document.getElementById("markDraftBtn").onclick = () => {
+        CH.markAdvocacyDrafted();
+        toast("Advocacy draft milestone recorded.");
+        renderDashboard();
+      };
+
+      document.getElementById("copyTemplateBtn").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(activeTemplate.body);
+          CH.markAdvocacyDrafted();
+          toast("Copied to clipboard.");
+          renderDashboard();
+        } catch {
+          toast("Copy failed — select text manually.");
+        }
+      };
+
+      function renderRooms() {
+        const grid = document.getElementById("roomGrid");
+        grid.innerHTML = "";
+        CH.COMMUNITY_ROOMS.forEach((room) => {
+          const joined = CH.isRoomJoined(room.id);
+          const card = document.createElement("article");
+          card.className = "ch-room-card" + (joined ? " joined" : "");
+          card.innerHTML =
+            "<h4 style=\"margin:0 0 0.25rem\">" + escapeHtml(room.name) + "</h4>" +
+            "<p class=\"muted-note\" style=\"margin:0 0 0.35rem\">" + escapeHtml(room.format) + " · " + room.members + " members</p>" +
+            "<p style=\"margin:0 0 0.35rem;font-size:0.88rem\">" + escapeHtml(room.description) + "</p>" +
+            "<span class=\"ch-tag\">" + CH.PATHS[room.path] + "</span>";
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = joined ? "btn btn-secondary btn-sm" : "btn btn-primary btn-sm";
+          btn.style.marginTop = "0.5rem";
+          btn.textContent = joined ? "Leave circle" : "Join circle";
+          btn.onclick = () => {
+            if (joined) CH.leaveRoom(room.id);
+            else CH.joinRoom(room.id);
+            toast(joined ? "Left " + room.name : "Joined " + room.name + " (pilot — no live chat yet).");
+            renderRooms();
+            renderDashboard();
+          };
+          card.appendChild(btn);
+          grid.appendChild(card);
+        });
+      }
+
+      function renderStories() {
+        const path = document.getElementById("storyPath").value;
+        const industry = document.getElementById("storyIndustry").value;
+        const query = document.getElementById("storySearch").value;
+        const list = CH.filterStories(path, industry, query);
+        const grid = document.getElementById("storyGrid");
+        grid.innerHTML = "";
+        list.forEach((story) => {
+          const saved = CH.isStorySaved(story.id);
+          const card = document.createElement("article");
+          card.className = "ch-story-card";
+          card.innerHTML =
+            "<h4>" + escapeHtml(story.title) + "</h4>" +
+            "<p class=\"ch-story-meta\">" + CH.PATHS[story.path] + " · " + CH.INDUSTRIES[story.industry] + " · " + escapeHtml(story.challenge) + "</p>" +
+            "<p style=\"margin:0;font-size:0.88rem;line-height:1.5;white-space:pre-wrap\">" + escapeHtml(story.body.slice(0, 220)) + (story.body.length > 220 ? "…" : "") + "</p>";
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = saved ? "btn btn-secondary btn-sm" : "btn btn-primary btn-sm";
+          btn.style.marginTop = "0.5rem";
+          btn.textContent = saved ? "Saved ✓" : "Save story";
+          btn.onclick = () => {
+            CH.toggleSaveStory(story.id);
+            toast(saved ? "Removed from saved." : "Story saved.");
+            renderStories();
+            renderDashboard();
+          };
+          card.appendChild(btn);
+          grid.appendChild(card);
+        });
+      }
+
+      ["storySearch", "storyPath", "storyIndustry"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", renderStories);
+        document.getElementById(id).addEventListener("change", renderStories);
+      });
+
+      document.getElementById("exportPlanBtn").onclick = () => {
+        CH.downloadPlan();
+        toast("Transition plan downloaded.");
+      };
+
+      loadProfile();
+      renderDashboard();
+      renderTemplates();
+      showTemplate();
+    })();
+  </script>
+</body>
+</html>

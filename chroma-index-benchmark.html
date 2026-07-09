@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaIndex Benchmark — neuro-inclusion assessment, rankings, roadmaps, and ESG export.">
+  <title>ChromaIndex Benchmark — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-index.css">
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html">Digital</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="ally.html" class="active">Ally</a></li>
+          <li><a href="arts.html">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-ally">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="ally.html">Chroma Ally</a>
+          <span aria-hidden="true">/</span>
+          <a href="chroma-index.html">ChromaIndex</a>
+          <span aria-hidden="true">/</span>
+          <span>Benchmark</span>
+        </nav>
+        <span class="pillar-tag">ChromaIndex Platform</span>
+        <h1>ChromaIndex Benchmark</h1>
+        <p>Run a five-stage neuro-inclusion assessment, compare against sector rankings, generate improvement roadmaps, and export ESG-ready summaries. Pilot data saves in your browser.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="ci-org-profile">
+          <label>Organization name<input type="text" id="orgName" maxlength="80" placeholder="Your organization"></label>
+          <label>Sector
+            <select id="orgSector">
+              <option value="tech">Technology</option>
+              <option value="education">Education</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="government">Government</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="ci-app" id="indexApp">
+          <div class="ci-toolbar">
+            <div class="ci-tabs" role="tablist" aria-label="ChromaIndex sections">
+              <button type="button" class="ci-tab active" data-panel="rankings" role="tab" aria-selected="true">Rankings</button>
+              <button type="button" class="ci-tab" data-panel="assess" role="tab" aria-selected="false">Assess</button>
+              <button type="button" class="ci-tab" data-panel="roadmap" role="tab" aria-selected="false">Roadmap</button>
+              <button type="button" class="ci-tab" data-panel="verify" role="tab" aria-selected="false">Verify</button>
+              <button type="button" class="ci-tab" data-panel="esg" role="tab" aria-selected="false">ESG export</button>
+            </div>
+          </div>
+
+          <div class="ci-panel active" id="panel-rankings" role="tabpanel">
+            <p class="ci-note">2026 public rankings across four sectors. Verified organizations completed third-party audit. Filter to compare peers in your industry.</p>
+            <div class="ci-filters">
+              <select id="rankSector" aria-label="Filter rankings by sector">
+                <option value="">All sectors</option>
+                <option value="tech">Technology</option>
+                <option value="education">Education</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="government">Government</option>
+              </select>
+            </div>
+            <div class="ci-table-wrap">
+              <table class="ci-table" id="rankTable">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Organization</th>
+                    <th>Sector</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="rankBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ci-panel" id="panel-assess" role="tabpanel" hidden>
+            <p class="ci-note">Complete all five lifecycle stages. Each stage has three evidence-based questions scored 0–3. Your overall ChromaIndex score updates as you go.</p>
+            <div class="ci-stage-nav" id="stageNav"></div>
+            <div id="questionArea"></div>
+            <div class="ci-score-card" id="scoreCard">
+              <p class="muted-note" style="margin:0;">Your ChromaIndex score</p>
+              <div class="ci-score-big" id="overallScore">—</div>
+              <p class="muted-note" id="sectorCompare"></p>
+              <div class="ci-stage-bars" id="stageBars"></div>
+              <div class="experience-controls" style="margin-top:0.75rem;">
+                <button type="button" class="btn btn-primary" id="submitAssessBtn" disabled>Submit assessment</button>
+                <button type="button" class="btn btn-secondary" id="resetAssessBtn">Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ci-panel" id="panel-roadmap" role="tabpanel" hidden>
+            <p class="ci-note">Prioritized improvements for stages scoring below 75 — sorted by gap size. Address high-priority items first.</p>
+            <div id="roadmapList"></div>
+          </div>
+
+          <div class="ci-panel" id="panel-verify" role="tabpanel" hidden>
+            <p class="ci-note">Third-party verification checklist. Complete assessment first, then mark evidence items your organization can provide for verified status.</p>
+            <p class="muted-note" id="verifyProgress"></p>
+            <div id="verifyList" style="margin-top:0.75rem;"></div>
+          </div>
+
+          <div class="ci-panel" id="panel-esg" role="tabpanel" hidden>
+            <p class="ci-note">Export a DEI/ESG-aligned summary for annual reports. Includes lifecycle scores, sector benchmark comparison, and roadmap priorities.</p>
+            <div class="experience-controls">
+              <button type="button" class="btn btn-primary" id="exportMdBtn">Download Markdown</button>
+              <button type="button" class="btn btn-secondary" id="exportJsonBtn">Download JSON</button>
+            </div>
+            <pre id="esgPreview" class="ci-note" style="margin-top:0.85rem;white-space:pre-wrap;max-height:320px;overflow:auto;font-size:0.8rem;"></pre>
+          </div>
+        </div>
+
+        <p class="muted-note" style="margin-top:1rem;text-align:center;">
+          <a href="chroma-index.html">← About ChromaIndex</a>
+          &nbsp;·&nbsp;
+          <a href="chroma-horizon.html">ChromaHorizon</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:1.5rem;">
+        <p>&copy; 2026 Chroma Hub International. ChromaIndex pilot — assessments stored in your browser.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chroma-index.js"></script>
+  <script>
+    (function () {
+      const CI = window.ChromaIndex;
+      let activeStage = "recruitment";
+
+      function toast(msg) {
+        const el = document.createElement("div");
+        el.className = "ci-toast";
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      }
+
+      function switchPanel(name) {
+        document.querySelectorAll(".ci-tab").forEach((t) => {
+          const on = t.dataset.panel === name;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        document.querySelectorAll(".ci-panel").forEach((p) => {
+          const on = p.id === "panel-" + name;
+          p.classList.toggle("active", on);
+          p.hidden = !on;
+        });
+        if (name === "roadmap") renderRoadmap();
+        if (name === "verify") renderVerify();
+        if (name === "esg") renderEsgPreview();
+      }
+
+      document.querySelectorAll(".ci-tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchPanel(tab.dataset.panel));
+      });
+
+      function saveProfile() {
+        CI.saveProfile({
+          org: document.getElementById("orgName").value.trim(),
+          sector: document.getElementById("orgSector").value,
+        });
+        renderScores();
+        renderEsgPreview();
+      }
+
+      document.getElementById("orgName").addEventListener("change", saveProfile);
+      document.getElementById("orgSector").addEventListener("change", saveProfile);
+
+      function loadProfile() {
+        const p = CI.getProfile();
+        document.getElementById("orgName").value = p.org || "";
+        document.getElementById("orgSector").value = p.sector || "tech";
+      }
+
+      function renderRankings() {
+        const sector = document.getElementById("rankSector").value;
+        const list = CI.filterRankings(sector);
+        const body = document.getElementById("rankBody");
+        body.innerHTML = "";
+        list.forEach((org, i) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" + (i + 1) + "</td>" +
+            "<td><strong>" + escapeHtml(org.name) + "</strong></td>" +
+            "<td>" + CI.SECTORS[org.sector] + "</td>" +
+            '<td class="ci-score">' + org.score + "</td>" +
+            '<td><span class="ci-badge' + (org.verified ? " verified" : "") + '">' +
+            (org.verified ? "Verified" : "Self-reported") + "</span></td>";
+          body.appendChild(tr);
+        });
+      }
+
+      function escapeHtml(s) {
+        const d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      document.getElementById("rankSector").addEventListener("change", renderRankings);
+
+      function renderStageNav() {
+        const nav = document.getElementById("stageNav");
+        nav.innerHTML = "";
+        const answers = CI.getAnswers();
+        Object.keys(CI.STAGES).forEach((key) => {
+          const qs = CI.QUESTIONS[key];
+          const done = qs.every((q) => answers[q.id] !== undefined);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ci-stage-pill" + (key === activeStage ? " active" : "") + (done ? " done" : "");
+          btn.textContent = CI.STAGES[key].label + (done ? " ✓" : "");
+          btn.onclick = () => {
+            activeStage = key;
+            renderStageNav();
+            renderQuestions();
+          };
+          nav.appendChild(btn);
+        });
+      }
+
+      function renderQuestions() {
+        const area = document.getElementById("questionArea");
+        area.innerHTML = "";
+        const answers = CI.getAnswers();
+        CI.QUESTIONS[activeStage].forEach((q) => {
+          const box = document.createElement("div");
+          box.className = "ci-question";
+          const p = document.createElement("p");
+          p.innerHTML = "<strong>" + CI.STAGES[activeStage].label + ":</strong> " + q.text;
+          box.appendChild(p);
+          const opts = document.createElement("div");
+          opts.className = "ci-options";
+          q.options.forEach((opt, idx) => {
+            const label = document.createElement("label");
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = q.id;
+            radio.value = String(idx);
+            if (answers[q.id] === idx) radio.checked = true;
+            radio.addEventListener("change", () => {
+              CI.saveAnswer(q.id, idx);
+              renderStageNav();
+              renderScores();
+              const qs = CI.QUESTIONS[activeStage];
+              const allDone = qs.every((qq) => CI.getAnswers()[qq.id] !== undefined);
+              if (allDone) {
+                const keys = Object.keys(CI.STAGES);
+                const next = keys[keys.indexOf(activeStage) + 1];
+                if (next) {
+                  activeStage = next;
+                  renderStageNav();
+                  renderQuestions();
+                }
+              }
+            });
+            label.append(radio, document.createTextNode(opt));
+            opts.appendChild(label);
+          });
+          box.appendChild(opts);
+          area.appendChild(box);
+        });
+      }
+
+      function renderScores() {
+        const overall = CI.overallScore();
+        const profile = CI.getProfile();
+        const bench = CI.SECTOR_BENCHMARKS[profile.sector] || 60;
+        const band = CI.scoreBand(overall);
+
+        document.getElementById("overallScore").textContent = overall ? overall + "/100" : "—";
+        document.getElementById("sectorCompare").textContent = overall
+          ? band.label + " · Sector benchmark: " + bench + "/100 (" + (overall >= bench ? "above" : "below") + ")"
+          : "Complete questions to calculate score.";
+
+        const bars = document.getElementById("stageBars");
+        bars.innerHTML = "";
+        Object.keys(CI.STAGES).forEach((s) => {
+          const sc = CI.stageScore(s);
+          const row = document.createElement("div");
+          row.className = "ci-stage-bar-row";
+          row.innerHTML =
+            "<span>" + CI.STAGES[s].label + "</span>" +
+            '<div class="ci-bar"><div class="ci-bar-fill" style="width:' + sc + '%"></div></div>' +
+            "<span>" + sc + "</span>";
+          bars.appendChild(row);
+        });
+
+        document.getElementById("submitAssessBtn").disabled = !CI.allStagesComplete();
+      }
+
+      document.getElementById("submitAssessBtn").onclick = () => {
+        if (!CI.allStagesComplete()) return;
+        CI.markSubmitted();
+        toast("Assessment submitted. View roadmap and ESG export.");
+        renderRoadmap();
+        renderVerify();
+      };
+
+      document.getElementById("resetAssessBtn").onclick = () => {
+        if (!confirm("Reset all assessment answers?")) return;
+        CI.clearAssessment();
+        activeStage = "recruitment";
+        renderStageNav();
+        renderQuestions();
+        renderScores();
+        renderRoadmap();
+        renderVerify();
+        toast("Assessment reset.");
+      };
+
+      function renderRoadmap() {
+        const list = document.getElementById("roadmapList");
+        const items = CI.getRoadmap();
+        if (!CI.overallScore()) {
+          list.innerHTML = '<p class="muted-note">Complete the assessment to generate your roadmap.</p>';
+          return;
+        }
+        if (!items.length) {
+          list.innerHTML = '<p class="muted-note">All stages score 75+. Maintain practices and pursue verification.</p>';
+          return;
+        }
+        list.innerHTML = "";
+        items.forEach((item) => {
+          const el = document.createElement("div");
+          el.className = "ci-roadmap-item" + (item.priority === "High" ? " high" : "");
+          el.innerHTML =
+            "<strong>[" + item.priority + "] " + CI.STAGES[item.stage].label + "</strong> (" + item.score + "/100)<br>" +
+            item.action;
+          list.appendChild(el);
+        });
+      }
+
+      function renderVerify() {
+        const vp = CI.verificationProgress();
+        document.getElementById("verifyProgress").textContent =
+          "Verification progress: " + vp.done + " / " + vp.total + " evidence items" +
+          (CI.isVerifiedEligible() ? " — eligible for verified badge" : "");
+
+        const list = document.getElementById("verifyList");
+        const v = CI.getVerification();
+        list.innerHTML = "";
+        CI.VERIFY_ITEMS.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "ci-verify-item";
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = !!v[item.id];
+          cb.addEventListener("change", () => {
+            CI.toggleVerification(item.id, cb.checked);
+            renderVerify();
+          });
+          row.append(cb, document.createTextNode(item.label));
+          list.appendChild(row);
+        });
+      }
+
+      function renderEsgPreview() {
+        document.getElementById("esgPreview").textContent =
+          CI.overallScore() ? CI.exportEsgMarkdown() : "Complete assessment to preview ESG export.";
+      }
+
+      document.getElementById("exportMdBtn").onclick = () => {
+        if (!CI.overallScore()) { toast("Complete assessment first."); return; }
+        CI.exportEsgMdFile();
+      };
+      document.getElementById("exportJsonBtn").onclick = () => {
+        if (!CI.overallScore()) { toast("Complete assessment first."); return; }
+        CI.exportEsgJsonFile();
+      };
+
+      loadProfile();
+      renderRankings();
+      renderStageNav();
+      renderQuestions();
+      renderScores();
+    })();
+  </script>
+</body>
+</html>

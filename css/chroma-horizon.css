@@ -1,0 +1,258 @@
+/* ChromaHorizon mentorship platform */
+.ch-app {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.ch-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.ch-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.ch-tab {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ch-tab:hover { border-color: var(--chroma-teal); }
+.ch-tab.active {
+  background: color-mix(in srgb, var(--chroma-teal) 14%, var(--bg-surface));
+  border-color: var(--chroma-teal);
+}
+
+.ch-panel { display: none; padding: 1rem; }
+.ch-panel.active { display: block; }
+
+.ch-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--chroma-teal) 6%, var(--bg-elevated));
+  border: 1px solid var(--border);
+}
+
+.ch-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.ch-profile-grid label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.ch-profile-grid input,
+.ch-profile-grid select,
+.ch-profile-grid textarea {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.ch-profile-grid textarea { min-height: 64px; resize: vertical; }
+.ch-profile-grid .span-full { grid-column: 1 / -1; }
+
+.ch-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.ch-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+}
+
+.ch-card h3 { margin: 0 0 0.35rem; font-size: 1rem; }
+.ch-card p { margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.45; }
+
+.ch-progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.ch-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--chroma-teal), var(--chroma-green));
+}
+
+.ch-milestone {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ch-milestone:last-child { border-bottom: none; }
+.ch-milestone.done { color: var(--chroma-green); }
+
+.ch-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.ch-filters input,
+.ch-filters select {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.ch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.ch-mentor-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ch-mentor-card.matched {
+  border-color: var(--chroma-teal);
+  background: color-mix(in srgb, var(--chroma-teal) 8%, var(--bg-surface));
+}
+
+.ch-match-score {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--chroma-teal);
+}
+
+.ch-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+.ch-tag {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.ch-playbook {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+  margin-bottom: 0.65rem;
+}
+
+.ch-playbook h4 { margin: 0 0 0.35rem; }
+.ch-playbook ol { margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.88rem; line-height: 1.5; }
+
+.ch-flags {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.ch-red { color: var(--chroma-magenta); }
+.ch-green { color: var(--chroma-green); }
+
+.ch-template-list { display: grid; gap: 0.5rem; }
+
+.ch-template-btn {
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ch-template-btn:hover,
+.ch-template-btn.active {
+  border-color: var(--chroma-teal);
+  background: color-mix(in srgb, var(--chroma-teal) 8%, var(--bg-surface));
+}
+
+.ch-template-body {
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.ch-room-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: var(--bg-surface);
+}
+
+.ch-room-card.joined { border-color: var(--chroma-green); }
+
+.ch-story-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+}
+
+.ch-story-card h4 { margin: 0 0 0.25rem; }
+.ch-story-meta { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+
+.ch-toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 300;
+  background: var(--bg-card);
+  border: 1px solid var(--chroma-teal);
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.88rem;
+  box-shadow: var(--shadow);
+}
