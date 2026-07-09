@@ -1,0 +1,273 @@
+/* ChromaForge learning platform */
+.cf-app {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.cf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.cf-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.cf-tab {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cf-tab:hover { border-color: var(--chroma-teal); }
+.cf-tab.active {
+  background: color-mix(in srgb, var(--chroma-teal) 14%, var(--bg-surface));
+  border-color: var(--chroma-teal);
+}
+
+.cf-panel { display: none; padding: 1rem; }
+.cf-panel.active { display: block; }
+
+.cf-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--chroma-teal) 6%, var(--bg-elevated));
+  border: 1px solid var(--border);
+}
+
+.cf-dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.cf-stat-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: var(--bg-surface);
+}
+
+.cf-stat-card h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
+.cf-stat-card p { margin: 0; font-size: 0.84rem; color: var(--text-secondary); }
+
+.cf-progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.cf-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--chroma-teal), var(--chroma-green));
+  transition: width 0.3s ease;
+}
+
+.cf-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.cf-settings label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.cf-settings input,
+.cf-settings select {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.cf-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  padding-bottom: 0.35rem;
+}
+
+.cf-module-list { display: grid; gap: 0.65rem; }
+
+.cf-module-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  background: var(--bg-surface);
+}
+
+.cf-module-item.done { border-color: var(--chroma-green); }
+.cf-module-item h3 { margin: 0; font-size: 0.95rem; }
+.cf-module-item p { margin: 0.2rem 0 0; font-size: 0.8rem; color: var(--text-muted); }
+
+.cf-module-view {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--bg-surface);
+  margin-top: 0.75rem;
+}
+
+.cf-mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.cf-mode-btn {
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-primary);
+}
+
+.cf-mode-btn.active {
+  border-color: var(--chroma-teal);
+  background: color-mix(in srgb, var(--chroma-teal) 12%, var(--bg-elevated));
+}
+
+.cf-content {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  min-height: 120px;
+}
+
+.cf-content p { margin: 0 0 0.65rem; }
+.cf-content ul { margin: 0.5rem 0 0.5rem 1.1rem; }
+
+.cf-scenario {
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.cf-scenario-options { display: grid; gap: 0.4rem; margin-top: 0.5rem; }
+
+.cf-scenario-options button {
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.cf-scenario-options button:hover { border-color: var(--chroma-orange); }
+.cf-scenario-options button.correct { border-color: var(--chroma-green); }
+.cf-scenario-options button.wrong { border-color: var(--chroma-magenta); }
+
+.cf-mentor-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--bg-surface);
+  max-width: 480px;
+}
+
+.cf-checkin {
+  border-left: 3px solid var(--chroma-teal);
+  padding: 0.45rem 0.65rem;
+  margin: 0.4rem 0;
+  background: var(--bg-elevated);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.86rem;
+}
+
+.cf-form {
+  max-width: 640px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cf-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.cf-form input,
+.cf-form textarea {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.cf-form textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+
+.cf-cert {
+  border: 2px solid var(--chroma-teal);
+  border-radius: 12px;
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--chroma-teal) 5%, var(--bg-surface));
+  max-width: 520px;
+  text-align: center;
+}
+
+.cf-cert h2 { margin: 0 0 0.5rem; font-family: var(--font-display); }
+.cf-cert.locked { opacity: 0.55; border-style: dashed; }
+
+.cf-toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 300;
+  background: var(--bg-card);
+  border: 1px solid var(--chroma-teal);
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.88rem;
+  box-shadow: var(--shadow);
+}
+
+[data-forge-low-stim="true"] .cf-app {
+  background: color-mix(in srgb, var(--chroma-green) 3%, var(--bg-card));
+}
+
+[data-forge-low-stim="true"] .cf-toast { animation: none; }

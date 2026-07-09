@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaForge Learning — self-paced advocacy modules, mentorship, and capstone projects.">
+  <title>ChromaForge Learning — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-forge.css">
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html">Digital</a></li>
+          <li><a href="academy.html" class="active">Academy</a></li>
+          <li><a href="ally.html">Ally</a></li>
+          <li><a href="arts.html">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-academy">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="academy.html">Chroma Academy</a>
+          <span aria-hidden="true">/</span>
+          <a href="chroma-forge.html">ChromaForge</a>
+          <span aria-hidden="true">/</span>
+          <span>Learning</span>
+        </nav>
+        <span class="pillar-tag">ChromaForge Platform</span>
+        <h1>ChromaForge Learning</h1>
+        <p>Self-paced advocacy modules in four modes, mentor matching, capstone projects, and certificates — progress saves in your browser for this pilot.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="cf-app" id="forgeApp">
+          <div class="cf-toolbar">
+            <div class="cf-tabs" role="tablist" aria-label="ChromaForge sections">
+              <button type="button" class="cf-tab active" data-panel="dashboard" role="tab" aria-selected="true">Dashboard</button>
+              <button type="button" class="cf-tab" data-panel="modules" role="tab" aria-selected="false">Modules</button>
+              <button type="button" class="cf-tab" data-panel="mentorship" role="tab" aria-selected="false">Mentorship</button>
+              <button type="button" class="cf-tab" data-panel="capstone" role="tab" aria-selected="false">Capstone</button>
+              <button type="button" class="cf-tab" data-panel="certificate" role="tab" aria-selected="false">Certificate</button>
+            </div>
+          </div>
+
+          <div class="cf-panel active" id="panel-dashboard" role="tabpanel">
+            <p class="cf-note">Choose your advocacy track and preferred content mode. No deadlines — complete modules when you are ready.</p>
+            <div class="cf-settings">
+              <label>Your name<input type="text" id="learnerName" maxlength="60" placeholder="e.g. Alex"></label>
+              <label>Advocacy track
+                <select id="learnerTrack">
+                  <option value="classroom">Classroom Advocate</option>
+                  <option value="workplace">Workplace Champion</option>
+                  <option value="community">Community Organizer</option>
+                </select>
+              </label>
+              <label>Default content mode
+                <select id="learnerMode">
+                  <option value="text">Text</option>
+                  <option value="audio">Audio script</option>
+                  <option value="visual">Visual outline</option>
+                  <option value="interactive">Interactive</option>
+                </select>
+              </label>
+              <label class="cf-toggle-row">
+                <input type="checkbox" id="learnerLowStim"> Low-stimulation UI
+              </label>
+            </div>
+            <div class="cf-dash-grid" id="dashCards"></div>
+          </div>
+
+          <div class="cf-panel" id="panel-modules" role="tabpanel" hidden>
+            <p class="cf-note">Each module ships in text, audio script, visual outline, and interactive scenario formats. Mark complete when finished — switch modes anytime.</p>
+            <div class="cf-module-list" id="moduleList"></div>
+            <div class="cf-module-view" id="moduleView" hidden>
+              <h3 id="moduleViewTitle" style="margin-top:0;"></h3>
+              <div class="cf-mode-tabs" id="modeTabs"></div>
+              <div class="cf-content" id="moduleContent"></div>
+              <div id="interactiveArea"></div>
+              <div class="experience-controls" style="margin-top:0.75rem;">
+                <button type="button" class="btn btn-primary" id="completeModuleBtn">Mark module complete</button>
+                <button type="button" class="btn btn-secondary" id="closeModuleBtn">Back to list</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cf-panel" id="panel-mentorship" role="tabpanel" hidden>
+            <p class="cf-note">Get matched with a peer mentor for your track. Check-ins are async — log notes after each conversation.</p>
+            <div id="mentorArea"></div>
+            <form id="checkinForm" class="cf-form" style="margin-top:1rem;max-width:480px;" hidden>
+              <label>Log a check-in note<textarea id="checkinNote" rows="3" placeholder="What did you discuss? What is your next step?"></textarea></label>
+              <button type="submit" class="btn btn-secondary">Save check-in</button>
+            </form>
+            <div id="checkinList" style="margin-top:1rem;"></div>
+          </div>
+
+          <div class="cf-panel" id="panel-capstone" role="tabpanel" hidden>
+            <p class="cf-note" id="capstonePrompt"></p>
+            <form class="cf-form" id="capstoneForm">
+              <label>Project title<input type="text" name="title" required maxlength="120" placeholder="Short name for your capstone"></label>
+              <label>Project plan<textarea name="body" required placeholder="Describe your advocacy project, audience, actions, and how you will measure impact…"></textarea></label>
+              <button type="submit" class="btn btn-primary">Submit capstone</button>
+            </form>
+            <div id="capstoneSubmitted" class="cf-note" style="margin-top:0.75rem;display:none;"></div>
+          </div>
+
+          <div class="cf-panel" id="panel-certificate" role="tabpanel" hidden>
+            <p class="cf-note">Complete all modules in your track and submit a capstone to unlock your ChromaForge pilot certificate.</p>
+            <div class="cf-cert locked" id="certCard">
+              <h2>ChromaForge Advocate Certificate</h2>
+              <p id="certStatus">Complete your track to unlock.</p>
+              <p id="certName" style="font-size:1.1rem;font-weight:600;margin:0.75rem 0;"></p>
+              <p id="certTrack" class="muted-note"></p>
+              <p id="certDate" class="muted-note"></p>
+            </div>
+          </div>
+        </div>
+
+        <p class="muted-note" style="margin-top:1rem;text-align:center;">
+          <a href="chroma-forge.html">← About ChromaForge</a>
+          &nbsp;·&nbsp;
+          <a href="chroma-horizon.html">ChromaHorizon mentorship</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:1.5rem;">
+        <p>&copy; 2026 Chroma Hub International. ChromaForge pilot — progress stored in your browser.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chroma-forge.js"></script>
+  <script>
+    (function () {
+      const CF = window.ChromaForge;
+      let activeModuleId = null;
+      let activeMode = "text";
+      let scenarioAnswered = false;
+
+      function toast(msg) {
+        const el = document.createElement("div");
+        el.className = "cf-toast";
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      }
+
+      function switchPanel(name) {
+        document.querySelectorAll(".cf-tab").forEach((t) => {
+          const on = t.dataset.panel === name;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        document.querySelectorAll(".cf-panel").forEach((p) => {
+          const on = p.id === "panel-" + name;
+          p.classList.toggle("active", on);
+          p.hidden = !on;
+        });
+        if (name === "certificate") renderCertificate();
+      }
+
+      document.querySelectorAll(".cf-tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchPanel(tab.dataset.panel));
+      });
+
+      function applyProfile() {
+        const p = CF.getProfile();
+        document.getElementById("learnerName").value = p.name || "";
+        document.getElementById("learnerTrack").value = p.track || "classroom";
+        document.getElementById("learnerMode").value = p.mode || "text";
+        document.getElementById("learnerLowStim").checked = !!p.lowStim;
+        document.documentElement.setAttribute("data-forge-low-stim", p.lowStim ? "true" : "false");
+        activeMode = p.mode || "text";
+      }
+
+      function saveProfileFromInputs() {
+        CF.saveProfile({
+          name: document.getElementById("learnerName").value.trim(),
+          track: document.getElementById("learnerTrack").value,
+          mode: document.getElementById("learnerMode").value,
+          lowStim: document.getElementById("learnerLowStim").checked,
+        });
+        applyProfile();
+        renderDashboard();
+        renderModuleList();
+        renderMentorship();
+        renderCapstone();
+      }
+
+      ["learnerName", "learnerTrack", "learnerMode", "learnerLowStim"].forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", saveProfileFromInputs);
+        if (el.type === "text") el.addEventListener("blur", saveProfileFromInputs);
+      });
+
+      function renderDashboard() {
+        const profile = CF.getProfile();
+        const tp = CF.getTrackProgress(profile.track);
+        const mentor = CF.getMentor();
+        const cap = CF.getCapstone();
+        const eligible = CF.certificateEligible();
+
+        document.getElementById("dashCards").innerHTML =
+          '<article class="cf-stat-card"><h3>' + CF.TRACKS[profile.track].icon + " " + CF.TRACKS[profile.track].label + '</h3>' +
+          '<p>Module progress: ' + tp.done + " / " + tp.total + "</p>" +
+          '<div class="cf-progress-bar"><div class="cf-progress-fill" style="width:' + tp.percent + '%"></div></div></article>' +
+          '<article class="cf-stat-card"><h3>Content mode</h3><p>Default: ' + CF.MODES[profile.mode] + "</p>" +
+          '<p class="muted-note" style="margin-top:0.35rem;">Switch per module in the Modules tab.</p></article>' +
+          '<article class="cf-stat-card"><h3>Mentorship</h3><p>' + (mentor ? "Matched with " + mentor.name : "Not matched yet") + "</p></article>" +
+          '<article class="cf-stat-card"><h3>Capstone</h3><p>' + (cap && cap.track === profile.track ? "Submitted" : "Not submitted") + "</p>" +
+          '<p class="muted-note" style="margin-top:0.35rem;">Certificate: ' + (eligible ? "Ready" : "In progress") + "</p></article>";
+      }
+
+      function renderModuleList() {
+        const profile = CF.getProfile();
+        const progress = CF.getProgress();
+        const list = document.getElementById("moduleList");
+        const view = document.getElementById("moduleView");
+        list.innerHTML = "";
+        list.hidden = false;
+        view.hidden = true;
+
+        CF.getModulesForTrack(profile.track).forEach((mod) => {
+          const done = progress[mod.id]?.completed;
+          const row = document.createElement("div");
+          row.className = "cf-module-item" + (done ? " done" : "");
+          row.innerHTML =
+            "<div><h3>" + mod.title + "</h3><p>" + mod.duration + (done ? " · Complete" : "") + "</p></div>";
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-secondary";
+          btn.textContent = done ? "Review" : "Open";
+          btn.onclick = () => openModule(mod.id);
+          row.appendChild(btn);
+          list.appendChild(row);
+        });
+      }
+
+      function openModule(id) {
+        const mod = CF.getModule(id);
+        if (!mod) return;
+        activeModuleId = id;
+        scenarioAnswered = false;
+        activeMode = CF.getProfile().mode || "text";
+        document.getElementById("moduleList").hidden = true;
+        document.getElementById("moduleView").hidden = false;
+        document.getElementById("moduleViewTitle").textContent = mod.title;
+        renderModeTabs(mod);
+        renderModuleContent(mod);
+      }
+
+      function renderModeTabs(mod) {
+        const tabs = document.getElementById("modeTabs");
+        tabs.innerHTML = "";
+        Object.keys(CF.MODES).forEach((key) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cf-mode-btn" + (key === activeMode ? " active" : "");
+          btn.textContent = CF.MODES[key];
+          btn.onclick = () => {
+            activeMode = key;
+            renderModeTabs(mod);
+            renderModuleContent(mod);
+          };
+          tabs.appendChild(btn);
+        });
+      }
+
+      function renderModuleContent(mod) {
+        const content = document.getElementById("moduleContent");
+        const interactive = document.getElementById("interactiveArea");
+        interactive.innerHTML = "";
+
+        if (activeMode === "interactive") {
+          content.innerHTML = "<p><strong>Scenario practice</strong> — choose the best advocacy response.</p>";
+          const scenario = CF.SCENARIOS[mod.modes.interactive];
+          if (!scenario) {
+            content.innerHTML += "<p>No scenario for this module.</p>";
+            return;
+          }
+          const box = document.createElement("div");
+          box.className = "cf-scenario";
+          box.innerHTML = "<p><strong>" + scenario.prompt + "</strong></p>";
+          const opts = document.createElement("div");
+          opts.className = "cf-scenario-options";
+          scenario.options.forEach((opt, i) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.textContent = opt;
+            b.onclick = () => {
+              if (scenarioAnswered) return;
+              scenarioAnswered = true;
+              opts.querySelectorAll("button").forEach((btn, j) => {
+                btn.classList.toggle("correct", j === scenario.correct);
+                btn.classList.toggle("wrong", j === i && i !== scenario.correct);
+                btn.disabled = true;
+              });
+              const fb = document.createElement("p");
+              fb.style.marginTop = "0.5rem";
+              fb.textContent = scenario.feedback;
+              box.appendChild(fb);
+            };
+            opts.appendChild(b);
+          });
+          box.appendChild(opts);
+          interactive.appendChild(box);
+        } else {
+          content.innerHTML = CF.renderContent(mod.modes[activeMode] || mod.modes.text);
+        }
+      }
+
+      document.getElementById("completeModuleBtn").onclick = () => {
+        if (!activeModuleId) return;
+        if (activeMode === "interactive" && !scenarioAnswered) {
+          toast("Complete the scenario first.");
+          return;
+        }
+        CF.completeModule(activeModuleId, activeMode);
+        toast("Module marked complete.");
+        renderDashboard();
+        renderModuleList();
+        renderCertificate();
+      };
+
+      document.getElementById("closeModuleBtn").onclick = () => renderModuleList();
+
+      function renderMentorship() {
+        const profile = CF.getProfile();
+        const area = document.getElementById("mentorArea");
+        const form = document.getElementById("checkinForm");
+        const mentor = CF.getMentor();
+
+        if (!mentor || mentor.track !== profile.track) {
+          area.innerHTML =
+            '<p>No mentor matched for this track yet.</p>' +
+            '<button type="button" class="btn btn-primary" id="matchMentorBtn">Find peer mentor</button>';
+          document.getElementById("matchMentorBtn").onclick = () => {
+            const m = CF.matchMentor(profile.track);
+            toast("Matched with " + m.name);
+            renderMentorship();
+            renderDashboard();
+          };
+          form.hidden = true;
+        } else {
+          area.innerHTML =
+            '<div class="cf-mentor-card"><h3 style="margin-top:0;">' + mentor.name + "</h3>" +
+            "<p>" + mentor.bio + "</p>" +
+            '<p class="muted-note"><strong>Style:</strong> ' + mentor.style + "</p>" +
+            '<button type="button" class="btn btn-secondary" id="clearMentorBtn" style="margin-top:0.5rem;">Change mentor</button></div>';
+          document.getElementById("clearMentorBtn").onclick = () => {
+            CF.clearMentor();
+            renderMentorship();
+            renderDashboard();
+          };
+          form.hidden = false;
+        }
+
+        const checkins = CF.getCheckins();
+        const list = document.getElementById("checkinList");
+        list.innerHTML = checkins.length
+          ? "<h4 style='margin:0 0 0.5rem;font-size:0.9rem;'>Recent check-ins</h4>"
+          : "";
+        checkins.forEach((c) => {
+          const el = document.createElement("div");
+          el.className = "cf-checkin";
+          el.innerHTML = "<p style='margin:0'>" + c.note + "</p><p class='muted-note' style='margin:0.25rem 0 0;font-size:0.75rem;'>" + CF.formatDate(c.created) + "</p>";
+          list.appendChild(el);
+        });
+      }
+
+      document.getElementById("checkinForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const note = document.getElementById("checkinNote").value;
+        if (!note.trim()) return;
+        CF.addCheckin(note);
+        document.getElementById("checkinNote").value = "";
+        renderMentorship();
+        toast("Check-in saved.");
+      });
+
+      function renderCapstone() {
+        const profile = CF.getProfile();
+        document.getElementById("capstonePrompt").textContent = CF.CAPSTONE_PROMPTS[profile.track];
+        const cap = CF.getCapstone();
+        const submitted = document.getElementById("capstoneSubmitted");
+        if (cap && cap.track === profile.track) {
+          submitted.style.display = "block";
+          submitted.innerHTML = "<strong>Submitted:</strong> " + cap.title + " · " + CF.formatDate(cap.submittedAt);
+          document.getElementById("capstoneForm").querySelector("[name=title]").value = cap.title;
+          document.getElementById("capstoneForm").querySelector("[name=body]").value = cap.body;
+        } else {
+          submitted.style.display = "none";
+        }
+      }
+
+      document.getElementById("capstoneForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const profile = CF.getProfile();
+        const fd = new FormData(e.target);
+        CF.saveCapstone({
+          title: fd.get("title"),
+          body: fd.get("body"),
+          track: profile.track,
+        });
+        toast("Capstone submitted.");
+        renderCapstone();
+        renderDashboard();
+        renderCertificate();
+      });
+
+      function renderCertificate() {
+        const profile = CF.getProfile();
+        const eligible = CF.certificateEligible();
+        const card = document.getElementById("certCard");
+        card.classList.toggle("locked", !eligible);
+        document.getElementById("certStatus").textContent = eligible
+          ? "Pilot certificate unlocked — recognized by Chroma partner organizations at launch."
+          : "Complete all modules and submit your capstone to unlock.";
+        document.getElementById("certName").textContent = eligible && profile.name ? profile.name : "";
+        document.getElementById("certTrack").textContent = eligible
+          ? CF.TRACKS[profile.track].label
+          : "";
+        document.getElementById("certDate").textContent = eligible
+          ? "Issued " + CF.formatDate(new Date().toISOString())
+          : "";
+      }
+
+      applyProfile();
+      renderDashboard();
+      renderModuleList();
+      renderMentorship();
+      renderCapstone();
+    })();
+  </script>
+</body>
+</html>
