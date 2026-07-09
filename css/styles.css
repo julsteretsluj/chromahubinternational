@@ -1010,6 +1010,59 @@ main {
   margin-bottom: 2rem;
 }
 
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.application-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.application-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-spectrum-soft);
+}
+
+.application-card-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.application-card h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.application-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.application-card .hero-eyebrow {
+  justify-content: center;
+}
+
+.application-card .hero-eyebrow::before {
+  display: none;
+}
+
 /* Contact form */
 .contact-grid {
   display: grid;
