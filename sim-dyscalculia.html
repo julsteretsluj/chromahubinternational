@@ -1,16 +1,204 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><script>(function(){const s=localStorage.getItem("chroma-theme");const p=window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.setAttribute("data-theme",s||(p?"light":"dark"));})();</script><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dyscalculia Experience — ChromaSim</title><link rel="icon" type="image/png" href="emblem.png"><link rel="stylesheet" href="css/styles.css"></head>
-<body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
-<main id="main"><header class="page-header pillar-digital"><div class="container"><h1>Dyscalculia: Visualizing Magnitude</h1><p>No raw numbers shown. Use shape, color, and pitch to interpret amount.</p></div></header>
-<section class="section"><div class="container"><div class="experience-shell">
-  <div class="experience-controls"><label for="mag" class="muted-note">Adjust Magnitude</label><input id="mag" type="range" min="0" max="100" value="25" style="flex:1;"></div>
-  <div class="experience-grid">
-    <div class="experience-panel"><h3>Spatial Meter</h3><div class="bar-meter"><div id="fill" class="bar-meter-fill"></div></div><div id="blocks" style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px;"></div></div>
-    <div class="experience-panel"><h3>Audio Magnitude</h3><p id="audioState">Slide to hear rising or falling pitch.</p><p class="muted-note">Pitch maps to amount instead of numeric labels.</p></div>
-  </div></div></div></section></main>
-<script>
-const r=document.getElementById("mag"),fill=document.getElementById("fill"),blocks=document.getElementById("blocks"),ctx=new (window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=220;osc.connect(ctx.destination);osc.start();osc.disconnect();
-for(let i=0;i<40;i++){const b=document.createElement("div");b.style.height="18px";b.style.borderRadius="4px";b.style.background="var(--bg-elevated)";blocks.appendChild(b);}
-function draw(v){fill.style.width=v+"%";[...blocks.children].forEach((b,idx)=>{b.style.background=(idx<(v/2.5))?"linear-gradient(90deg,var(--chroma-green),var(--chroma-blue))":"var(--bg-elevated)";});osc.frequency.value=160+v*5;}
-r.addEventListener("input",async e=>{if(ctx.state!=="running")await ctx.resume();osc.connect(ctx.destination);draw(+e.target.value);});draw(25);
-</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dyscalculia Experience — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-digital">
+      <div class="container">
+        <h1>Dyscalculia: Visualizing Magnitude</h1>
+        <p>No raw digits are required by default. Compare quantity using shape, space, and sound first.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="experience-shell">
+          <div class="experience-controls">
+            <label for="mag" class="muted-note">Magnitude Slider</label>
+            <input id="mag" type="range" min="0" max="100" value="25" style="flex: 1;">
+            <button id="assistiveToggle" class="btn btn-secondary">Show Numeric Assist</button>
+            <span id="assistiveBadge" class="xp-badge">Non-numeric mode</span>
+          </div>
+
+          <div class="experience-grid">
+            <div class="experience-panel">
+              <h3>Scene 1: Spatial Magnitude</h3>
+              <div class="bar-meter"><div id="fill" class="bar-meter-fill"></div></div>
+              <div id="blocks" style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px;"></div>
+              <p class="muted-note" id="assistiveText">Use visual fill and block density to estimate amount.</p>
+            </div>
+
+            <div class="experience-panel">
+              <h3>Scene 2: Audio Magnitude</h3>
+              <p id="audioState">Move the slider: pitch rises with more, lowers with less.</p>
+              <div class="bar-meter" style="margin-top: 0.75rem;"><div id="toneFill" class="bar-meter-fill"></div></div>
+              <p class="muted-note">Pitch and texture communicate quantity without symbols.</p>
+            </div>
+          </div>
+
+          <div class="experience-grid" style="margin-top: 1rem;">
+            <div class="experience-panel">
+              <h3>Scene 3: Compare Two Groups</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                <div>
+                  <p class="muted-note">Group A</p>
+                  <div id="groupA" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;"></div>
+                </div>
+                <div>
+                  <p class="muted-note">Group B</p>
+                  <div id="groupB" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;"></div>
+                </div>
+              </div>
+              <div class="experience-controls" style="margin-top: 0.9rem;">
+                <button id="regenCompare" class="btn btn-secondary">New Comparison</button>
+                <button id="guessA" class="btn btn-secondary">Guess A is Larger</button>
+                <button id="guessB" class="btn btn-secondary">Guess B is Larger</button>
+                <span id="compareFeedback" class="xp-badge">Make a guess</span>
+              </div>
+            </div>
+
+            <div class="experience-panel">
+              <h3>Scene 4: Contextual Fill (No Percentage)</h3>
+              <p class="muted-note">Imagine this as project completion, battery, or workload.</p>
+              <div style="height: 160px; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-elevated); display:flex; align-items:flex-end;">
+                <div id="contextFill" style="width:100%; height:20%; background:linear-gradient(180deg,var(--chroma-teal),var(--chroma-blue));"></div>
+              </div>
+              <p id="contextLabel" class="muted-note" style="margin-top: 0.6rem;">Low fill state</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const r = document.getElementById("mag");
+    const fill = document.getElementById("fill");
+    const toneFill = document.getElementById("toneFill");
+    const blocks = document.getElementById("blocks");
+    const contextFill = document.getElementById("contextFill");
+    const contextLabel = document.getElementById("contextLabel");
+    const assistiveToggle = document.getElementById("assistiveToggle");
+    const assistiveBadge = document.getElementById("assistiveBadge");
+    const assistiveText = document.getElementById("assistiveText");
+    const audioState = document.getElementById("audioState");
+    const groupA = document.getElementById("groupA");
+    const groupB = document.getElementById("groupB");
+    const compareFeedback = document.getElementById("compareFeedback");
+
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ctx = AC ? new AC() : null;
+    const osc = ctx ? ctx.createOscillator() : null;
+    const gain = ctx ? ctx.createGain() : null;
+    if (osc && gain) {
+      osc.type = "sine";
+      osc.frequency.value = 220;
+      gain.gain.value = 0;
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+    }
+
+    let numericAssist = false;
+    let aCount = 0;
+    let bCount = 0;
+
+    function seedBlocks(container, count, colorA, colorB) {
+      container.innerHTML = "";
+      for (let i = 0; i < 25; i++) {
+        const b = document.createElement("div");
+        b.style.height = "18px";
+        b.style.borderRadius = "4px";
+        b.style.background = i < count ? `linear-gradient(90deg, ${colorA}, ${colorB})` : "var(--bg-elevated)";
+        container.appendChild(b);
+      }
+    }
+
+    function contextCopy(v) {
+      if (v < 25) return "Low fill state";
+      if (v < 50) return "Growing fill state";
+      if (v < 75) return "High fill state";
+      return "Near-full fill state";
+    }
+
+    function draw(v) {
+      fill.style.width = v + "%";
+      toneFill.style.width = v + "%";
+      contextFill.style.height = Math.max(8, v) + "%";
+      contextLabel.textContent = contextCopy(v);
+      seedBlocks(blocks, Math.round(v / 4), "var(--chroma-green)", "var(--chroma-blue)");
+      if (osc) osc.frequency.value = 150 + v * 4.2;
+      audioState.textContent = numericAssist
+        ? `Pitch mapped to value ${Math.round(v)}`
+        : "Pitch rises with more, lowers with less.";
+      assistiveText.textContent = numericAssist
+        ? `Numeric assist: ${Math.round(v)} out of 100`
+        : "Use visual fill and block density to estimate amount.";
+    }
+
+    function regenCompare() {
+      aCount = 6 + Math.floor(Math.random() * 15);
+      bCount = 6 + Math.floor(Math.random() * 15);
+      seedBlocks(groupA, aCount, "var(--chroma-orange)", "var(--chroma-yellow)");
+      seedBlocks(groupB, bCount, "var(--chroma-magenta)", "var(--chroma-indigo)");
+      compareFeedback.textContent = "Make a guess";
+    }
+
+    function guess(which) {
+      const winner = aCount === bCount ? "tie" : (aCount > bCount ? "a" : "b");
+      if (winner === "tie") {
+        compareFeedback.textContent = "Both groups are equivalent";
+        return;
+      }
+      compareFeedback.textContent = which === winner ? "Correct comparison" : "Try again";
+    }
+
+    r.addEventListener("input", async (e) => {
+      if (ctx && ctx.state !== "running") await ctx.resume();
+      if (gain) gain.gain.value = 0.03;
+      draw(+e.target.value);
+    });
+
+    assistiveToggle.addEventListener("click", () => {
+      numericAssist = !numericAssist;
+      assistiveToggle.textContent = numericAssist ? "Hide Numeric Assist" : "Show Numeric Assist";
+      assistiveBadge.textContent = numericAssist ? "Numeric assist on" : "Non-numeric mode";
+      draw(+r.value);
+    });
+
+    document.getElementById("regenCompare").addEventListener("click", regenCompare);
+    document.getElementById("guessA").addEventListener("click", () => guess("a"));
+    document.getElementById("guessB").addEventListener("click", () => guess("b"));
+
+    regenCompare();
+    draw(25);
+  </script>
+</body>
+</html>
