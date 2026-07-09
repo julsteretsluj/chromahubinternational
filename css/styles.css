@@ -1,19 +1,53 @@
-/* Chroma Hub International — Design System */
+/* Chroma Hub International — Design System (logo palette) */
 
 :root {
   color-scheme: dark light;
-  --accent-violet: #8b5cf6;
-  --accent-cyan: #22d3ee;
-  --accent-rose: #f472b6;
-  --accent-amber: #fbbf24;
-  --accent-emerald: #34d399;
+
+  /* Spectrum extracted from Chroma Hub emblem */
+  --chroma-red: #ff3b30;
+  --chroma-orange: #ff9500;
+  --chroma-yellow: #ffcc00;
+  --chroma-green: #34c759;
+  --chroma-teal: #00c7be;
+  --chroma-blue: #007aff;
+  --chroma-indigo: #5856d6;
+  --chroma-violet: #af52de;
+  --chroma-magenta: #ff2d92;
+  --chroma-pink: #ff6482;
+
+  --accent-red: var(--chroma-red);
+  --accent-orange: var(--chroma-orange);
+  --accent-amber: var(--chroma-yellow);
+  --accent-emerald: var(--chroma-green);
+  --accent-cyan: var(--chroma-teal);
+  --accent-blue: var(--chroma-blue);
+  --accent-violet: var(--chroma-indigo);
+  --accent-rose: var(--chroma-magenta);
+
   --gradient-spectrum: linear-gradient(
     135deg,
-    var(--accent-violet) 0%,
-    var(--accent-cyan) 35%,
-    var(--accent-emerald) 65%,
-    var(--accent-rose) 100%
+    var(--chroma-red) 0%,
+    var(--chroma-orange) 12%,
+    var(--chroma-yellow) 24%,
+    var(--chroma-green) 40%,
+    var(--chroma-teal) 55%,
+    var(--chroma-blue) 70%,
+    var(--chroma-indigo) 85%,
+    var(--chroma-magenta) 100%
   );
+
+  --gradient-spectrum-soft: linear-gradient(
+    90deg,
+    var(--chroma-red),
+    var(--chroma-orange),
+    var(--chroma-yellow),
+    var(--chroma-green),
+    var(--chroma-teal),
+    var(--chroma-blue),
+    var(--chroma-indigo),
+    var(--chroma-magenta)
+  );
+
   --radius: 12px;
   --radius-lg: 20px;
   --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
@@ -24,81 +58,93 @@
 }
 
 [data-theme="dark"] {
-  --bg-deep: #0a0b14;
-  --bg-surface: #12141f;
-  --bg-elevated: #1a1d2e;
-  --bg-card: #1e2236;
-  --text-primary: #f0f2f8;
-  --text-secondary: #a8b0c8;
-  --text-muted: #6b7394;
-  --link-color: #22d3ee;
+  --bg-deep: #000000;
+  --bg-surface: #0a0a0c;
+  --bg-elevated: #121216;
+  --bg-card: #18181d;
+  --text-primary: #f5f5f7;
+  --text-secondary: #b0b0bc;
+  --text-muted: #6e6e7a;
+  --link-color: #5ac8fa;
   --gradient-subtle: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.15) 0%,
-    rgba(34, 211, 238, 0.1) 50%,
-    rgba(244, 114, 182, 0.15) 100%
+    rgba(255, 59, 48, 0.1) 0%,
+    rgba(255, 149, 0, 0.07) 14%,
+    rgba(255, 204, 0, 0.05) 28%,
+    rgba(52, 199, 89, 0.07) 42%,
+    rgba(0, 199, 190, 0.09) 56%,
+    rgba(0, 122, 255, 0.1) 70%,
+    rgba(88, 86, 214, 0.12) 84%,
+    rgba(255, 45, 146, 0.1) 100%
   );
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.16);
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.15);
-  --header-bg: rgba(10, 11, 20, 0.85);
-  --nav-mobile-bg: rgba(10, 11, 20, 0.97);
-  --nav-hover-bg: rgba(255, 255, 255, 0.06);
-  --hero-radial-glow: rgba(139, 92, 246, 0.12);
-  --btn-primary-hover-glow: 0 0 80px rgba(139, 92, 246, 0.25);
-  --pillar-digital-tag-bg: rgba(139, 92, 246, 0.2);
-  --pillar-digital-tag-color: #c4b5fd;
-  --pillar-academy-tag-bg: rgba(34, 211, 238, 0.15);
-  --pillar-academy-tag-color: #67e8f9;
-  --pillar-ally-tag-bg: rgba(52, 211, 153, 0.15);
-  --pillar-ally-tag-color: #6ee7b7;
-  --pillar-arts-tag-bg: rgba(244, 114, 182, 0.15);
-  --pillar-arts-tag-color: #f9a8d4;
-  --pillar-digital-icon-bg: rgba(139, 92, 246, 0.2);
-  --pillar-academy-icon-bg: rgba(34, 211, 238, 0.15);
-  --pillar-ally-icon-bg: rgba(52, 211, 153, 0.15);
-  --pillar-arts-icon-bg: rgba(244, 114, 182, 0.15);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --shadow: 0 4px 28px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 70px rgba(88, 86, 214, 0.22);
+  --header-bg: rgba(0, 0, 0, 0.88);
+  --nav-mobile-bg: rgba(0, 0, 0, 0.97);
+  --nav-hover-bg: rgba(255, 255, 255, 0.07);
+  --hero-radial-glow: rgba(88, 86, 214, 0.18);
+  --btn-primary-hover-glow: 0 0 90px rgba(0, 122, 255, 0.35);
+  --pillar-digital-tag-bg: rgba(88, 86, 214, 0.22);
+  --pillar-digital-tag-color: #b8b6ff;
+  --pillar-academy-tag-bg: rgba(0, 199, 190, 0.18);
+  --pillar-academy-tag-color: #6ef0ea;
+  --pillar-ally-tag-bg: rgba(52, 199, 89, 0.18);
+  --pillar-ally-tag-color: #7dffb0;
+  --pillar-arts-tag-bg: rgba(255, 45, 146, 0.18);
+  --pillar-arts-tag-color: #ff9fd0;
+  --pillar-digital-icon-bg: rgba(88, 86, 214, 0.22);
+  --pillar-academy-icon-bg: rgba(0, 199, 190, 0.16);
+  --pillar-ally-icon-bg: rgba(52, 199, 89, 0.16);
+  --pillar-arts-icon-bg: rgba(255, 45, 146, 0.16);
   --theme-toggle-bg: var(--bg-elevated);
+  --focus-color: var(--chroma-teal);
 }
 
 [data-theme="light"] {
-  --bg-deep: #f5f7fc;
-  --bg-surface: #ffffff;
-  --bg-elevated: #eef1f8;
+  --bg-deep: #ffffff;
+  --bg-surface: #fafafa;
+  --bg-elevated: #f2f2f7;
   --bg-card: #ffffff;
-  --text-primary: #12141f;
-  --text-secondary: #4a5068;
-  --text-muted: #6b7394;
-  --link-color: #0891b2;
+  --text-primary: #1c1c1e;
+  --text-secondary: #48484f;
+  --text-muted: #7c7c84;
+  --link-color: #0070e0;
   --gradient-subtle: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.08) 0%,
-    rgba(34, 211, 238, 0.06) 50%,
-    rgba(244, 114, 182, 0.08) 100%
+    rgba(255, 59, 48, 0.06) 0%,
+    rgba(255, 149, 0, 0.05) 14%,
+    rgba(255, 204, 0, 0.04) 28%,
+    rgba(52, 199, 89, 0.05) 42%,
+    rgba(0, 199, 190, 0.06) 56%,
+    rgba(0, 122, 255, 0.07) 70%,
+    rgba(88, 86, 214, 0.08) 84%,
+    rgba(255, 45, 146, 0.06) 100%
   );
-  --border: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(0, 0, 0, 0.14);
-  --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
-  --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.12);
-  --header-bg: rgba(245, 247, 252, 0.9);
+  --border: rgba(0, 0, 0, 0.09);
+  --border-hover: rgba(0, 0, 0, 0.16);
+  --shadow: 0 4px 24px rgba(28, 28, 30, 0.08);
+  --shadow-glow: 0 0 60px rgba(88, 86, 214, 0.14);
+  --header-bg: rgba(255, 255, 255, 0.92);
   --nav-mobile-bg: rgba(255, 255, 255, 0.98);
   --nav-hover-bg: rgba(0, 0, 0, 0.05);
-  --hero-radial-glow: rgba(139, 92, 246, 0.08);
-  --btn-primary-hover-glow: 0 0 80px rgba(139, 92, 246, 0.18);
-  --pillar-digital-tag-bg: rgba(139, 92, 246, 0.12);
-  --pillar-digital-tag-color: #6d28d9;
-  --pillar-academy-tag-bg: rgba(8, 145, 178, 0.12);
-  --pillar-academy-tag-color: #0e7490;
-  --pillar-ally-tag-bg: rgba(5, 150, 105, 0.12);
-  --pillar-ally-tag-color: #047857;
-  --pillar-arts-tag-bg: rgba(219, 39, 119, 0.12);
-  --pillar-arts-tag-color: #be185d;
-  --pillar-digital-icon-bg: rgba(139, 92, 246, 0.12);
-  --pillar-academy-icon-bg: rgba(8, 145, 178, 0.1);
-  --pillar-ally-icon-bg: rgba(5, 150, 105, 0.1);
-  --pillar-arts-icon-bg: rgba(219, 39, 119, 0.1);
+  --hero-radial-glow: rgba(0, 122, 255, 0.1);
+  --btn-primary-hover-glow: 0 0 80px rgba(88, 86, 214, 0.2);
+  --pillar-digital-tag-bg: rgba(88, 86, 214, 0.12);
+  --pillar-digital-tag-color: #4840b8;
+  --pillar-academy-tag-bg: rgba(0, 151, 144, 0.12);
+  --pillar-academy-tag-color: #00857d;
+  --pillar-ally-tag-bg: rgba(36, 138, 61, 0.12);
+  --pillar-ally-tag-color: #1f7a3f;
+  --pillar-arts-tag-bg: rgba(212, 20, 120, 0.1);
+  --pillar-arts-tag-color: #c4106e;
+  --pillar-digital-icon-bg: rgba(88, 86, 214, 0.1);
+  --pillar-academy-icon-bg: rgba(0, 151, 144, 0.1);
+  --pillar-ally-icon-bg: rgba(36, 138, 61, 0.1);
+  --pillar-arts-icon-bg: rgba(212, 20, 120, 0.1);
   --theme-toggle-bg: var(--bg-elevated);
+  --focus-color: var(--chroma-indigo);
 }
 
 *,
@@ -157,7 +203,7 @@ a:hover {
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--focus-color);
   outline-offset: 3px;
 }
 
@@ -167,7 +213,7 @@ button:focus-visible {
   top: -100%;
   left: 1rem;
   z-index: 1000;
-  background: var(--accent-violet);
+  background: var(--gradient-spectrum);
   color: white;
   padding: 0.75rem 1.25rem;
   border-radius: var(--radius);
@@ -188,6 +234,17 @@ button:focus-visible {
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   transition: background-color var(--transition), border-color var(--transition);
+}
+
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--gradient-spectrum-soft);
+  opacity: 0.65;
 }
 
 .nav-container {
@@ -366,7 +423,10 @@ main {
   right: -20%;
   width: 70%;
   height: 140%;
-  background: radial-gradient(ellipse, var(--hero-radial-glow) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse at 70% 30%, rgba(255, 45, 146, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 60%, rgba(0, 122, 255, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse, var(--hero-radial-glow) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -535,7 +595,23 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
+  overflow: hidden;
 }
+
+.pillar-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.pillar-digital.pillar-card::before { background: linear-gradient(90deg, var(--chroma-indigo), var(--chroma-blue)); }
+.pillar-academy.pillar-card::before { background: linear-gradient(90deg, var(--chroma-teal), var(--chroma-green)); }
+.pillar-ally.pillar-card::before { background: linear-gradient(90deg, var(--chroma-green), var(--chroma-yellow)); }
+.pillar-arts.pillar-card::before { background: linear-gradient(90deg, var(--chroma-magenta), var(--chroma-orange)); }
 
 .pillar-card:hover {
   border-color: var(--border-hover);
@@ -699,7 +775,7 @@ main {
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--gradient-spectrum);
+  background: var(--gradient-spectrum-soft);
 }
 
 .mission-block blockquote {
@@ -885,7 +961,8 @@ main {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--accent-violet);
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-color) 20%, transparent);
 }
 
 .form-group textarea {
@@ -905,6 +982,18 @@ main {
   border-top: 1px solid var(--border);
   padding: 4rem 0 2rem;
   margin-top: auto;
+  position: relative;
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-spectrum-soft);
+  opacity: 0.55;
 }
 
 .footer-grid {
