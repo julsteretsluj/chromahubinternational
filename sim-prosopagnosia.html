@@ -3,7 +3,7 @@
 <body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
 <main id="main"><header class="page-header pillar-digital"><div class="container"><h1>Prosopagnosia: Contextual Landscapes</h1><p>Identity is anchored in role, signal, voice, and pattern rather than facial processing.</p></div></header>
 <section class="section"><div class="container"><div class="experience-shell">
-  <div class="experience-controls"><button id="toggleFaces" class="btn btn-primary">Show Face-First Mode</button><span class="xp-badge" id="modeLabel">Context-first mode active</span></div>
+  <div class="experience-controls"><button id="toggleFaces" class="btn btn-primary">Activate Context-First Pivot</button><span class="xp-badge" id="modeLabel">Challenge mode: face-first active</span></div>
   <div class="experience-panel" id="idPanel">
     <div class="identity-card" style="color:#ff9500;"><div class="identity-halo"></div><div><strong>Jules — Founder, Accessible Ed Tech</strong><div class="muted-note">Voice Marker: 212Hz · Icon: Triad</div></div></div>
     <div class="identity-card" style="color:#34c759;"><div class="identity-halo"></div><div><strong>Ari — Community Educator</strong><div class="muted-note">Voice Marker: 186Hz · Icon: Spiral</div></div></div>
@@ -12,11 +12,12 @@
   </div></div></div></section></main>
 <script>
 const btn=document.getElementById("toggleFaces"),panel=document.getElementById("idPanel"),label=document.getElementById("modeLabel");
-let faceMode=false;
+let faceMode=true;
 const contextual=panel.innerHTML;
 const faceFirst=`<div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#aaa,#666);"></div><div><strong>Person A</strong><div class="muted-note">No contextual role tags shown</div></div></div>
 <div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#bbb,#777);"></div><div><strong>Person B</strong><div class="muted-note">No voice marker shown</div></div></div>
 <div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#999,#555);"></div><div><strong>Person C</strong><div class="muted-note">No functional metadata shown</div></div></div>
 <p class="muted-note">Face-first mode demonstrates lost context for many users.</p>`;
-btn.onclick=()=>{faceMode=!faceMode;panel.innerHTML=faceMode?faceFirst:contextual;btn.textContent=faceMode?"Show Context-First Mode":"Show Face-First Mode";label.textContent=faceMode?"Face-first mode active":"Context-first mode active";};
+panel.innerHTML = faceFirst;
+btn.onclick=()=>{faceMode=!faceMode;panel.innerHTML=faceMode?faceFirst:contextual;btn.textContent=faceMode?"Activate Context-First Pivot":"Return to Face-First Challenge";label.textContent=faceMode?"Challenge mode: face-first active":"Inclusive pivot: context-first active";};
 </script></body></html>
