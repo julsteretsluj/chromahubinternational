@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><script>(function(){const s=localStorage.getItem("chroma-theme");const p=window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.setAttribute("data-theme",s||(p?"light":"dark"));})();</script><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ASD Experience — ChromaSim</title><link rel="icon" type="image/png" href="emblem.png"><link rel="stylesheet" href="css/styles.css"></head>
+<body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+<main id="main"><header class="page-header pillar-digital"><div class="container"><h1>ASD: Predictable, Low-Sensory Sanctuary</h1><p>Literal copy and a low-sensory mode reduce ambiguity and overload.</p></div></header>
+<section class="section"><div class="container"><div id="asdShell" class="experience-shell">
+  <div class="experience-controls"><button id="sensoryBtn" class="btn btn-primary">Enable Low-Sensory Mode</button></div>
+  <div class="experience-panel">
+    <h3>Literal Step Guide</h3>
+    <p><strong>Step 1 of 3:</strong> Enter your preferred name. This field accepts letters only.</p>
+    <p><strong>Step 2 of 3:</strong> Choose one engagement path. You may change this later.</p>
+    <p><strong>Step 3 of 3:</strong> Press Submit. Your response is saved immediately.</p>
+    <p class="muted-note">No hidden meanings, no idioms, no decorative motion required.</p>
+  </div></div></div></section></main>
+<script>
+const shell=document.getElementById("asdShell"),btn=document.getElementById("sensoryBtn");
+btn.onclick=()=>{shell.classList.toggle("low-sensory");const on=shell.classList.contains("low-sensory");btn.textContent=on?"Disable Low-Sensory Mode":"Enable Low-Sensory Mode";document.body.style.filter=on?"saturate(0.55) contrast(0.95)":"none";};
+</script></body></html>

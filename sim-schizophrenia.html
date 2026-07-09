@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><script>(function(){const s=localStorage.getItem("chroma-theme");const p=window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.setAttribute("data-theme",s||(p?"light":"dark"));})();</script><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Schizophrenia Experience — ChromaSim</title><link rel="icon" type="image/png" href="emblem.png"><link rel="stylesheet" href="css/styles.css"></head>
+<body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+<main id="main"><header class="page-header pillar-digital"><div class="container"><h1>Schizophrenia: Grounding &amp; Sensory Salience</h1><p>This careful simulation contrasts shifting ambient signals with a stable anchor tool.</p></div></header>
+<section class="section"><div class="container"><div class="experience-shell">
+  <div class="experience-controls"><button id="startAudio" class="btn btn-primary">Start Ambient Layers</button><button id="anchorBtn" class="btn btn-secondary">Toggle Anchor Pulse</button></div>
+  <div class="experience-panel" id="field" style="position:relative;min-height:240px;overflow:hidden;">
+    <div id="anchor" style="position:absolute;inset:auto 50% 50% auto;transform:translate(50%,50%);width:80px;height:80px;border:2px solid var(--chroma-teal);border-radius:50%;box-shadow:0 0 0 0 rgba(0,199,190,0.5);"></div>
+    <p class="muted-note">Move your cursor across the field to shift ambient intensity. Use the anchor as a constant focal reference.</p>
+  </div></div></div></section></main>
+<script>
+let ctx,osc1,osc2,g1,g2,pulsing=false,pulseTimer;const field=document.getElementById("field"),anchor=document.getElementById("anchor");
+document.getElementById("startAudio").onclick=async()=>{if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();osc1=ctx.createOscillator();osc2=ctx.createOscillator();g1=ctx.createGain();g2=ctx.createGain();osc1.type="triangle";osc2.type="sine";osc1.frequency.value=180;osc2.frequency.value=240;g1.gain.value=0.02;g2.gain.value=0.01;osc1.connect(g1).connect(ctx.destination);osc2.connect(g2).connect(ctx.destination);osc1.start();osc2.start();}await ctx.resume();};
+field.addEventListener("mousemove",(e)=>{if(!ctx)return;const r=field.getBoundingClientRect();const x=(e.clientX-r.left)/r.width;const y=(e.clientY-r.top)/r.height;g1.gain.value=0.01+0.08*x;g2.gain.value=0.01+0.08*(1-y);});
+document.getElementById("anchorBtn").onclick=()=>{pulsing=!pulsing;if(!pulsing){clearInterval(pulseTimer);anchor.style.boxShadow="0 0 0 0 rgba(0,199,190,0.5)";return;}pulseTimer=setInterval(()=>{anchor.style.boxShadow="0 0 0 14px rgba(0,199,190,0)";anchor.animate([{boxShadow:"0 0 0 0 rgba(0,199,190,0.55)"},{boxShadow:"0 0 0 18px rgba(0,199,190,0)"}],{duration:700});},800);};
+</script></body></html>

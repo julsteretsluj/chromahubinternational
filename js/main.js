@@ -1,5 +1,6 @@
 (function () {
   const storageKey = "chroma-theme";
+  const seizureSafeKey = "chroma-seizure-safe";
 
   function getPreferredTheme() {
     return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
@@ -22,7 +23,25 @@
     });
   }
 
+  function isSeizureSafeEnabled() {
+    return localStorage.getItem(seizureSafeKey) === "true";
+  }
+
+  function setSeizureSafe(enabled) {
+    document.documentElement.setAttribute("data-seizure-safe", enabled ? "true" : "false");
+    localStorage.setItem(seizureSafeKey, String(enabled));
+    document.querySelectorAll(".safety-toggle").forEach((button) => {
+      button.textContent = enabled ? "Safe On" : "Safe";
+      button.setAttribute(
+        "aria-label",
+        enabled ? "Disable epilepsy safe mode" : "Enable epilepsy safe mode"
+      );
+      button.setAttribute("aria-pressed", enabled ? "true" : "false");
+    });
+  }
+
   setTheme(getTheme());
+  setSeizureSafe(isSeizureSafeEnabled());
 
   document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.querySelector(".nav-toggle");
@@ -51,7 +70,20 @@
       });
     });
 
+    document.querySelectorAll(".nav-end").forEach((navEnd) => {
+      if (navEnd.querySelector(".safety-toggle")) return;
+      const safetyButton = document.createElement("button");
+      safetyButton.type = "button";
+      safetyButton.className = "safety-toggle";
+      navEnd.insertBefore(safetyButton, navEnd.querySelector(".nav-toggle") || null);
+      safetyButton.addEventListener("click", () => {
+        const enabled = document.documentElement.getAttribute("data-seizure-safe") === "true";
+        setSeizureSafe(!enabled);
+      });
+    });
+
     updateThemeToggle(document.documentElement.getAttribute("data-theme"));
+    setSeizureSafe(document.documentElement.getAttribute("data-seizure-safe") === "true");
 
     const form = document.querySelector(".contact-form form");
     if (form) {

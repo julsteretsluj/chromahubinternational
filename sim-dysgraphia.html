@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><script>(function(){const s=localStorage.getItem("chroma-theme");const p=window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.setAttribute("data-theme",s||(p?"light":"dark"));})();</script><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dysgraphia Experience — ChromaSim</title><link rel="icon" type="image/png" href="emblem.png"><link rel="stylesheet" href="css/styles.css"></head>
+<body><header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+<main id="main"><header class="page-header pillar-digital"><div class="container"><h1>Dysgraphia: Beyond the Keyboard</h1><p>Capture thoughts as nodes and voice snippets instead of forcing linear typing.</p></div></header>
+<section class="section"><div class="container"><div class="experience-shell">
+  <div class="experience-controls"><button id="addNode" class="btn btn-primary">Add Thought Node</button><button id="voiceBtn" class="btn btn-secondary">Speech to Text</button></div>
+  <div class="experience-grid">
+    <div class="experience-panel node-canvas" id="canvas"></div>
+    <div class="experience-panel"><h3>Semantic Smoothing Output</h3><textarea id="out" style="width:100%;min-height:210px;background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border);border-radius:12px;padding:0.75rem;"></textarea><p class="muted-note">Filler words are lightly cleaned while preserving intent.</p></div>
+  </div></div></div></section></main>
+<script>
+const canvas=document.getElementById("canvas"),out=document.getElementById("out");let i=0;
+document.getElementById("addNode").onclick=()=>{const n=document.createElement("div");n.className="mind-node";n.textContent=`Idea ${++i}`;n.style.left=Math.random()*75+"%";n.style.top=Math.random()*75+"%";canvas.appendChild(n);};
+document.getElementById("voiceBtn").onclick=()=>{const demo="um I think like inclusive tools should let people map ideas before writing final text";out.value=demo.replace(/\b(um|like)\b/gi,"").replace(/\s+/g," ").trim();};
+</script></body></html>
