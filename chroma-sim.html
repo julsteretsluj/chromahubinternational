@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const stored = localStorage.getItem("chroma-theme");
+      const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", stored || (prefersLight ? "light" : "dark"));
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaSim — immersive empathy simulations for dyslexia, dysgraphia, dyscalculia, ADHD, ASD, schizophrenia, prosopagnosia, and synesthesia.">
+  <title>ChromaSim — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="apple-touch-icon" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html" class="active">Digital</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="ally.html">Ally</a></li>
+          <li><a href="arts.html">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-digital">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="digital.html">Chroma Digital</a>
+          <span aria-hidden="true">/</span>
+          <span>ChromaSim</span>
+        </nav>
+        <span class="pillar-tag">Chroma Digital</span>
+        <h1>ChromaSim</h1>
+        <p>An empathy simulation lab exploring how digital interfaces can represent diverse cognitive experiences while offering inclusive pivots that support agency, clarity, and access.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Part 1: Strategic &amp; Technical Deep Dive</h2>
+          <p>Each simulation translates lived cognitive experience into frontend behavior, then provides an immediate inclusive pivot that restores agency and access.</p>
+        </div>
+
+        <div class="sim-grid">
+          <article class="sim-card">
+            <span class="sim-kicker">Module 01</span>
+            <h3>Dyslexia: The Fluidity of Text</h3>
+            <p><strong>Lived Sensory Reality:</strong> Visual tracking fatigue where typography loses fixed stability.</p>
+            <p><strong>Technical Implementation:</strong> A custom <code>useTextDrift</code> hook tracks pointer velocity and applies character-level micro-shifts using Framer Motion across span-split text.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> letter jitter, swaps, kerning shifts, and subtle opacity change on hover/move.</li>
+              <li><strong>Inclusive Pivot:</strong> Accessibility Anchor disables motion, applies weighted dyslexia-friendly fonts, increases line height to 2.0, and activates speech with synchronized phrase highlighting.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 02</span>
+            <h3>Dysgraphia: Beyond the Keyboard</h3>
+            <p><strong>Lived Sensory Reality:</strong> Motor and cognitive friction when non-linear ideas are forced into rigid text inputs.</p>
+            <p><strong>Technical Implementation:</strong> Replace linear text areas with a node-graph canvas via React Flow where users spawn and connect thought nodes.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> multi-modal expression space that values intent over typing precision.</li>
+              <li><strong>Inclusive Pivot:</strong> speech-to-text plus semantic smoothing to reduce filler and preserve meaning without erasing voice.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 03</span>
+            <h3>Dyscalculia: Visualizing Magnitude</h3>
+            <p><strong>Lived Sensory Reality:</strong> Abstract symbols and raw digits can be inaccessible as magnitude indicators.</p>
+            <p><strong>Technical Implementation:</strong> A rendering layer detects and suppresses raw number tokens, replacing them with visual quantity metaphors.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> dynamic block matrices, SVG area charts, and spatial volume representations.</li>
+              <li><strong>Inclusive Pivot:</strong> slider-driven gradient expansion and Web Audio pitch shift communicate more/less without numeral dependency.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 04</span>
+            <h3>ADHD: Dynamic Pacing &amp; Interest-Driven Flow</h3>
+            <p><strong>Lived Sensory Reality:</strong> Peripheral distraction competes with deep focus; engagement increases with immediate feedback.</p>
+            <p><strong>Technical Implementation:</strong> Focus Masking computes active reading bounds and dims all non-active zones with overlay and blur.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> reduced visual competition outside the active task block.</li>
+              <li><strong>Inclusive Pivot:</strong> gamified micro-milestones, confetti/haptic feedback, and Save &amp; Return checkpoints to honor pacing shifts.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 05</span>
+            <h3>ASD: Predictable, Low-Sensory Sanctuaries</h3>
+            <p><strong>Lived Sensory Reality:</strong> sensory intensity and ambiguous language can produce cognitive overload.</p>
+            <p><strong>Technical Implementation:</strong> A global <code>useSensoryEnvironment</code> state manages deterministic layout and literal language rules.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> modular, explicit dashboard with direct step-based copy.</li>
+              <li><strong>Inclusive Pivot:</strong> Low-Sensory Mode removes non-essential motion and swaps to muted, earthy tokens for reduced sensory load.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 06</span>
+            <h3>Schizophrenia: Grounding and Sensory Salience</h3>
+            <p><strong>Lived Sensory Reality:</strong> competing stimuli and altered salience can intensify neutral environmental input.</p>
+            <p><strong>Technical Implementation:</strong> Web Audio spatial channels use <code>PannerNode</code> and focal vectors to vary ambient layers by position.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> layered 3D ambient field that foregrounds gating complexity.</li>
+              <li><strong>Inclusive Pivot:</strong> persistent Anchor Tool (stable geometry + metronome pulse) for visual and temporal grounding.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 07</span>
+            <h3>Prosopagnosia: Contextual Landscapes</h3>
+            <p><strong>Lived Sensory Reality:</strong> face-centric identity systems can fail when facial processing is unreliable.</p>
+            <p><strong>Technical Implementation:</strong> profile cards deprioritize facial imagery and privilege persistent contextual identity metadata.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> color halos, structural icons, role labels, and voice signatures replace face-first recognition.</li>
+              <li><strong>Inclusive Pivot:</strong> stable non-facial identity channels remain visible across all collaborative views.</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Module 08</span>
+            <h3>Synesthesia: Cross-Wired Sensorium</h3>
+            <p><strong>Lived Sensory Reality:</strong> input in one sensory path involuntarily triggers experience in another.</p>
+            <p><strong>Technical Implementation:</strong> keyboard, cursor, and numeric events are mapped to visual blooms, chord generation, and filter modulation.</p>
+            <ul class="feature-list">
+              <li><strong>Simulation:</strong> keystrokes trigger color ripples; numeric sequences produce procedural harmonics.</li>
+              <li><strong>Inclusive Pivot:</strong> users can tune intensity and mapping ranges to maintain exploration without overload.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-sm">
+      <div class="container">
+        <div class="section-header">
+          <h2>Part 2: Sign-Up Architecture</h2>
+          <p>The Chroma Hub onboarding form mirrors ChromaSim principles by centering clarity, interdependence, and access from first contact.</p>
+        </div>
+        <div class="application-card">
+          <div class="application-card-content">
+            <p class="hero-eyebrow">Intake Blueprint</p>
+            <h2>Collective Access First</h2>
+            <div class="sim-grid">
+              <article class="sim-card">
+                <span class="sim-kicker">01</span>
+                <h3>About Us &amp; Founder Ethos</h3>
+                <p>Lead with lived-experience leadership and disability justice commitments before data collection.</p>
+              </article>
+              <article class="sim-card">
+                <span class="sim-kicker">02</span>
+                <h3>Core Information</h3>
+                <p>Lightweight essentials only: name, pronouns, email, and role pathway with minimal cognitive demand.</p>
+              </article>
+              <article class="sim-card">
+                <span class="sim-kicker">03</span>
+                <h3>Engagement Pathways</h3>
+                <p>Clear opt-in tracks for ChromaSim, ChromaShare, ChromaIndex, and ChromaPulse.</p>
+              </article>
+              <article class="sim-card">
+                <span class="sim-kicker">04</span>
+                <h3>Interdependence Exchange</h3>
+                <p>Mutual aid prompts: what the applicant can share and what they hope to learn.</p>
+              </article>
+              <article class="sim-card">
+                <span class="sim-kicker">05</span>
+                <h3>Sustainability &amp; Access Needs</h3>
+                <p>Capture preferred access supports up front: screen reader, async options, low-sensory mode, and more.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Accessibility Requirements</h2>
+          <p>Baseline standards for all ChromaSim and application workflows.</p>
+        </div>
+        <div class="values-grid">
+          <div class="value-item">
+            <h4>Keyboard-First Navigation</h4>
+            <p>Sequential focus order with complete form operability through Tab and Enter only.</p>
+          </div>
+          <div class="value-item">
+            <h4>WCAG AA Contrast</h4>
+            <p>Minimum 4.5:1 contrast for text against all interactive and structural backgrounds.</p>
+          </div>
+          <div class="value-item">
+            <h4>Screen Reader Semantics</h4>
+            <p>Explicit labels and aria descriptions on all fields, never placeholder-only instruction.</p>
+          </div>
+          <div class="value-item">
+            <h4>Save &amp; Return Persistence</h4>
+            <p>Auto-save with local storage state checkpoints to prevent cognitive-fatigue data loss.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-sm principles-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Part 3: Disability Justice Grounding</h2>
+          <p>ChromaSim is explicitly positioned beyond corporate inclusion language and anchored in systemic transformation.</p>
+        </div>
+        <div class="principles-grid">
+          <article class="principle-card">
+            <p class="principle-number">I</p>
+            <h3>Intersectionality</h3>
+            <p>Design must account for overlapping systems of oppression including ableism, white supremacy, capitalism, and colonialism.</p>
+          </article>
+          <article class="principle-card">
+            <p class="principle-number">II</p>
+            <h3>Leadership of Those Most Impacted</h3>
+            <p>People who live these realities lead strategy, implementation, and governance decisions.</p>
+          </article>
+          <article class="principle-card">
+            <p class="principle-number">III</p>
+            <h3>Anti-Capitalist Politic</h3>
+            <p>No interface or policy should measure human worth by productivity output.</p>
+          </article>
+          <article class="principle-card">
+            <p class="principle-number">IV</p>
+            <h3>Cross-Movement Solidarity</h3>
+            <p>Neuro-inclusion is linked to racial, environmental, queer, and economic justice work.</p>
+          </article>
+          <article class="principle-card">
+            <p class="principle-number">V</p>
+            <h3>Wholeness, Interdependence, Sustainability</h3>
+            <p>Rest, mutual aid, and collective access are core system requirements, not optional features.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="container cta-inner">
+        <h2>Bring ChromaSim to your institution</h2>
+        <p>Partner with us to pilot simulation modules in schools, workplaces, and civic learning environments.</p>
+        <div class="cta-actions">
+          <a href="https://forms.gle/uxj8MjCKuXfVK2XB7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Apply to Collaborate</a>
+          <a href="contact.html" class="btn btn-secondary">Contact Chroma Digital</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+            <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+            <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+            <span class="logo-text">Chroma Hub International</span>
+          </a>
+          <p>Re-engineering global education, workspaces, and civic assemblies into universally accessible environments.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Pillars</h4>
+          <ul>
+            <li><a href="digital.html">Chroma Digital</a></li>
+            <li><a href="academy.html">Chroma Academy</a></li>
+            <li><a href="ally.html">Chroma Ally</a></li>
+            <li><a href="arts.html">Chroma Arts</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Organization</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="about.html#values">Values</a></li>
+            <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Projects</h4>
+          <ul>
+            <li><a href="chroma-sim.html">ChromaSim</a></li>
+            <li><a href="academy.html">ChromaShare</a></li>
+            <li><a href="ally.html">ChromaIndex</a></li>
+            <li><a href="arts.html">ChromaPulse</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chroma Hub International. All rights reserved.</p>
+        <p class="footer-tagline">Cognitive diversity is not a deficit — it is a vital spectrum of perspective.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

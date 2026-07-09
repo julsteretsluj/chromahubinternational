@@ -781,6 +781,10 @@ main {
   margin-bottom: 1.25rem;
 }
 
+.project-cta {
+  margin-top: 1.25rem;
+}
+
 .feature-list {
   list-style: none;
   display: flex;
@@ -804,6 +808,61 @@ main {
   height: 6px;
   border-radius: 50%;
   background: var(--gradient-spectrum);
+}
+
+/* ChromaSim modules */
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.sim-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.sim-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-spectrum-soft);
+  opacity: 0.8;
+}
+
+.sim-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.sim-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.sim-card p {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  margin-bottom: 0.9rem;
+}
+
+.sim-kicker {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--link-color);
+  margin-bottom: 0.5rem;
 }
 
 /* Mission block */
