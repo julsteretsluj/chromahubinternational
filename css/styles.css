@@ -184,11 +184,6 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   transition: background-color var(--transition), color var(--transition);
-  visibility: hidden;
-}
-
-body.site-ready {
-  visibility: visible;
 }
 
 body.safety-gate-active > *:not(.safety-gate) {
