@@ -13,6 +13,77 @@
   <title>Dyscalculia Experience — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .dc-num {
+      display: inline-block;
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      margin: 0.2rem;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .dc-num.scramble {
+      animation: dcscramble 0.4s ease infinite alternate;
+    }
+    @keyframes dcscramble {
+      0% { transform: translateX(-2px) rotate(-1deg); opacity: 0.85; }
+      100% { transform: translateX(2px) rotate(1deg); opacity: 1; }
+    }
+    .dc-pile {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      min-height: 100px;
+      align-content: flex-end;
+      padding: 0.5rem;
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .dc-block {
+      width: 14px;
+      border-radius: 3px;
+      background: linear-gradient(180deg, var(--chroma-teal), var(--chroma-blue));
+    }
+    .dc-vessel {
+      height: 140px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .dc-vessel-fill {
+      width: 100%;
+      height: 30%;
+      background: linear-gradient(180deg, var(--chroma-green), var(--chroma-teal));
+      transition: height 0.2s ease;
+    }
+    .dc-price-bar {
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--chroma-orange), var(--chroma-rose));
+      transition: width 0.25s ease;
+    }
+    .dc-hidden { display: none !important; }
+    .dc-clock {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+    }
+    .dc-arc {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 8px solid var(--border);
+      border-top-color: var(--chroma-teal);
+      transform: rotate(-45deg);
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -23,9 +94,7 @@
         <span class="logo-text">Chroma Hub International</span>
       </a>
       <nav class="site-nav">
-        <ul>
-          <li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li>
-        </ul>
+        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
       </nav>
     </div>
   </header>
@@ -34,7 +103,7 @@
     <header class="page-header pillar-digital">
       <div class="container">
         <h1>Dyscalculia: Visualizing Magnitude</h1>
-        <p>No raw digits are required by default. Compare quantity using shape, space, and sound first.</p>
+        <p>Challenge mode shows how raw numbers and symbols break magnitude sense. The inclusive pivot replaces digits with space, sound, and relative visuals.</p>
         <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
       </div>
     </header>
@@ -43,56 +112,99 @@
       <div class="container">
         <div class="experience-shell">
           <div class="experience-controls">
-            <label for="mag" class="muted-note">Magnitude Slider</label>
-            <input id="mag" type="range" min="0" max="100" value="25" style="flex: 1;">
-            <button id="assistiveToggle" class="btn btn-secondary">Show Numeric Assist</button>
-            <span id="assistiveBadge" class="xp-badge">Non-numeric mode</span>
+            <button id="pivotBtn" class="btn btn-primary">Activate Spatial Pivot</button>
+            <span id="modeBadge" class="xp-badge">Challenge mode: symbols active</span>
           </div>
 
           <div class="experience-grid">
             <div class="experience-panel">
-              <h3>Scene 1: Spatial Magnitude</h3>
-              <div class="bar-meter"><div id="fill" class="bar-meter-fill"></div></div>
-              <div id="blocks" style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px;"></div>
-              <p class="muted-note" id="assistiveText">Use visual fill and block density to estimate amount.</p>
+              <h3>Scene 1: Which Is Larger?</h3>
+              <p class="muted-note" id="scene1Hint">Digits appear with no visual size cue — magnitude must be decoded from symbols alone.</p>
+              <div id="compareNums" style="display:flex;gap:1rem;align-items:center;justify-content:center;min-height:70px;margin:0.75rem 0;"></div>
+              <div class="experience-controls">
+                <button id="pickLeft" class="btn btn-secondary">Left is larger</button>
+                <button id="pickRight" class="btn btn-secondary">Right is larger</button>
+                <button id="newCompare" class="btn btn-secondary">New pair</button>
+                <span id="compareResult" class="xp-badge">—</span>
+              </div>
             </div>
 
             <div class="experience-panel">
-              <h3>Scene 2: Audio Magnitude</h3>
-              <p id="audioState">Move the slider: pitch rises with more, lowers with less.</p>
-              <div class="bar-meter" style="margin-top: 0.75rem;"><div id="toneFill" class="bar-meter-fill"></div></div>
-              <p class="muted-note">Pitch and texture communicate quantity without symbols.</p>
+              <h3>Scene 2: Symbol Flood</h3>
+              <p class="muted-note">Mixed units and formats compete — which value feels biggest?</p>
+              <div id="symbolFlood" style="min-height:80px;line-height:2;"></div>
+              <p id="floodQuestion" class="muted-note" style="margin-top:0.5rem;"></p>
+              <div class="experience-controls">
+                <button id="floodBtn" class="btn btn-secondary">Show new symbols</button>
+                <span id="floodFeedback" class="xp-badge">Symbols only</span>
+              </div>
             </div>
           </div>
 
-          <div class="experience-grid" style="margin-top: 1rem;">
+          <div class="experience-grid" style="margin-top:1rem;">
             <div class="experience-panel">
-              <h3>Scene 3: Compare Two Groups</h3>
+              <h3>Scene 3: Compare Quantities</h3>
+              <p class="muted-note" id="pileHint">In challenge mode, digit labels appear on piles and can mislead judgment.</p>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
                 <div>
-                  <p class="muted-note">Group A</p>
-                  <div id="groupA" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;"></div>
+                  <p class="muted-note">Pile A <span id="labelA" class="dc-num">12</span></p>
+                  <div id="pileA" class="dc-pile"></div>
                 </div>
                 <div>
-                  <p class="muted-note">Group B</p>
-                  <div id="groupB" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;"></div>
+                  <p class="muted-note">Pile B <span id="labelB" class="dc-num">19</span></p>
+                  <div id="pileB" class="dc-pile"></div>
                 </div>
               </div>
-              <div class="experience-controls" style="margin-top: 0.9rem;">
-                <button id="regenCompare" class="btn btn-secondary">New Comparison</button>
-                <button id="guessA" class="btn btn-secondary">Guess A is Larger</button>
-                <button id="guessB" class="btn btn-secondary">Guess B is Larger</button>
-                <span id="compareFeedback" class="xp-badge">Make a guess</span>
+              <div class="experience-controls" style="margin-top:0.75rem;">
+                <button id="guessPileA" class="btn btn-secondary">A has more</button>
+                <button id="guessPileB" class="btn btn-secondary">B has more</button>
+                <button id="newPiles" class="btn btn-secondary">New piles</button>
+                <span id="pileResult" class="xp-badge">—</span>
               </div>
             </div>
 
             <div class="experience-panel">
-              <h3>Scene 4: Contextual Fill (No Percentage)</h3>
-              <p class="muted-note">Imagine this as project completion, battery, or workload.</p>
-              <div style="height: 160px; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--bg-elevated); display:flex; align-items:flex-end;">
-                <div id="contextFill" style="width:100%; height:20%; background:linear-gradient(180deg,var(--chroma-teal),var(--chroma-blue));"></div>
+              <h3>Scene 4: Progress Without Percentages</h3>
+              <p class="muted-note" id="progressHint">Challenge mode ties control to a number scale.</p>
+              <div id="numericProgress" class="dc-hidden">
+                <label for="pctSlider" class="muted-note">Set progress (numeric)</label>
+                <input id="pctSlider" type="range" min="0" max="100" value="40" style="width:100%;margin:0.5rem 0;">
+                <p id="pctLabel" class="dc-num" style="font-size:1.25rem;">40%</p>
               </div>
-              <p id="contextLabel" class="muted-note" style="margin-top: 0.6rem;">Low fill state</p>
+              <div id="spatialProgress">
+                <p class="muted-note">Drag lever to feel amount — no digits shown.</p>
+                <input id="spatialSlider" type="range" min="0" max="100" value="40" style="width:100%;margin:0.5rem 0;">
+                <div class="dc-vessel"><div id="vesselFill" class="dc-vessel-fill"></div></div>
+                <p id="qualLabel" class="muted-note" style="margin-top:0.5rem;">About halfway</p>
+                <p id="pitchLabel" class="muted-note">Pitch: medium</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="experience-panel" style="margin-top:1rem;">
+            <h3>Scene 5: Which Costs More?</h3>
+            <p class="muted-note" id="priceHint">Challenge mode shows dollar strings. Pivot mode shows relative bar length only.</p>
+            <div id="priceChallenge">
+              <div style="display:flex;gap:1rem;align-items:center;margin:0.75rem 0;">
+                <span id="priceA" class="dc-num" style="font-size:1.1rem;">$12.99</span>
+                <span class="muted-note">vs</span>
+                <span id="priceB" class="dc-num" style="font-size:1.1rem;">$8.50</span>
+              </div>
+              <div class="experience-controls">
+                <button id="pricePickA" class="btn btn-secondary">Left costs more</button>
+                <button id="pricePickB" class="btn btn-secondary">Right costs more</button>
+                <span id="priceResult" class="xp-badge">—</span>
+              </div>
+            </div>
+            <div id="pricePivot" class="dc-hidden">
+              <p class="muted-note">Relative cost (longer bar = more expensive)</p>
+              <div style="margin:0.5rem 0;"><div id="barA" class="dc-price-bar" style="width:65%;margin-bottom:0.5rem;"></div></div>
+              <div style="margin:0.5rem 0;"><div id="barB" class="dc-price-bar" style="width:42%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>
+              <div class="experience-controls">
+                <button id="barPickA" class="btn btn-secondary">Top bar costs more</button>
+                <button id="barPickB" class="btn btn-secondary">Bottom costs more</button>
+                <span id="barResult" class="xp-badge">No symbols needed</span>
+              </div>
             </div>
           </div>
         </div>
@@ -101,105 +213,220 @@
   </main>
 
   <script>
-    const r = document.getElementById("mag");
-    const fill = document.getElementById("fill");
-    const toneFill = document.getElementById("toneFill");
-    const blocks = document.getElementById("blocks");
-    const contextFill = document.getElementById("contextFill");
-    const contextLabel = document.getElementById("contextLabel");
-    const assistiveToggle = document.getElementById("assistiveToggle");
-    const assistiveBadge = document.getElementById("assistiveBadge");
-    const assistiveText = document.getElementById("assistiveText");
-    const audioState = document.getElementById("audioState");
-    const groupA = document.getElementById("groupA");
-    const groupB = document.getElementById("groupB");
-    const compareFeedback = document.getElementById("compareFeedback");
+    let pivotOn = false;
+    let leftVal = 0;
+    let rightVal = 0;
+    let pileA = 0;
+    let pileB = 0;
+    let priceA = 12.99;
+    let priceB = 8.5;
+
+    const modeBadge = document.getElementById("modeBadge");
+    const pivotBtn = document.getElementById("pivotBtn");
+    const labelA = document.getElementById("labelA");
+    const labelB = document.getElementById("labelB");
+    const numericProgress = document.getElementById("numericProgress");
+    const spatialProgress = document.getElementById("spatialProgress");
+    const priceChallenge = document.getElementById("priceChallenge");
+    const pricePivot = document.getElementById("pricePivot");
+    const pileHint = document.getElementById("pileHint");
+    const progressHint = document.getElementById("progressHint");
+    const priceHint = document.getElementById("priceHint");
+    const scene1Hint = document.getElementById("scene1Hint");
 
     const AC = window.AudioContext || window.webkitAudioContext;
     const ctx = AC ? new AC() : null;
-    const osc = ctx ? ctx.createOscillator() : null;
-    const gain = ctx ? ctx.createGain() : null;
-    if (osc && gain) {
-      osc.type = "sine";
-      osc.frequency.value = 220;
-      gain.gain.value = 0;
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
+    let toneOsc = null;
+    let toneGain = null;
+
+    function qualLabel(v) {
+      if (v < 20) return "Just starting";
+      if (v < 45) return "A little";
+      if (v < 70) return "About halfway";
+      if (v < 90) return "Mostly full";
+      return "Nearly complete";
     }
 
-    let numericAssist = false;
-    let aCount = 0;
-    let bCount = 0;
+    function pitchLabel(v) {
+      if (v < 25) return "Low pitch";
+      if (v < 55) return "Medium pitch";
+      if (v < 80) return "Rising pitch";
+      return "High pitch";
+    }
 
-    function seedBlocks(container, count, colorA, colorB) {
-      container.innerHTML = "";
-      for (let i = 0; i < 25; i++) {
+    function setTone(v) {
+      if (!ctx || !toneOsc) return;
+      if (ctx.state !== "running") ctx.resume();
+      toneOsc.frequency.value = 140 + v * 5.5;
+    }
+
+    function buildPile(el, count) {
+      el.innerHTML = "";
+      const maxH = 90;
+      for (let i = 0; i < count; i++) {
         const b = document.createElement("div");
-        b.style.height = "18px";
-        b.style.borderRadius = "4px";
-        b.style.background = i < count ? `linear-gradient(90deg, ${colorA}, ${colorB})` : "var(--bg-elevated)";
-        container.appendChild(b);
+        b.className = "dc-block";
+        b.style.height = `${12 + (i % 5) * 4}px`;
+        b.style.width = "14px";
+        el.appendChild(b);
       }
     }
 
-    function contextCopy(v) {
-      if (v < 25) return "Low fill state";
-      if (v < 50) return "Growing fill state";
-      if (v < 75) return "High fill state";
-      return "Near-full fill state";
+    function newNumberCompare() {
+      leftVal = 10 + Math.floor(Math.random() * 90);
+      rightVal = 10 + Math.floor(Math.random() * 90);
+      while (leftVal === rightVal) rightVal = 10 + Math.floor(Math.random() * 90);
+      const box = document.getElementById("compareNums");
+      box.innerHTML = "";
+      const a = document.createElement("span");
+      const b = document.createElement("span");
+      a.className = "dc-num scramble";
+      b.className = "dc-num scramble";
+      a.textContent = leftVal;
+      b.textContent = rightVal;
+      a.style.fontSize = pivotOn ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
+      b.style.fontSize = pivotOn ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
+      box.append(a, b);
+      document.getElementById("compareResult").textContent = "—";
     }
 
-    function draw(v) {
-      fill.style.width = v + "%";
-      toneFill.style.width = v + "%";
-      contextFill.style.height = Math.max(8, v) + "%";
-      contextLabel.textContent = contextCopy(v);
-      seedBlocks(blocks, Math.round(v / 4), "var(--chroma-green)", "var(--chroma-blue)");
-      if (osc) osc.frequency.value = 150 + v * 4.2;
-      audioState.textContent = numericAssist
-        ? `Pitch mapped to value ${Math.round(v)}`
-        : "Pitch rises with more, lowers with less.";
-      assistiveText.textContent = numericAssist
-        ? `Numeric assist: ${Math.round(v)} out of 100`
-        : "Use visual fill and block density to estimate amount.";
+    function newSymbolFlood() {
+      const symbols = ["75%", "$45", "100 miles", "3/8", "0.92", "2,400", "⅔", "19°C"];
+      const pick = symbols.sort(() => Math.random() - 0.5).slice(0, 4);
+      document.getElementById("symbolFlood").innerHTML = pick.map((s) => `<span class="dc-num scramble">${s}</span>`).join(" ");
+      document.getElementById("floodQuestion").textContent = pivotOn
+        ? "Pivot mode: ignore symbols — imagine which container feels fullest."
+        : "Which symbol feels like the largest amount? (There is no single correct answer — this is the difficulty.)";
+      document.getElementById("floodFeedback").textContent = pivotOn ? "Use spatial intuition" : "Incomparable units";
     }
 
-    function regenCompare() {
-      aCount = 6 + Math.floor(Math.random() * 15);
-      bCount = 6 + Math.floor(Math.random() * 15);
-      seedBlocks(groupA, aCount, "var(--chroma-orange)", "var(--chroma-yellow)");
-      seedBlocks(groupB, bCount, "var(--chroma-magenta)", "var(--chroma-indigo)");
-      compareFeedback.textContent = "Make a guess";
-    }
-
-    function guess(which) {
-      const winner = aCount === bCount ? "tie" : (aCount > bCount ? "a" : "b");
-      if (winner === "tie") {
-        compareFeedback.textContent = "Both groups are equivalent";
-        return;
+    function newPiles() {
+      pileA = 4 + Math.floor(Math.random() * 18);
+      pileB = 4 + Math.floor(Math.random() * 18);
+      while (pileA === pileB) pileB = 4 + Math.floor(Math.random() * 18);
+      buildPile(document.getElementById("pileA"), pileA);
+      buildPile(document.getElementById("pileB"), pileB);
+      if (pivotOn) {
+        labelA.classList.add("dc-hidden");
+        labelB.classList.add("dc-hidden");
+      } else {
+        labelA.classList.remove("dc-hidden");
+        labelB.classList.remove("dc-hidden");
+        let fakeA = pileA + (Math.random() > 0.5 ? 3 : -3);
+        let fakeB = pileB + (Math.random() > 0.5 ? 3 : -3);
+        if (fakeA < 1) fakeA = pileA + 4;
+        if (fakeB < 1) fakeB = pileB + 4;
+        if (fakeA === pileA) fakeA += 5;
+        if (fakeB === pileB) fakeB += 5;
+        labelA.textContent = fakeA;
+        labelB.textContent = fakeB;
       }
-      compareFeedback.textContent = which === winner ? "Correct comparison" : "Try again";
+      document.getElementById("pileResult").textContent = "—";
     }
 
-    r.addEventListener("input", async (e) => {
-      if (ctx && ctx.state !== "running") await ctx.resume();
-      if (gain) gain.gain.value = 0.03;
-      draw(+e.target.value);
-    });
+    function updateProgress(v) {
+      document.getElementById("vesselFill").style.height = `${v}%`;
+      document.getElementById("qualLabel").textContent = qualLabel(v);
+      document.getElementById("pitchLabel").textContent = pitchLabel(v);
+      document.getElementById("pctLabel").textContent = `${v}%`;
+      document.getElementById("pctSlider").value = v;
+      document.getElementById("spatialSlider").value = v;
+      setTone(v);
+    }
 
-    assistiveToggle.addEventListener("click", () => {
-      numericAssist = !numericAssist;
-      assistiveToggle.textContent = numericAssist ? "Hide Numeric Assist" : "Show Numeric Assist";
-      assistiveBadge.textContent = numericAssist ? "Numeric assist on" : "Non-numeric mode";
-      draw(+r.value);
-    });
+    function setMode(pivot) {
+      pivotOn = pivot;
+      pivotBtn.textContent = pivot ? "Return to Challenge Mode" : "Activate Spatial Pivot";
+      modeBadge.textContent = pivot ? "Inclusive pivot: symbols hidden" : "Challenge mode: symbols active";
 
-    document.getElementById("regenCompare").addEventListener("click", regenCompare);
-    document.getElementById("guessA").addEventListener("click", () => guess("a"));
-    document.getElementById("guessB").addEventListener("click", () => guess("b"));
+      labelA.classList.toggle("dc-hidden", pivot);
+      labelB.classList.toggle("dc-hidden", pivot);
+      numericProgress.classList.toggle("dc-hidden", pivot);
+      spatialProgress.classList.toggle("dc-hidden", !pivot);
+      priceChallenge.classList.toggle("dc-hidden", pivot);
+      pricePivot.classList.toggle("dc-hidden", !pivot);
 
-    regenCompare();
-    draw(25);
+      pileHint.textContent = pivot
+        ? "Numbers removed — compare pile area only."
+        : "Digit labels on piles often disagree with what you see — symbols and quantity feel disconnected.";
+      if (!pivot) newPiles();
+      progressHint.textContent = pivot
+        ? "Control amount by vessel fill and pitch — no percentage shown."
+        : "Progress is tied to a numeric percentage scale.";
+      priceHint.textContent = pivot
+        ? "Relative bar length replaces dollar notation."
+        : "Price strings force symbolic decoding.";
+      scene1Hint.textContent = pivot
+        ? "Pivot adds consistent sizing; still practice comparison without stress scoring."
+        : "Digits appear with uneven visual weight — symbol decoding breaks down.";
+
+      document.querySelectorAll("#compareNums .dc-num").forEach((n) => {
+        n.classList.toggle("scramble", !pivot);
+        n.style.fontSize = pivot ? "1rem" : `${0.9 + Math.random() * 0.8}rem`;
+      });
+
+      if (pivot && ctx && !toneOsc) {
+        toneOsc = ctx.createOscillator();
+        toneGain = ctx.createGain();
+        toneOsc.type = "sine";
+        toneOsc.frequency.value = 200;
+        toneGain.gain.value = 0.04;
+        toneOsc.connect(toneGain).connect(ctx.destination);
+        toneOsc.start();
+      }
+      updateProgress(+document.getElementById("spatialSlider").value);
+      newSymbolFlood();
+    }
+
+    document.getElementById("pickLeft").onclick = () => {
+      const ok = leftVal > rightVal;
+      document.getElementById("compareResult").textContent = ok ? "Correct" : "Incorrect — magnitude was hard to read from symbols";
+    };
+    document.getElementById("pickRight").onclick = () => {
+      const ok = rightVal > leftVal;
+      document.getElementById("compareResult").textContent = ok ? "Correct" : "Incorrect — magnitude was hard to read from symbols";
+    };
+    document.getElementById("newCompare").onclick = newNumberCompare;
+
+    document.getElementById("floodBtn").onclick = newSymbolFlood;
+
+    document.getElementById("guessPileA").onclick = () => {
+      const ok = pileA > pileB;
+      document.getElementById("pileResult").textContent = ok ? "Correct" : "Incorrect";
+    };
+    document.getElementById("guessPileB").onclick = () => {
+      const ok = pileB > pileA;
+      document.getElementById("pileResult").textContent = ok ? "Correct" : "Incorrect";
+    };
+    document.getElementById("newPiles").onclick = newPiles;
+
+    document.getElementById("pctSlider").oninput = (e) => updateProgress(+e.target.value);
+    document.getElementById("spatialSlider").oninput = (e) => updateProgress(+e.target.value);
+
+    document.getElementById("pricePickA").onclick = () => {
+      document.getElementById("priceResult").textContent = priceA > priceB ? "Correct" : "Incorrect";
+    };
+    document.getElementById("pricePickB").onclick = () => {
+      document.getElementById("priceResult").textContent = priceB > priceA ? "Correct" : "Incorrect";
+    };
+    document.getElementById("barPickA").onclick = () => {
+      document.getElementById("barResult").textContent = priceA > priceB ? "Correct — no digits needed" : "Try again";
+    };
+    document.getElementById("barPickB").onclick = () => {
+      document.getElementById("barResult").textContent = priceB > priceA ? "Correct — no digits needed" : "Try again";
+    };
+
+    pivotBtn.onclick = () => setMode(!pivotOn);
+
+    const maxBar = Math.max(priceA, priceB);
+    document.getElementById("barA").style.width = `${(priceA / maxBar) * 100}%`;
+    document.getElementById("barB").style.width = `${(priceB / maxBar) * 100}%`;
+
+    newNumberCompare();
+    newSymbolFlood();
+    newPiles();
+    updateProgress(40);
+    setMode(false);
   </script>
 </body>
 </html>
