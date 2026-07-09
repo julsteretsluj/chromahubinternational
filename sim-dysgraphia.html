@@ -7,6 +7,11 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+      window.chromaSeizureSafe = function () {
+        return document.documentElement.getAttribute("data-seizure-safe") === "true";
+      };
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -156,6 +161,7 @@
     </section>
   </main>
 
+  <script src="js/sim-common.js"></script>
   <script>
     const strictInput = document.getElementById("strictInput");
     const strictSubmit = document.getElementById("strictSubmit");
@@ -256,8 +262,10 @@
       const valid = text.length >= 120 && /[.?!]$/.test(text);
       strictFeedback.textContent = valid ? "Accepted" : "Rejected: formatting mismatch";
       if (!valid) {
-        strictInput.classList.add("strict-shake");
-        setTimeout(() => strictInput.classList.remove("strict-shake"), 260);
+        if (!window.chromaSeizureSafe?.()) {
+          strictInput.classList.add("strict-shake");
+          setTimeout(() => strictInput.classList.remove("strict-shake"), 260);
+        }
         updateFriction(pivotOn ? 38 : 86);
       }
     });

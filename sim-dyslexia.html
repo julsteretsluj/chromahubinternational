@@ -4,9 +4,14 @@
   <meta charset="UTF-8">
   <script>
     (function () {
-      const stored = localStorage.getItem("chroma-theme");
-      const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-      document.documentElement.setAttribute("data-theme", stored || (prefersLight ? "light" : "dark"));
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+      window.chromaSeizureSafe = function () {
+        return document.documentElement.getAttribute("data-seizure-safe") === "true";
+      };
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,6 +39,7 @@
       </div>
     </div></section>
   </main>
+  <script src="js/sim-common.js"></script>
   <script>
     const p = document.getElementById("driftText");
     const toggle = document.getElementById("toggleAnchor");
@@ -42,7 +48,7 @@
     const chars = [...p.textContent].map((ch) => `<span class="drift-char">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
     p.innerHTML = chars;
     p.addEventListener("mousemove", (e) => {
-      if (anchored) return;
+      if (anchored || window.chromaSeizureSafe?.()) return;
       const velocity = Math.min(4, Math.abs(e.movementX) + Math.abs(e.movementY));
       p.querySelectorAll(".drift-char").forEach((el, i) => {
         const x = (Math.sin((i + e.clientX) * 0.08) * velocity).toFixed(2);
