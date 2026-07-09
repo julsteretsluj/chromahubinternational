@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const stored = localStorage.getItem("chroma-theme");
+      const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", stored || (prefersLight ? "light" : "dark"));
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaPulse — a worldwide collective of neurodivergent artists, writers, musicians, and activists making cognitive diversity visible.">
+  <title>ChromaPulse — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="apple-touch-icon" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html">Digital</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="ally.html">Ally</a></li>
+          <li><a href="arts.html" class="active">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-arts">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="arts.html">Chroma Arts</a>
+          <span aria-hidden="true">/</span>
+          <span>ChromaPulse</span>
+        </nav>
+        <span class="pillar-tag">Chroma Arts</span>
+        <h1>ChromaPulse</h1>
+        <p>ChromaPulse is a worldwide collective of neurodivergent artists, writers, musicians, filmmakers, and activists. Through exhibitions, performances, publications, and digital campaigns, ChromaPulse makes cognitive diversity visible — challenging stereotypes and celebrating the creative power of different minds.</p>
+        <div class="project-cta" style="margin-top:1.25rem;">
+          <a href="https://forms.gle/uxj8MjCKuXfVK2XB7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Join the Collective</a>
+          <a href="arts.html" class="btn btn-secondary">Back to Arts</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="section section-sm">
+      <div class="container">
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-number">Global</div>
+            <div class="stat-label">Artist Network</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">Hybrid</div>
+            <div class="stat-label">Annual Festival</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">Open</div>
+            <div class="stat-label">Digital Gallery</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">Micro</div>
+            <div class="stat-label">Creative Grants</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Collective Capabilities</h2>
+          <p>Platforms, programs, and partnerships that put neurodivergent creators in control of their own stories.</p>
+        </div>
+
+        <div class="sim-grid">
+          <article class="sim-card">
+            <span class="sim-kicker">Residencies</span>
+            <h3>Global Fellowships &amp; Residencies</h3>
+            <p>Year-round residency and fellowship programs connect neurodivergent artists with studio space, stipends, mentorship, and time to develop work without masking or rushing.</p>
+            <ul class="feature-list">
+              <li>Regional and virtual residency tracks</li>
+              <li>Sensory-accessible studio placements</li>
+              <li>Peer cohorts across disciplines</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Festival</span>
+            <h3>Annual ChromaPulse Festival</h3>
+            <p>A hybrid celebration — in-person exhibitions and performances alongside virtual stages — so artists and audiences worldwide can participate on their own terms.</p>
+            <ul class="feature-list">
+              <li>Live and streamed programming</li>
+              <li>Captioned, audio-described, and low-stim rooms</li>
+              <li>Open-call submissions from the collective</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Archive</span>
+            <h3>Digital Gallery &amp; Media Library</h3>
+            <p>An open-access archive of visual art, film, music, writing, and performance — permanently hosted, properly credited, and free to experience and share.</p>
+            <ul class="feature-list">
+              <li>Searchable by medium and theme</li>
+              <li>Creator-controlled licensing options</li>
+              <li>Accessible media formats standard</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Campaigns</span>
+            <h3>Collaborative Advocacy</h3>
+            <p>Coordinated digital campaigns across social platforms — art-led messaging that challenges deficit narratives and amplifies neurodivergent voices at scale.</p>
+            <ul class="feature-list">
+              <li>Collective campaign briefs</li>
+              <li>Asset kits for allies and partners</li>
+              <li>Impact reporting by reach and engagement</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Grants</span>
+            <h3>Micro-Grants for Creators</h3>
+            <p>Small, fast-turnaround grants for neurodivergent creative projects — zines, albums, short films, installations — without bureaucratic gatekeeping.</p>
+            <ul class="feature-list">
+              <li>Rolling application windows</li>
+              <li>Flexible budget categories</li>
+              <li>Optional mentor pairing for grantees</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Partners</span>
+            <h3>Museum &amp; Gallery Partnerships</h3>
+            <p>Institutional collaborations with museums, galleries, and cultural centers — co-curated shows, touring exhibitions, and permanent collection pathways for neurodivergent artists.</p>
+            <ul class="feature-list">
+              <li>Co-curation with lived-experience leads</li>
+              <li>Accessible exhibition design standards</li>
+              <li>Artist fee and rights protections</li>
+            </ul>
+          </article>
+
+          <article class="sim-card">
+            <span class="sim-kicker">Workshops</span>
+            <h3>Storytelling for Self-Advocacy</h3>
+            <p>Workshops that teach artists and activists to tell their own stories through visual, written, and performance media — advocacy skills rooted in creative practice.</p>
+            <ul class="feature-list">
+              <li>Multi-modal storytelling methods</li>
+              <li>Async and in-person formats</li>
+              <li>Portfolio and pitch development</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-sm" style="background: var(--bg-surface);">
+      <div class="container">
+        <div class="section-header">
+          <h2>Creative Disciplines</h2>
+          <p>One collective, many mediums — all united by neurodivergent perspective.</p>
+        </div>
+
+        <div class="projects-grid">
+          <article class="project-card">
+            <div class="project-card-header">
+              <p class="project-code">Medium</p>
+              <h3>Visual &amp; Installation</h3>
+              <p class="project-subtitle">Painting, sculpture, digital art</p>
+            </div>
+            <div class="project-card-body">
+              <p>Gallery exhibitions and public installations that reframe how audiences see cognitive difference — as aesthetic strength, not clinical curiosity.</p>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card-header">
+              <p class="project-code">Medium</p>
+              <h3>Film &amp; Performance</h3>
+              <p class="project-subtitle">Cinema, theatre, live art</p>
+            </div>
+            <div class="project-card-body">
+              <p>Screenings and stage work with accessible performance design — quiet rooms, content notes, and flexible audience participation built in from the start.</p>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card-header">
+              <p class="project-code">Medium</p>
+              <h3>Writing &amp; Music</h3>
+              <p class="project-subtitle">Publications, scores, podcasts</p>
+            </div>
+            <div class="project-card-body">
+              <p>Literary journals, recorded albums, and audio storytelling that document lived neurodivergent experience in the artists&apos; own words and sounds.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>How ChromaPulse Works</h2>
+          <p>From solo creator to global collective — at your pace.</p>
+        </div>
+        <div class="values-grid">
+          <div class="value-item">
+            <h4>1. Create &amp; Submit</h4>
+            <p>Share work through open calls, grant applications, or the digital archive. You keep credit and control over how your art is presented.</p>
+          </div>
+          <div class="value-item">
+            <h4>2. Connect &amp; Collaborate</h4>
+            <p>Join residencies, festival programming, and advocacy campaigns with peers who understand the creative and sensory realities you navigate.</p>
+          </div>
+          <div class="value-item">
+            <h4>3. Amplify &amp; Advocate</h4>
+            <p>Reach global audiences through institutional partnerships and coordinated campaigns — changing culture, not just galleries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-sm" style="background: var(--bg-surface);">
+      <div class="container">
+        <div class="mission-block">
+          <blockquote>
+            &ldquo;Every mind paints the world differently. ChromaPulse is the gallery where all those visions belong.&rdquo;
+          </blockquote>
+          <cite>— Chroma Arts Collective</cite>
+        </div>
+        <div class="values-grid" style="margin-top:2rem;">
+          <div class="value-item">
+            <h4>Representation Matters</h4>
+            <p>When neurodivergent artists control their own narratives, stereotypes give way to authentic, multifaceted stories.</p>
+          </div>
+          <div class="value-item">
+            <h4>Art Changes Culture</h4>
+            <p>Data changes policy. Art changes hearts. ChromaPulse ensures both move together toward inclusion.</p>
+          </div>
+          <div class="value-item">
+            <h4>Global Solidarity</h4>
+            <p>From street art in S&atilde;o Paulo to digital installations in Seoul, the collective connects creative advocates across borders.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="container cta-inner">
+        <h2>Bring Your Voice to ChromaPulse</h2>
+        <p>We&apos;re onboarding founding artists, festival partners, and institutional collaborators for the ChromaPulse pilot. Apply to join the collective or propose a partnership.</p>
+        <div class="cta-actions">
+          <a href="https://forms.gle/uxj8MjCKuXfVK2XB7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Apply as an Artist</a>
+          <a href="contact.html" class="btn btn-secondary">Partner With Us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+            <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+            <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+            <span class="logo-text">Chroma Hub International</span>
+          </a>
+          <p>Re-engineering global education, workspaces, and civic assemblies into universally accessible environments.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Pillars</h4>
+          <ul>
+            <li><a href="digital.html">Chroma Digital</a></li>
+            <li><a href="academy.html">Chroma Academy</a></li>
+            <li><a href="ally.html">Chroma Ally</a></li>
+            <li><a href="arts.html">Chroma Arts</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Organization</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="about.html#values">Values</a></li>
+            <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Projects</h4>
+          <ul>
+            <li><a href="chroma-sim.html">ChromaSim</a></li>
+            <li><a href="chroma-share.html">ChromaShare</a></li>
+            <li><a href="chroma-forge.html">ChromaForge</a></li>
+            <li><a href="chroma-index.html">ChromaIndex</a></li>
+            <li><a href="chroma-horizon.html">ChromaHorizon</a></li>
+            <li><a href="chroma-pulse.html">ChromaPulse</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chroma Hub International. All rights reserved.</p>
+        <p class="footer-tagline">Cognitive diversity is not a deficit — it is a vital spectrum of perspective.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

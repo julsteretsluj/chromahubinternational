@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
+      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChromaShare Library — browse, share, and audit UDL resources for inclusive classrooms.">
+  <title>ChromaShare Library — Chroma Hub International</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-share.css">
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo" aria-label="Chroma Hub International home">
+        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
+        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
+        <span class="logo-text">Chroma Hub International</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="digital.html">Digital</a></li>
+          <li><a href="academy.html" class="active">Academy</a></li>
+          <li><a href="ally.html">Ally</a></li>
+          <li><a href="arts.html">Arts</a></li>
+          <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-end">
+        <button class="theme-toggle" type="button" aria-label="Switch to light mode">
+          <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+        </button>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="page-header pillar-academy">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="academy.html">Chroma Academy</a>
+          <span aria-hidden="true">/</span>
+          <a href="chroma-share.html">ChromaShare</a>
+          <span aria-hidden="true">/</span>
+          <span>Library</span>
+        </nav>
+        <span class="pillar-tag">ChromaShare Platform</span>
+        <h1>ChromaShare Library</h1>
+        <p>Browse peer resources, publish your own, start from UDL templates, audit curriculum, and join educator discussions. Resources save locally in your browser for this pilot.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="cs-app" id="shareApp">
+          <div class="cs-toolbar">
+            <div class="cs-tabs" role="tablist" aria-label="ChromaShare sections">
+              <button type="button" class="cs-tab active" data-panel="library" role="tab" aria-selected="true">Library</button>
+              <button type="button" class="cs-tab" data-panel="share" role="tab" aria-selected="false">Share resource</button>
+              <button type="button" class="cs-tab" data-panel="templates" role="tab" aria-selected="false">UDL templates</button>
+              <button type="button" class="cs-tab" data-panel="audit" role="tab" aria-selected="false">Accessibility audit</button>
+              <button type="button" class="cs-tab" data-panel="forum" role="tab" aria-selected="false">Forum</button>
+            </div>
+            <div class="cs-profile">
+              <label>
+                <span class="visually-hidden">Your name</span>
+                <input type="text" id="profileName" placeholder="Your name" maxlength="60">
+              </label>
+              <label>
+                <span class="visually-hidden">School</span>
+                <input type="text" id="profileSchool" placeholder="School (optional)" maxlength="80">
+              </label>
+            </div>
+          </div>
+
+          <div class="cs-panel active" id="panel-library" role="tabpanel">
+            <p class="cs-note">Search the living library. Click a card to view, fork, or export. Community seed resources ship with the platform; your uploads appear alongside them.</p>
+            <div class="cs-filters">
+              <input type="search" id="libSearch" placeholder="Search title, tags, author…" aria-label="Search resources">
+              <select id="libType" aria-label="Filter by type">
+                <option value="">All types</option>
+                <option value="lesson-plan">Lesson plans</option>
+                <option value="strategy">Strategies</option>
+                <option value="audit">Audit reports</option>
+                <option value="template">Templates</option>
+              </select>
+              <select id="libSubject" aria-label="Filter by subject">
+                <option value="">All subjects</option>
+                <option value="general">General</option>
+                <option value="literacy">Literacy</option>
+                <option value="math">Math</option>
+                <option value="science">Science</option>
+                <option value="sel">SEL</option>
+              </select>
+              <select id="libAge" aria-label="Filter by age band">
+                <option value="">All ages</option>
+                <option value="k-2">K–2</option>
+                <option value="3-5">3–5</option>
+                <option value="6-8">6–8</option>
+                <option value="9-12">9–12</option>
+                <option value="adult">Adult / PD</option>
+              </select>
+              <select id="libLang" aria-label="Filter by language">
+                <option value="">All languages</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+              </select>
+            </div>
+            <div class="cs-grid" id="resourceGrid" aria-live="polite"></div>
+          </div>
+
+          <div class="cs-panel" id="panel-share" role="tabpanel" hidden>
+            <p class="cs-note">Publish a resource to your local library. In the full network, submissions sync to the global ChromaShare catalog.</p>
+            <form class="cs-form" id="shareForm">
+              <label>Title<input type="text" name="title" required maxlength="120"></label>
+              <div class="cs-form-row">
+                <label>Type
+                  <select name="type" required>
+                    <option value="lesson-plan">Lesson plan</option>
+                    <option value="strategy">Accessibility strategy</option>
+                    <option value="audit">Audit report</option>
+                    <option value="template">UDL template</option>
+                  </select>
+                </label>
+                <label>Subject
+                  <select name="subject" required>
+                    <option value="general">General</option>
+                    <option value="literacy">Literacy</option>
+                    <option value="math">Math</option>
+                    <option value="science">Science</option>
+                    <option value="sel">SEL</option>
+                  </select>
+                </label>
+                <label>Age band
+                  <select name="age" required>
+                    <option value="k-2">K–2</option>
+                    <option value="3-5">3–5</option>
+                    <option value="6-8">6–8</option>
+                    <option value="9-12">9–12</option>
+                    <option value="adult">Adult / PD</option>
+                  </select>
+                </label>
+                <label>Language
+                  <select name="language" required>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                  </select>
+                </label>
+              </div>
+              <label>Tags (comma-separated)<input type="text" name="tags" placeholder="UDL, transitions, elementary"></label>
+              <label>License
+                <select name="license">
+                  <option value="CC BY 4.0">CC BY 4.0</option>
+                  <option value="CC BY-SA 4.0">CC BY-SA 4.0</option>
+                  <option value="CC0">CC0 (public domain)</option>
+                </select>
+              </label>
+              <label>Resource content (Markdown supported)<textarea name="body" required placeholder="Describe goals, barriers, strategies, and implementation notes…"></textarea></label>
+              <button type="submit" class="btn btn-primary">Publish to library</button>
+            </form>
+          </div>
+
+          <div class="cs-panel" id="panel-templates" role="tabpanel" hidden>
+            <p class="cs-note">Start from UDL-aligned scaffolds. Preview a template, then use it to pre-fill the share form — adapt before you publish.</p>
+            <div class="cs-template-grid" id="templateGrid"></div>
+          </div>
+
+          <div class="cs-panel" id="panel-audit" role="tabpanel" hidden>
+            <p class="cs-note">Paste worksheet text, lesson copy, or instructions. The audit checks readability, structure, sensory language, and scannability — then suggests fixes.</p>
+            <div class="cs-audit-layout">
+              <div>
+                <label for="auditInput"><strong>Curriculum text</strong></label>
+                <textarea id="auditInput" style="width:100%;min-height:220px;margin-top:0.4rem;padding:0.65rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-primary);font:inherit;line-height:1.5;" placeholder="Paste lesson or worksheet content here…"></textarea>
+                <button type="button" class="btn btn-secondary" id="runAuditBtn" style="margin-top:0.5rem;">Run audit</button>
+              </div>
+              <div>
+                <h3 style="margin:0 0 0.25rem;font-size:1rem;">Audit results</h3>
+                <div class="cs-audit-score" id="auditScore">—</div>
+                <div id="auditChecks"></div>
+                <h4 style="margin:1rem 0 0.4rem;font-size:0.9rem;">Suggested fixes</h4>
+                <ul id="auditSuggestions" class="feature-list" style="font-size:0.86rem;"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-panel" id="panel-forum" role="tabpanel" hidden>
+            <p class="cs-note">Async educator discussions moderated for clarity. Posts save locally in this pilot — founding cohort syncs to the network at launch.</p>
+            <form class="cs-form" id="newTopicForm" style="margin-bottom:1.25rem;">
+              <label>Start a topic<input type="text" name="title" required maxlength="120" placeholder="Question or discussion prompt"></label>
+              <label>First post (optional)<textarea name="body" rows="3" placeholder="Add context for your question…"></textarea></label>
+              <button type="submit" class="btn btn-secondary">Post topic</button>
+            </form>
+            <div id="forumList" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <p class="muted-note" style="margin-top:1rem;text-align:center;">
+          <a href="chroma-share.html">← About ChromaShare</a>
+          &nbsp;·&nbsp;
+          <a href="academy.html">Chroma Academy</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="cs-modal-overlay" id="resourceModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="cs-modal">
+      <div class="cs-modal-head">
+        <div>
+          <p class="cs-card-type" id="modalType"></p>
+          <h2 id="modalTitle" style="margin:0;font-size:1.2rem;"></h2>
+          <p class="cs-card-meta" id="modalMeta"></p>
+        </div>
+        <button type="button" class="cs-modal-close" id="modalClose" aria-label="Close">×</button>
+      </div>
+      <div class="cs-modal-body" id="modalBody"></div>
+      <div class="cs-modal-actions">
+        <button type="button" class="btn btn-primary" id="modalFork">Fork &amp; adapt</button>
+        <button type="button" class="btn btn-secondary" id="modalExportMd">Export .md</button>
+        <button type="button" class="btn btn-secondary" id="modalExportJson">Export JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:1.5rem;">
+        <p>&copy; 2026 Chroma Hub International. ChromaShare pilot — resources stored in your browser.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/chroma-share.js"></script>
+  <script>
+    (function () {
+      const CS = window.ChromaShare;
+      let activeResourceId = null;
+
+      const profileName = document.getElementById("profileName");
+      const profileSchool = document.getElementById("profileSchool");
+      const resourceGrid = document.getElementById("resourceGrid");
+      const shareForm = document.getElementById("shareForm");
+      const templateGrid = document.getElementById("templateGrid");
+      const forumList = document.getElementById("forumList");
+      const modal = document.getElementById("resourceModal");
+
+      function toast(msg) {
+        const el = document.createElement("div");
+        el.className = "cs-toast";
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      }
+
+      function loadProfile() {
+        const p = CS.getProfile();
+        profileName.value = p.name || "";
+        profileSchool.value = p.school || "";
+      }
+
+      function saveProfileFromInputs() {
+        CS.saveProfile({ name: profileName.value.trim(), school: profileSchool.value.trim() });
+      }
+
+      profileName.addEventListener("change", saveProfileFromInputs);
+      profileSchool.addEventListener("change", saveProfileFromInputs);
+
+      function switchPanel(name) {
+        document.querySelectorAll(".cs-tab").forEach((t) => {
+          const on = t.dataset.panel === name;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        document.querySelectorAll(".cs-panel").forEach((p) => {
+          const on = p.id === "panel-" + name;
+          p.classList.toggle("active", on);
+          p.hidden = !on;
+        });
+      }
+
+      document.querySelectorAll(".cs-tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchPanel(tab.dataset.panel));
+      });
+
+      function getFilters() {
+        return {
+          q: document.getElementById("libSearch").value,
+          type: document.getElementById("libType").value,
+          subject: document.getElementById("libSubject").value,
+          age: document.getElementById("libAge").value,
+          language: document.getElementById("libLang").value,
+        };
+      }
+
+      function renderLibrary() {
+        const list = CS.filterResources(CS.getAllResources(), getFilters());
+        resourceGrid.innerHTML = "";
+        if (!list.length) {
+          resourceGrid.innerHTML = '<p class="cs-empty">No resources match your filters. Try clearing filters or share a new resource.</p>';
+          return;
+        }
+        list.forEach((r) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cs-card";
+          btn.innerHTML =
+            '<p class="cs-card-type">' + (CS.TYPES[r.type] || r.type) + "</p>" +
+            "<h3>" + escapeHtml(r.title) + "</h3>" +
+            '<p class="cs-card-meta">' + escapeHtml(r.author) + " · " + r.language.toUpperCase() + " · " + r.age +
+            (r.forks ? " · " + r.forks + " forks" : "") + "</p>" +
+            '<div class="cs-tags">' + r.tags.slice(0, 4).map((t) => '<span class="cs-tag">' + escapeHtml(t) + "</span>").join("") + "</div>";
+          btn.onclick = () => openResource(r.id);
+          resourceGrid.appendChild(btn);
+        });
+      }
+
+      function escapeHtml(s) {
+        const d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function openResource(id) {
+        const r = CS.getResource(id);
+        if (!r) return;
+        activeResourceId = id;
+        document.getElementById("modalType").textContent = CS.TYPES[r.type] || r.type;
+        document.getElementById("modalTitle").textContent = r.title;
+        document.getElementById("modalMeta").textContent =
+          r.author + " · " + r.license + " · " + r.subject + " · " + r.age +
+          (r.forkedFrom ? " · forked" : "");
+        document.getElementById("modalBody").innerHTML = CS.renderMarkdownLite(r.body);
+        modal.classList.add("open");
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        activeResourceId = null;
+      }
+
+      document.getElementById("modalClose").onclick = closeModal;
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      document.getElementById("modalFork").onclick = () => {
+        if (!activeResourceId) return;
+        const forked = CS.forkResource(activeResourceId);
+        if (!forked) return;
+        closeModal();
+        switchPanel("share");
+        shareForm.title.value = forked.title;
+        shareForm.type.value = forked.type;
+        shareForm.subject.value = forked.subject;
+        shareForm.age.value = forked.age;
+        shareForm.language.value = forked.language;
+        shareForm.tags.value = forked.tags.join(", ");
+        shareForm.license.value = forked.license;
+        shareForm.body.value = forked.body;
+        toast("Resource forked — edit and publish your adaptation.");
+      };
+
+      document.getElementById("modalExportMd").onclick = () => {
+        if (activeResourceId) CS.exportResourceMarkdown(activeResourceId);
+      };
+      document.getElementById("modalExportJson").onclick = () => {
+        if (activeResourceId) CS.exportResourceJson(activeResourceId);
+      };
+
+      ["libSearch", "libType", "libSubject", "libAge", "libLang"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", renderLibrary);
+        document.getElementById(id).addEventListener("change", renderLibrary);
+      });
+
+      shareForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        saveProfileFromInputs();
+        const fd = new FormData(shareForm);
+        CS.addResource({
+          title: fd.get("title"),
+          type: fd.get("type"),
+          subject: fd.get("subject"),
+          age: fd.get("age"),
+          language: fd.get("language"),
+          tags: fd.get("tags"),
+          license: fd.get("license"),
+          body: fd.get("body"),
+        });
+        shareForm.reset();
+        renderLibrary();
+        switchPanel("library");
+        toast("Resource published to your library.");
+      });
+
+      function renderTemplates() {
+        templateGrid.innerHTML = "";
+        CS.UDL_TEMPLATES.forEach((tpl) => {
+          const card = document.createElement("article");
+          card.className = "cs-template-card";
+          card.innerHTML = "<h3>" + escapeHtml(tpl.title) + "</h3><p>" + escapeHtml(tpl.description) + "</p>";
+          const preview = document.createElement("button");
+          preview.type = "button";
+          preview.className = "btn btn-secondary";
+          preview.textContent = "Use template";
+          preview.style.marginRight = "0.4rem";
+          preview.onclick = () => {
+            switchPanel("share");
+            shareForm.title.value = tpl.title + " (my version)";
+            shareForm.type.value = "template";
+            shareForm.body.value = tpl.body;
+            shareForm.tags.value = "UDL, template";
+            toast("Template loaded — customize and publish.");
+          };
+          card.appendChild(preview);
+          templateGrid.appendChild(card);
+        });
+      }
+
+      document.getElementById("runAuditBtn").onclick = () => {
+        const text = document.getElementById("auditInput").value;
+        const result = CS.runAudit(text);
+        document.getElementById("auditScore").textContent = result.score + "% accessible";
+        document.getElementById("auditChecks").innerHTML = result.checks.map((c) => {
+          const cls = c.pass === true ? "pass" : c.pass === false ? "fail" : "manual";
+          const icon = c.pass === true ? "✓" : c.pass === false ? "✗" : "○";
+          return '<div class="cs-check ' + cls + '"><span class="cs-check-icon">' + icon + '</span><span>' + escapeHtml(c.label) + "</span></div>";
+        }).join("");
+        const sug = document.getElementById("auditSuggestions");
+        sug.innerHTML = "";
+        result.suggestions.forEach((s) => {
+          const li = document.createElement("li");
+          li.textContent = s;
+          sug.appendChild(li);
+        });
+      };
+
+      function renderForum() {
+        const topics = CS.getForumTopics();
+        forumList.innerHTML = "";
+        topics.forEach((topic) => {
+          const el = document.createElement("article");
+          el.className = "cs-forum-topic";
+          el.innerHTML =
+            "<h3>" + escapeHtml(topic.title) + "</h3>" +
+            '<p class="cs-forum-meta">Started by ' + escapeHtml(topic.author) + " · " + CS.formatDate(topic.created) + "</p>";
+          topic.posts.forEach((post) => {
+            const p = document.createElement("div");
+            p.className = "cs-post";
+            p.innerHTML = '<p class="cs-post-author">' + escapeHtml(post.author) + "</p><p style='margin:0'>" + escapeHtml(post.body) + "</p>";
+            el.appendChild(p);
+          });
+          const row = document.createElement("div");
+          row.className = "cs-reply-row";
+          const input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "Reply…";
+          input.maxLength = 500;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-secondary";
+          btn.textContent = "Reply";
+          btn.onclick = () => {
+            if (!input.value.trim()) return;
+            saveProfileFromInputs();
+            CS.addForumReply(topic.id, input.value);
+            renderForum();
+          };
+          row.append(input, btn);
+          el.appendChild(row);
+          forumList.appendChild(el);
+        });
+      }
+
+      document.getElementById("newTopicForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        saveProfileFromInputs();
+        const fd = new FormData(e.target);
+        CS.addForumTopic(fd.get("title"), fd.get("body"));
+        e.target.reset();
+        renderForum();
+        toast("Topic posted.");
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      loadProfile();
+      renderLibrary();
+      renderTemplates();
+      renderForum();
+    })();
+  </script>
+</body>
+</html>
