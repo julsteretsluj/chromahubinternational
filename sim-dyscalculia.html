@@ -26,7 +26,7 @@
       <div class="experience-shell" data-cs-tabs>
         <div class="cs-redo-bar">
           <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
-          <p class="cs-redo-hint muted-note">New swap rates, equations, and vessel fills each run.</p>
+          <p class="cs-redo-hint muted-note">New problem sets, swap rates, equations, and vessel fills each run.</p>
         </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="symbols" aria-selected="true">Symbol confusion</button>
@@ -35,10 +35,24 @@
         </div>
 
         <div class="cs-panel active" data-cs-panel="symbols">
-          <p class="muted-note">Type numbers — similar digits and symbols swap (6/9, 1/7, +/×).</p>
-          <input id="numIn" class="cs-input" type="text" inputmode="numeric" placeholder="e.g. 47 + 18 = ?">
-          <div id="numOut" class="cs-output" aria-live="polite"></div>
-          <p class="muted-note" style="margin-top:0.5rem;">Which is correct — what you typed or what you see?</p>
+          <p class="muted-note">Solve each problem in order. Similar digits and symbols swap in what you read and type (6/9, 1/7, +/×).</p>
+          <div class="experience-controls" style="margin-top:0.65rem;">
+            <span id="symbolProgress" class="xp-badge">Problem 1 of 5</span>
+            <span id="symbolScore" class="xp-badge">Solved: 0</span>
+          </div>
+          <p class="muted-note" style="margin:0.75rem 0 0.35rem;"><strong>Problem (as shown)</strong></p>
+          <div id="symbolProblem" class="cs-field cs-symbol-problem" aria-live="polite">7 + 4 = ?</div>
+          <p class="muted-note" style="margin:0.5rem 0 0.35rem;">What you might read instead</p>
+          <div id="symbolProblemMirror" class="cs-output" aria-live="polite">—</div>
+          <label for="numIn" class="muted-note" style="display:block;margin-top:0.75rem;"><strong>Your answer</strong></label>
+          <input id="numIn" class="cs-input" type="text" inputmode="numeric" placeholder="Type your answer…" autocomplete="off">
+          <p class="muted-note" style="margin:0.5rem 0 0.35rem;">What your answer looks like after swaps</p>
+          <div id="numOut" class="cs-output" aria-live="polite">—</div>
+          <div class="experience-controls" style="margin-top:0.75rem;">
+            <button type="button" id="symbolSubmit" class="btn btn-primary">Check answer</button>
+            <button type="button" id="symbolSkip" class="btn btn-secondary">Next problem</button>
+          </div>
+          <p id="symbolResult" class="muted-note" style="margin-top:0.65rem;">Work through all five problems — swaps make even simple maths unreliable.</p>
         </div>
 
         <div class="cs-panel" data-cs-panel="float" hidden>
@@ -67,15 +81,106 @@
   <script src="js/chroma-sim.js"></script>
   <script>
     const CS = window.ChromaSim;
-    const SWAP_NUM = { "6": "9", "9": "6", "1": "7", "7": "1", "3": "8", "8": "3", "+": "×", "×": "+", "5": "S", "S": "5" };
+    const SWAP_NUM = { "6": "9", "9": "6", "1": "7", "7": "1", "3": "8", "8": "3", "+": "×", "×": "+", "−": "+", "5": "S", "S": "5" };
+    const PROBLEM_COUNT = 5;
     let swapThreshold = 0.4 + Math.random() * 0.25;
-    const numIn = document.getElementById("numIn");
-    numIn.addEventListener("input", (e) => {
-      const out = [...e.target.value]
+    let problems = [];
+    let problemIdx = 0;
+    let solved = 0;
+
+    function confuseText(text) {
+      return [...text]
         .map((c) => (SWAP_NUM[c] && Math.random() > swapThreshold ? SWAP_NUM[c] : c))
         .join("");
+    }
+
+    function makeProblem() {
+      const op = CS.pick(["+", "−"]);
+      let a = CS.randInt(3, 12);
+      let b = CS.randInt(2, 9);
+      if (op === "−" && b > a) [a, b] = [b, a];
+      const answer = op === "+" ? a + b : a - b;
+      return { a, b, op, answer, text: a + " " + op + " " + b + " = ?" };
+    }
+
+    function buildProblems() {
+      problems = Array.from({ length: PROBLEM_COUNT }, () => makeProblem());
+      problemIdx = 0;
+      solved = 0;
+    }
+
+    function renderProblem() {
+      const p = problems[problemIdx];
+      if (!p) return;
+      document.getElementById("symbolProblem").textContent = p.text;
+      document.getElementById("symbolProblemMirror").textContent = confuseText(p.text);
+      document.getElementById("symbolProgress").textContent = "Problem " + (problemIdx + 1) + " of " + PROBLEM_COUNT;
+      document.getElementById("symbolScore").textContent = "Solved: " + solved;
+      document.getElementById("symbolSubmit").disabled = false;
+      document.getElementById("symbolSkip").disabled = false;
+      numIn.value = "";
+      document.getElementById("numOut").textContent = "—";
+      if (problemIdx === 0 && solved === 0) {
+        document.getElementById("symbolResult").textContent =
+          "Work through all five problems — swaps make even simple maths unreliable.";
+      }
+    }
+
+    function finishSet() {
+      document.getElementById("symbolProgress").textContent = "Set complete";
+      document.getElementById("symbolProblem").textContent = "—";
+      document.getElementById("symbolProblemMirror").textContent = "—";
+      document.getElementById("symbolSubmit").disabled = true;
+      document.getElementById("symbolSkip").disabled = true;
+      numIn.value = "";
+      document.getElementById("numOut").textContent = "—";
+      document.getElementById("symbolResult").textContent =
+        "Finished — you solved " + solved + " of " + PROBLEM_COUNT + ". Use New scenario for another set.";
+    }
+
+    function advanceProblem(wasCorrect) {
+      if (wasCorrect) solved++;
+      document.getElementById("symbolScore").textContent = "Solved: " + solved;
+      if (problemIdx >= PROBLEM_COUNT - 1) {
+        finishSet();
+        return;
+      }
+      problemIdx++;
+      renderProblem();
+    }
+
+    const numIn = document.getElementById("numIn");
+    numIn.addEventListener("input", (e) => {
+      const out = confuseText(e.target.value);
       document.getElementById("numOut").textContent = out || "—";
     });
+
+    document.getElementById("symbolSubmit").onclick = () => {
+      const p = problems[problemIdx];
+      if (!p) return;
+      const raw = numIn.value.trim();
+      if (!raw) {
+        document.getElementById("symbolResult").textContent = "Enter an answer first.";
+        return;
+      }
+      const guess = Number(raw);
+      const correct = Number.isFinite(guess) && guess === p.answer;
+      document.getElementById("symbolResult").textContent = correct
+        ? "Correct — " + p.a + " " + p.op + " " + p.b + " = " + p.answer + ". Loading next problem…"
+        : "Not quite — the answer was " + p.answer + ". Swaps may have misled you.";
+      setTimeout(() => advanceProblem(correct), correct ? 700 : 1100);
+    };
+
+    document.getElementById("symbolSkip").onclick = () => {
+      const p = problems[problemIdx];
+      if (!p) return;
+      document.getElementById("symbolResult").textContent =
+        "Skipped — answer was " + p.answer + ".";
+      setTimeout(() => advanceProblem(false), 600);
+    };
+
+    buildProblems();
+    renderProblem();
 
     const OPS = ["+", "×", "−"];
     function renderEq() {
@@ -103,12 +208,12 @@
 
     document.getElementById("redoSim").onclick = () => {
       swapThreshold = 0.35 + Math.random() * 0.3;
-      numIn.value = "";
-      document.getElementById("numOut").textContent = "—";
+      buildProblems();
+      renderProblem();
       document.getElementById("eqAnswer").value = "";
       renderEq();
       renderSpatial();
-      CS.toast("New scenario — symbols and quantities changed.");
+      CS.toast("New scenario — fresh problem set and quantities.");
     };
   </script>
 </body>

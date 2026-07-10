@@ -26,7 +26,7 @@
       <div class="experience-shell" data-cs-tabs>
         <div class="cs-redo-bar">
           <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
-          <p class="cs-redo-hint muted-note">Resets lag, target position, and table traps.</p>
+          <p class="cs-redo-hint muted-note">Resets lag, target position, typing sentence, and table traps.</p>
         </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="motor" aria-selected="true">Fine motor</button>
@@ -46,8 +46,15 @@
         </div>
 
         <div class="cs-panel" data-cs-panel="timing" hidden>
-          <p class="muted-note">Typing appears delayed and sporadic — keystrokes don't land when you expect.</p>
-          <textarea id="laggyType" class="cs-input" rows="4" placeholder="Type here and wait for characters to appear…"></textarea>
+          <p class="muted-note">Type the sentence below — keystrokes arrive delayed and out of sync with your fingers.</p>
+          <p class="muted-note" style="margin-bottom:0.35rem;"><strong>Target sentence</strong></p>
+          <div id="typeTarget" class="cs-field" style="min-height:auto;">Please call me when you arrive at the station.</div>
+          <label for="laggyType" class="muted-note" style="display:block;margin-top:0.65rem;"><strong>Your typing</strong> (characters appear late)</label>
+          <textarea id="laggyType" class="cs-input" rows="4" placeholder="Type the target sentence here…"></textarea>
+          <div class="experience-controls" style="margin-top:0.65rem;">
+            <button type="button" id="newSentence" class="btn btn-secondary">New sentence</button>
+            <span id="timingResult" class="xp-badge">Not finished</span>
+          </div>
           <p class="muted-note" style="margin-top:0.5rem;">Pivot: speech-to-text, extended time, or keyboard alternatives remove motor-timing pressure.</p>
         </div>
 
@@ -121,6 +128,48 @@
       }
     });
 
+    const TYPE_SENTENCES = [
+      "Please call me when you arrive at the station.",
+      "The meeting moved to room four on the second floor.",
+      "I will send the form after lunch today.",
+      "Can you pick up milk on your way home tonight?",
+      "My appointment is at ten fifteen on Thursday morning.",
+      "Write your name at the top of the page in pen.",
+      "The bus leaves from gate seven at six pm.",
+      "Thank you for waiting while I finish this message.",
+    ];
+    let currentSentence = TYPE_SENTENCES[0];
+
+    function pickTypeSentence() {
+      currentSentence = CS.pick(TYPE_SENTENCES, currentSentence);
+      document.getElementById("typeTarget").textContent = currentSentence;
+    }
+
+    function checkTimingProgress() {
+      const typed = laggy.value.trim();
+      const badge = document.getElementById("timingResult");
+      if (!typed) {
+        badge.textContent = "Not finished";
+        return;
+      }
+      if (typed === currentSentence) {
+        badge.textContent = "Matched — but it took extra timing effort";
+      } else if (currentSentence.startsWith(typed)) {
+        badge.textContent = "In progress…";
+      } else {
+        badge.textContent = "Off track — lag makes corrections harder";
+      }
+    }
+
+    pickTypeSentence();
+    document.getElementById("newSentence").onclick = () => {
+      pickTypeSentence();
+      buf = "";
+      laggy.value = "";
+      document.getElementById("timingResult").textContent = "Not finished";
+      CS.toast("New sentence — try typing it again.");
+    };
+
     const laggy = document.getElementById("laggyType");
     let buf = "";
     let typeDelayBase = 100 + Math.random() * 120;
@@ -133,6 +182,16 @@
           setTimeout(() => {
             buf += ch;
             laggy.value = buf;
+            checkTimingProgress();
+          }, wait);
+        }
+        if (e.key === "Backspace") {
+          e.preventDefault();
+          const wait = (window.chromaSeizureSafe?.() ? 30 : typeDelayBase * 0.8) + Math.random() * 180;
+          setTimeout(() => {
+            buf = buf.slice(0, -1);
+            laggy.value = buf;
+            checkTimingProgress();
           }, wait);
         }
       };
@@ -186,6 +245,8 @@
       typeDelayBase = 90 + Math.random() * 160;
       buf = "";
       laggy.value = "";
+      pickTypeSentence();
+      document.getElementById("timingResult").textContent = "Not finished";
       tableIdx = CS.randInt(0, TABLE_ROWS.length - 1);
       renderTable();
       placeMotorTarget();
