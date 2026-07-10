@@ -33,6 +33,7 @@
         <div class="cs-redo-bar">
           <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
           <p class="cs-redo-hint muted-note">Different voices, visual overlays, and delusion paths.</p>
+          <span id="szProgress" class="xp-badge">Tasks: 0 / 3 complete</span>
         </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="audio" aria-selected="true">Auditory</button>
@@ -48,27 +49,41 @@
           </div>
           <div id="audioField" class="sz-field" style="margin-top:0.65rem;">
             <div id="voiceLayer" class="sz-voice-layer"></div>
-            <p style="margin:0;max-width:420px;position:relative;z-index:2;">Read: <strong>The meeting is at three o'clock by the fountain.</strong></p>
-            <input class="cs-input" type="text" placeholder="Repeat the time…" style="max-width:200px;margin-top:0.65rem;position:relative;z-index:2;">
+            <p id="readPrompt" style="margin:0;max-width:420px;position:relative;z-index:2;">Read: <strong>The meeting is at three o'clock by the fountain.</strong></p>
+            <label for="audioRecall" class="muted-note" style="display:block;margin-top:0.65rem;position:relative;z-index:2;">Repeat the key detail you need to remember</label>
+            <input id="audioRecall" class="cs-input" type="text" placeholder="e.g. three o'clock…" style="max-width:240px;position:relative;z-index:2;" autocomplete="off">
+            <div class="experience-controls" style="margin-top:0.65rem;position:relative;z-index:2;">
+              <button type="button" id="audioSubmit" class="btn btn-primary">Submit recall</button>
+              <span id="audioTaskBadge" class="xp-badge">Not complete</span>
+            </div>
+            <p id="audioResult" class="muted-note" style="margin-top:0.5rem;position:relative;z-index:2;">Start the voice layer, then recall the detail despite the noise.</p>
           </div>
         </div>
 
         <div class="cs-panel" data-cs-panel="visual" hidden>
-          <p class="muted-note">Upload a photo — overlays simulate visual hallucinations on familiar images.</p>
+          <p class="muted-note">Upload a photo — overlays simulate visual hallucinations on familiar images. Use grounding to see the real picture again.</p>
           <input id="photoUpload" type="file" accept="image/*" class="cs-input">
+          <div class="experience-controls" style="margin-top:0.65rem;">
+            <button type="button" id="visualGround" class="btn btn-secondary" disabled>Grounding pivot — show real image</button>
+            <span id="visualTaskBadge" class="xp-badge">Not complete</span>
+          </div>
           <div id="visualField" class="sz-field" style="margin-top:0.65rem;min-height:240px;">
             <div id="hallucinationLayer" class="cs-hallucination-layer"></div>
             <p id="visualPlaceholder" class="muted-note" style="margin:0;">No image yet</p>
             <img id="uploadPreview" alt="" style="max-width:100%;display:none;border-radius:8px;position:relative;z-index:2;">
           </div>
+          <p id="visualResult" class="muted-note" style="margin-top:0.65rem;">Upload a photo, then use grounding to complete this task.</p>
         </div>
 
         <div class="cs-panel" data-cs-panel="delusion" hidden>
-          <p class="muted-note">A guided thought path — each choice drifts more paranoid and illogical.</p>
+          <p class="muted-note">A guided thought path — each choice drifts more paranoid and illogical. Reach an ending to complete the task.</p>
           <p id="delusionPrompt" class="cs-field" style="min-height:auto;">You notice a coworker whispering. What do you think?</p>
           <div id="delusionChoices" class="cs-choice-grid"></div>
           <p id="delusionLog" class="muted-note" style="margin-top:0.65rem;"></p>
-          <button id="delusionReset" class="btn btn-secondary" style="margin-top:0.5rem;">Reset path</button>
+          <div class="experience-controls" style="margin-top:0.5rem;">
+            <button id="delusionReset" class="btn btn-secondary">New path</button>
+            <span id="delusionTaskBadge" class="xp-badge">Not complete</span>
+          </div>
         </div>
 
         <div class="cs-pivot"><strong>Inclusive pivot:</strong> Grounding sequences, trusted support contacts, medication adherence support, and trauma-informed care — never punishment for symptoms.</div>
@@ -90,14 +105,91 @@
       "You missed something important.",
       "They're coordinating.",
     ];
-    const READ_PROMPTS = [
-      "Read: The meeting is at three o'clock by the fountain.",
-      "Read: Pick up milk after work and call Sam.",
-      "Read: Your appointment moved to room 4B upstairs.",
-      "Read: The bus leaves at quarter past six.",
+    const READ_TASKS = [
+      {
+        html: "Read: The meeting is at <strong>three o'clock</strong> by the fountain.",
+        placeholder: "e.g. three o'clock…",
+        answers: ["three o'clock", "three o clock", "3 o'clock", "3 o clock", "three", "3", "3pm", "3 pm", "15:00"],
+      },
+      {
+        html: "Read: Pick up milk after work and <strong>call Sam</strong>.",
+        placeholder: "e.g. call Sam…",
+        answers: ["call sam", "sam"],
+      },
+      {
+        html: "Read: Your appointment moved to <strong>room 4B</strong> upstairs.",
+        placeholder: "e.g. room 4B…",
+        answers: ["room 4b", "4b", "4 b", "room 4 b"],
+      },
+      {
+        html: "Read: The bus leaves at <strong>quarter past six</strong>.",
+        placeholder: "e.g. quarter past six…",
+        answers: ["quarter past six", "6:15", "6.15", "6 15", "six fifteen", "6:15pm", "6.15pm"],
+      },
     ];
     let voicesOn = false, grounded = false, timer = null;
     let readIdx = 0;
+    let audioDone = false;
+    let visualDone = false;
+    let delusionDone = false;
+    let visualGrounded = false;
+
+    function norm(s) {
+      return String(s || "").toLowerCase().replace(/[^\w\s:.'"]/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function matchesAnswer(input, answers) {
+      const n = norm(input);
+      if (!n) return false;
+      return answers.some((a) => {
+        const target = norm(a);
+        return n === target || n.includes(target) || target.includes(n);
+      });
+    }
+
+    function updateOverallProgress() {
+      const done = (audioDone ? 1 : 0) + (visualDone ? 1 : 0) + (delusionDone ? 1 : 0);
+      document.getElementById("szProgress").textContent = "Tasks: " + done + " / 3 complete";
+      if (done === 3) {
+        CS.toast("Simulation complete — all three tasks finished.");
+      }
+    }
+
+    function renderReadTask() {
+      const task = READ_TASKS[readIdx];
+      document.getElementById("readPrompt").innerHTML = task.html;
+      document.getElementById("audioRecall").placeholder = task.placeholder;
+      document.getElementById("audioRecall").value = "";
+      document.getElementById("audioResult").textContent =
+        "Start the voice layer, then recall the key detail despite the noise.";
+    }
+
+    function setAudioComplete() {
+      audioDone = true;
+      document.getElementById("audioTaskBadge").textContent = "Complete";
+      document.getElementById("audioSubmit").disabled = true;
+      updateOverallProgress();
+    }
+
+    function setVisualComplete() {
+      visualDone = true;
+      document.getElementById("visualTaskBadge").textContent = "Complete";
+      document.getElementById("visualGround").disabled = true;
+      updateOverallProgress();
+    }
+
+    function setDelusionComplete(kind) {
+      delusionDone = true;
+      document.getElementById("delusionTaskBadge").textContent = "Complete";
+      document.getElementById("delusionLog").textContent =
+        kind === "ok"
+          ? "Path complete — grounding helped interrupt the spiral."
+          : "Path complete — support and grounding are the inclusive pivot here.";
+      updateOverallProgress();
+    }
+
+    renderReadTask();
+    updateOverallProgress();
 
     function speak() {
       if (!voicesOn || grounded) return;
@@ -127,6 +219,22 @@
       document.getElementById("groundBtn").textContent = grounded ? "Exit grounding" : "Grounding pivot";
     };
 
+    document.getElementById("audioSubmit").onclick = () => {
+      const task = READ_TASKS[readIdx];
+      const raw = document.getElementById("audioRecall").value;
+      if (!raw.trim()) {
+        document.getElementById("audioResult").textContent = "Enter what you remember first.";
+        return;
+      }
+      if (matchesAnswer(raw, task.answers)) {
+        document.getElementById("audioResult").textContent = "Correct — you held onto the detail despite the voices.";
+        setAudioComplete();
+      } else {
+        document.getElementById("audioResult").textContent =
+          "Not quite — try again or use grounding to quiet the voice layer.";
+      }
+    };
+
     function renderHallucinations(url) {
       const layer = document.getElementById("hallucinationLayer");
       layer.innerHTML = "";
@@ -151,7 +259,20 @@
       img.dataset.hallUrl = url;
       img.style.display = "block";
       document.getElementById("visualPlaceholder").hidden = true;
+      visualGrounded = false;
+      document.getElementById("visualGround").disabled = false;
+      document.getElementById("visualResult").textContent =
+        "Hallucination overlays added — use grounding to see the real image and finish.";
       renderHallucinations(url);
+    };
+
+    document.getElementById("visualGround").onclick = () => {
+      if (!document.getElementById("uploadPreview").dataset.hallUrl) return;
+      document.getElementById("hallucinationLayer").innerHTML = "";
+      visualGrounded = true;
+      document.getElementById("visualResult").textContent =
+        "Grounded — the real photo is visible again without the overlays.";
+      if (!visualDone) setVisualComplete();
     };
 
     const DELUSION_TREES = [
@@ -227,6 +348,12 @@
       document.getElementById("delusionPrompt").textContent = n.text;
       const box = document.getElementById("delusionChoices");
       box.innerHTML = "";
+      if (!n.choices.length) {
+        if (!delusionDone) {
+          setDelusionComplete(node === "end_ok" ? "ok" : "bad");
+        }
+        return;
+      }
       CS.shuffle(n.choices).forEach((c) => {
         const b = document.createElement("button");
         b.type = "button";
@@ -234,7 +361,10 @@
         b.textContent = c.label;
         b.onclick = () => {
           node = c.next;
-          document.getElementById("delusionLog").textContent = "Path depth: " + (c.next.includes("high") || c.next.includes("bad") ? "high" : "building");
+          if (c.next !== "end_ok" && c.next !== "end_bad") {
+            document.getElementById("delusionLog").textContent =
+              "Path depth: " + (c.next.includes("high") ? "high" : "building");
+          }
           renderDelusion();
         };
         box.appendChild(b);
@@ -244,13 +374,30 @@
     document.getElementById("delusionReset").onclick = () => {
       treeIdx = CS.randInt(0, DELUSION_TREES.length - 1);
       node = "start";
+      delusionDone = false;
+      document.getElementById("delusionTaskBadge").textContent = "Not complete";
       renderDelusion();
       document.getElementById("delusionLog").textContent = "";
+      updateOverallProgress();
     };
 
+    function resetTasks() {
+      audioDone = false;
+      visualDone = false;
+      delusionDone = false;
+      visualGrounded = false;
+      document.getElementById("audioTaskBadge").textContent = "Not complete";
+      document.getElementById("visualTaskBadge").textContent = "Not complete";
+      document.getElementById("delusionTaskBadge").textContent = "Not complete";
+      document.getElementById("audioSubmit").disabled = false;
+      document.getElementById("visualGround").disabled = !document.getElementById("uploadPreview").dataset.hallUrl;
+      updateOverallProgress();
+    }
+
     document.getElementById("redoSim").onclick = () => {
-      readIdx = CS.randInt(0, READ_PROMPTS.length - 1);
-      document.querySelector("#audioField p").innerHTML = READ_PROMPTS[readIdx];
+      readIdx = CS.randInt(0, READ_TASKS.length - 1);
+      renderReadTask();
+      resetTasks();
       treeIdx = CS.randInt(0, DELUSION_TREES.length - 1);
       node = "start";
       renderDelusion();
@@ -263,8 +410,15 @@
       document.getElementById("voiceLayer").innerHTML = "";
       document.getElementById("groundBtn").textContent = "Grounding pivot";
       const img = document.getElementById("uploadPreview");
-      if (img.dataset.hallUrl) renderHallucinations(img.dataset.hallUrl);
-      CS.toast("New scenario — fresh voice and delusion branch.");
+      if (img.dataset.hallUrl) {
+        renderHallucinations(img.dataset.hallUrl);
+        document.getElementById("visualGround").disabled = false;
+        document.getElementById("visualResult").textContent =
+          "Hallucination overlays added — use grounding to see the real image and finish.";
+      } else {
+        document.getElementById("visualResult").textContent = "Upload a photo, then use grounding to complete this task.";
+      }
+      CS.toast("New scenario — fresh tasks and delusion branch.");
     };
   </script>
 </body>
