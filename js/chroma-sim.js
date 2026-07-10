@@ -32,8 +32,17 @@
   }
 
   function wrapDrift(text) {
-    return [...text]
-      .map((ch) => `<span class="cs-drift-char">${ch === " " ? "&nbsp;" : escapeHtml(ch)}</span>`)
+    const parts = text.match(/\S+|\s+/g) || [];
+    return parts
+      .map((part) => {
+        if (/^\s+$/.test(part)) {
+          return part.replace(/\s/g, " ");
+        }
+        const chars = [...part]
+          .map((ch) => `<span class="cs-drift-char">${escapeHtml(ch)}</span>`)
+          .join("");
+        return `<span class="cs-drift-word">${chars}</span>`;
+      })
       .join("");
   }
 

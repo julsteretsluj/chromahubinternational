@@ -27,6 +27,19 @@
 .cs-panel { display: none; }
 .cs-panel.active { display: block; }
 
+.cs-drift-para {
+  line-height: 1.85;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+  text-wrap: pretty;
+}
+
+.cs-drift-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .cs-drift-char {
   display: inline-block;
   transition: transform 100ms linear;
@@ -40,6 +53,12 @@
   position: relative;
   overflow: hidden;
   min-height: 200px;
+}
+
+.cs-field--drift {
+  overflow: visible;
+  min-height: auto;
+  padding: 1.25rem 1rem;
 }
 
 .cs-input {
