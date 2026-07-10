@@ -7,600 +7,76 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
-      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
-      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
-      window.chromaSeizureSafe = function () {
-        return document.documentElement.getAttribute("data-seizure-safe") === "true";
-      };
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dyscalculia Experience — ChromaSim</title>
+  <title>Dyscalculia — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
-  <style>
-    .dc-how {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--bg-elevated);
-      padding: 0.9rem 1rem;
-      margin-bottom: 1rem;
-    }
-    .dc-how ol { margin: 0.5rem 0 0 1.1rem; padding: 0; }
-    .dc-how li { margin-bottom: 0.35rem; font-size: 0.92rem; color: var(--text-secondary); }
-    .dc-workspace {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--bg-surface);
-      padding: 1rem;
-      min-height: 280px;
-      position: relative;
-      overflow: hidden;
-    }
-    .dc-step { display: none; }
-    .dc-step.active { display: block; }
-    .dc-num {
-      display: inline-block;
-      font-weight: 700;
-      padding: 0.4rem 0.7rem;
-      border-radius: 8px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-    .dc-num.scramble { animation: dcscramble 0.45s ease infinite alternate; }
-    @keyframes dcscramble {
-      0% { transform: translateX(-2px) rotate(-2deg); }
-      100% { transform: translateX(2px) rotate(2deg); }
-    }
-    [data-seizure-safe="true"] .dc-num.scramble { animation: none; }
-    .dc-num.pickable:hover { border-color: var(--chroma-orange); }
-    .dc-num.selected { border-color: var(--chroma-orange); box-shadow: 0 0 0 3px color-mix(in srgb, var(--chroma-orange) 30%, transparent); }
-    .dc-pile {
-      display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-end;
-      min-height: 110px; padding: 0.6rem; border-radius: 10px;
-      border: 2px solid var(--border); background: var(--bg-elevated);
-      cursor: pointer;
-    }
-    .dc-pile.selected { border-color: var(--chroma-teal); }
-    .dc-block {
-      width: 14px; border-radius: 3px;
-      background: linear-gradient(180deg, var(--chroma-teal), var(--chroma-blue));
-    }
-    .dc-vessel {
-      height: 130px; border: 1px solid var(--border); border-radius: 10px;
-      background: var(--bg-elevated); display: flex; align-items: flex-end; overflow: hidden;
-    }
-    .dc-vessel-fill {
-      width: 100%; height: 30%;
-      background: linear-gradient(180deg, var(--chroma-green), var(--chroma-teal));
-      transition: height 0.2s ease;
-    }
-    .dc-price-bar {
-      height: 26px; border-radius: 6px; margin-bottom: 0.5rem;
-      background: linear-gradient(90deg, var(--chroma-orange), var(--chroma-rose));
-    }
-    .dc-symbol-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
-    .dc-float-layer {
-      position: absolute; inset: 0; pointer-events: none; z-index: 5;
-    }
-    .dc-float {
-      position: absolute; pointer-events: none;
-      padding: 0.3rem 0.55rem; border-radius: 8px;
-      background: color-mix(in srgb, var(--chroma-magenta) 15%, var(--bg-card));
-      border: 1px solid var(--border); font-weight: 700; font-size: 0.85rem;
-      animation: dcfloat 2.5s ease forwards;
-    }
-    @keyframes dcfloat {
-      0% { opacity: 0; transform: translateY(8px); }
-      15% { opacity: 0.9; }
-      100% { opacity: 0; transform: translateY(-30px); }
-    }
-    [data-seizure-safe="true"] .dc-float { animation: none; opacity: 0.7; }
-    .dc-log {
-      max-height: 240px; overflow-y: auto;
-      border: 1px solid var(--border); border-radius: 10px;
-      background: var(--bg-elevated); padding: 0.55rem 0.65rem; font-size: 0.84rem;
-    }
-    .dc-log p { margin: 0 0 0.4rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
-    .dc-log p:last-child { border-bottom: none; margin-bottom: 0; }
-    .dc-hidden { display: none !important; }
-    .dc-pivot-box {
-      border: 1px dashed var(--chroma-teal); border-radius: 12px;
-      padding: 0.9rem; margin-top: 1rem;
-      background: color-mix(in srgb, var(--chroma-teal) 7%, var(--bg-elevated));
-    }
-  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
-        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
-        <span class="logo-text">Chroma Hub International</span>
-      </a>
-      <nav class="site-nav">
-        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
-      </nav>
-    </div>
-  </header>
-
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
   <main id="main">
-    <header class="page-header pillar-digital">
-      <div class="container">
-        <h1>Dyscalculia: Visualizing Magnitude</h1>
-        <p>Work through four number tasks while symbols fight your sense of quantity. The spatial pivot replaces digits with fill, sound, and relative size.</p>
-        <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
-      </div>
-    </header>
+    <header class="page-header pillar-digital"><div class="container"><h1>Dyscalculia</h1><p>Symbol confusion and floating equations that break magnitude sense — with spatial pivots that replace digits.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="symbols" aria-selected="true">Symbol confusion</button>
+          <button type="button" class="cs-tab" data-cs-tab="float" aria-selected="false">Floating maths</button>
+          <button type="button" class="cs-tab" data-cs-tab="spatial" aria-selected="false">Spatial pivot</button>
+        </div>
 
-    <section class="section">
-      <div class="container">
-        <div class="experience-shell">
-          <div class="dc-how">
-            <strong>How this simulation works</strong>
-            <ol id="howList">
-              <li>Complete <strong>4 steps</strong> — each one asks you to judge quantity using numbers or symbols.</li>
-              <li>In challenge mode, digits <strong>scramble</strong>, labels <strong>lie</strong>, and random symbols <strong>float across</strong> the screen.</li>
-              <li>The <strong>symptom log</strong> names what breaks magnitude sense as you interact.</li>
-              <li>Use <strong>Spatial Pivot</strong> to redo tasks with containers, pitch, and bars — no raw numbers.</li>
-            </ol>
-          </div>
+        <div class="cs-panel active" data-cs-panel="symbols">
+          <p class="muted-note">Type numbers — similar digits and symbols swap (6/9, 1/7, +/×).</p>
+          <input id="numIn" class="cs-input" type="text" inputmode="numeric" placeholder="e.g. 47 + 18 = ?">
+          <div id="numOut" class="cs-output" aria-live="polite"></div>
+          <p class="muted-note" style="margin-top:0.5rem;">Which is correct — what you typed or what you see?</p>
+        </div>
 
-          <div class="experience-controls">
-            <button id="pivotBtn" class="btn btn-primary">Activate Spatial Pivot</button>
-            <span id="modeBadge" class="xp-badge">Challenge: step 1 of 4</span>
-            <span id="stressBadge" class="xp-badge">Magnitude stress: low</span>
-          </div>
-
-          <div class="experience-grid">
-            <div class="experience-panel">
-              <div id="workspace" class="dc-workspace">
-                <div id="floatLayer" class="dc-float-layer" aria-live="polite"></div>
-
-                <div class="dc-step active" data-step="1">
-                  <h3 style="margin-top:0;">Step 1: Which number is larger?</h3>
-                  <p class="muted-note">Tap the number you think is bigger. Digits may not look the size they represent.</p>
-                  <div id="compareBox" style="display:flex;gap:1rem;justify-content:center;margin:1rem 0;"></div>
-                  <div class="experience-controls">
-                    <button id="retryCompare" class="btn btn-secondary">New pair</button>
-                    <span id="compareFeedback" class="xp-badge">Tap a number</span>
-                  </div>
-                </div>
-
-                <div class="dc-step" data-step="2">
-                  <h3 style="margin-top:0;">Step 2: Symbol flood</h3>
-                  <p class="muted-note">Mixed units appear. Tap the one that <em>feels</em> largest, then confirm.</p>
-                  <div id="symbolGrid" class="dc-symbol-grid"></div>
-                  <div class="experience-controls">
-                    <button id="reshuffleSymbols" class="btn btn-secondary">Shuffle symbols</button>
-                    <button id="confirmSymbol" class="btn btn-secondary">Confirm choice</button>
-                    <span id="symbolFeedback" class="xp-badge">Tap a symbol</span>
-                  </div>
-                </div>
-
-                <div class="dc-step" data-step="3">
-                  <h3 style="margin-top:0;">Step 3: Which pile has more?</h3>
-                  <p class="muted-note" id="pileHint">Digit labels may disagree with the blocks you see.</p>
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem;">
-                    <div>
-                      <p class="muted-note">Pile A <span id="labelA" class="dc-num">0</span></p>
-                      <div id="pileA" class="dc-pile" data-pile="a"></div>
-                    </div>
-                    <div>
-                      <p class="muted-note">Pile B <span id="labelB" class="dc-num">0</span></p>
-                      <div id="pileB" class="dc-pile" data-pile="b"></div>
-                    </div>
-                  </div>
-                  <div class="experience-controls" style="margin-top:0.75rem;">
-                    <button id="newPiles" class="btn btn-secondary">New piles</button>
-                    <span id="pileFeedback" class="xp-badge">Tap a pile</span>
-                  </div>
-                </div>
-
-                <div class="dc-step" data-step="4">
-                  <h3 style="margin-top:0;">Step 4: Mark halfway</h3>
-                  <p class="muted-note" id="progressHint">Set the marker to about halfway using the control below.</p>
-                  <div id="challengeProgress">
-                    <label for="pctSlider" class="muted-note">Progress slider (numeric)</label>
-                    <input id="pctSlider" type="range" min="0" max="100" value="10" style="width:100%;margin:0.5rem 0;">
-                    <p id="pctLabel" class="dc-num" style="font-size:1.2rem;">10%</p>
-                  </div>
-                  <div id="pivotProgress" class="dc-hidden">
-                    <input id="spatialSlider" type="range" min="0" max="100" value="50" style="width:100%;margin:0.5rem 0;">
-                    <div class="dc-vessel"><div id="vesselFill" class="dc-vessel-fill"></div></div>
-                    <p id="qualLabel" class="muted-note">About halfway</p>
-                    <p id="pitchLabel" class="muted-note">Pitch: medium</p>
-                  </div>
-                  <div class="experience-controls">
-                    <button id="submitProgress" class="btn btn-secondary">Submit answer</button>
-                    <span id="progressFeedback" class="xp-badge">Waiting</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="experience-controls" style="margin-top:0.75rem;">
-                <button id="prevStep" class="btn btn-secondary">Previous</button>
-                <button id="nextStep" class="btn btn-secondary">Next step</button>
-              </div>
-            </div>
-
-            <div class="experience-panel">
-              <h3>Symptom log</h3>
-              <p class="muted-note">What dyscalculia friction looks like during this task.</p>
-              <div class="bar-meter"><div id="stressFill" class="bar-meter-fill" style="width:12%"></div></div>
-              <div id="symptomLog" class="dc-log" style="margin-top:0.75rem;">
-                <p class="muted-note" style="margin:0;border:none;">Interact to see symptoms…</p>
-              </div>
-            </div>
-          </div>
-
-          <div id="pivotTools" class="dc-pivot-box dc-hidden">
-            <h3 style="margin-top:0;">Spatial pivot tools</h3>
-            <p class="muted-note">Step 5 bonus: compare prices by bar length only.</p>
-            <div style="margin:0.6rem 0;"><div id="barA" class="dc-price-bar" style="width:70%;"></div></div>
-            <div style="margin:0.6rem 0;"><div id="barB" class="dc-price-bar" style="width:45%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>
-            <div class="experience-controls">
-              <button id="barPickA" class="btn btn-secondary">Top costs more</button>
-              <button id="barPickB" class="btn btn-secondary">Bottom costs more</button>
-              <span id="barFeedback" class="xp-badge">No digits needed</span>
-            </div>
+        <div class="cs-panel" data-cs-panel="float" hidden>
+          <p class="muted-note">Equations drift — tracking operands while they move is exhausting.</p>
+          <div id="floatEq" class="cs-float-math"></div>
+          <div class="experience-controls" style="margin-top:0.75rem;">
+            <button id="newEq" class="btn btn-secondary">New equation</button>
+            <input id="eqAnswer" class="cs-input" type="text" placeholder="Your answer…" style="max-width:160px;">
           </div>
         </div>
+
+        <div class="cs-panel" data-cs-panel="spatial" hidden>
+          <p class="muted-note">Compare quantity without digits — container fill shows magnitude.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.75rem;">
+            <div><p class="muted-note">Amount A</p><div id="vesselA" style="height:100px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:flex-end;"><div id="fillA" style="width:100%;background:var(--chroma-teal);height:30%;"></div></div></div>
+            <div><p class="muted-note">Amount B</p><div id="vesselB" style="height:100px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:flex-end;"><div id="fillB" style="width:100%;background:var(--chroma-orange);height:55%;"></div></div></div>
+          </div>
+          <p class="muted-note" style="margin-top:0.65rem;">Which container holds more? No numbers needed.</p>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Manipulatives, graph paper, color-coded operands, calculators, and visual magnitude instead of raw symbols.</div>
       </div>
-    </section>
+    </div></section>
   </main>
-
   <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
   <script>
-    const SYMBOL_POOL = ["75%", "$45", "100 mi", "3/8", "0.92", "2,400", "⅔", "19°C", "4:30", "€120"];
-    const FLOAT_SYMBOLS = ["47%", "3/8", "$12", "⅔", "0.07", "2,400", "19°", "500ms"];
-    const SYMPTOMS = {
-      scramble: "Symbol scramble: digit size does not match magnitude",
-      flood: "Incomparable units: values cannot be ranked on one scale",
-      label: "Label mismatch: number on pile disagrees with blocks shown",
-      percent: "Percent overload: abstract scale replaces visible quantity",
-      float: "Number intrusion: extra symbols pull attention away"
-    };
-
-    let pivotOn = false;
-    let step = 1;
-    let stress = 12;
-    let leftVal = 0;
-    let rightVal = 0;
-    let pileA = 0;
-    let pileB = 0;
-    let symbolPick = null;
-    let floatTimer = null;
-    let scrambleTimer = null;
-    let priceA = 12.99;
-    let priceB = 8.5;
-
-    const symptomLog = document.getElementById("symptomLog");
-    const floatLayer = document.getElementById("floatLayer");
-
-    function isSafe() { return window.chromaSeizureSafe?.(); }
-
-    function logSymptom(key) {
-      const msg = SYMPTOMS[key];
-      if (!msg) return;
-      const existing = [...symptomLog.querySelectorAll("p")].map((p) => p.textContent);
-      if (existing.includes(msg)) return;
-      if (symptomLog.querySelector(".muted-note")) symptomLog.innerHTML = "";
-      const p = document.createElement("p");
-      p.textContent = msg;
-      symptomLog.appendChild(p);
-      symptomLog.scrollTop = symptomLog.scrollHeight;
-    }
-
-    function addStress(n) {
-      stress = Math.min(100, stress + n);
-      document.getElementById("stressFill").style.width = stress + "%";
-      document.getElementById("stressBadge").textContent =
-        stress < 35 ? "Magnitude stress: low" : stress < 65 ? "Magnitude stress: rising" : "Magnitude stress: high";
-    }
-
-    function showStep(n) {
-      step = Math.max(1, Math.min(4, n));
-      document.querySelectorAll(".dc-step").forEach((el) => {
-        el.classList.toggle("active", +el.dataset.step === step);
-      });
-      document.getElementById("modeBadge").textContent = pivotOn
-        ? "Pivot: step " + step + " of 4 (spatial)"
-        : "Challenge: step " + step + " of 4";
-    }
-
-    function newCompare() {
-      leftVal = 15 + Math.floor(Math.random() * 80);
-      rightVal = 15 + Math.floor(Math.random() * 80);
-      while (leftVal === rightVal) rightVal = 15 + Math.floor(Math.random() * 80);
-      const box = document.getElementById("compareBox");
-      box.innerHTML = "";
-      [leftVal, rightVal].forEach((val, i) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "dc-num pickable" + (pivotOn || isSafe() ? "" : " scramble");
-        btn.textContent = val;
-        if (!pivotOn && !isSafe()) {
-          btn.style.fontSize = (0.85 + Math.random() * 0.9) + "rem";
-        }
-        btn.onclick = () => {
-          box.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
-          btn.classList.add("selected");
-          const chosen = val;
-          const ok = (chosen === leftVal && leftVal > rightVal) || (chosen === rightVal && rightVal > leftVal);
-          document.getElementById("compareFeedback").textContent = ok
-            ? "Correct — but hard to read from symbols alone"
-            : "Incorrect — magnitude was unclear";
-          if (!ok) logSymptom("scramble");
-          addStress(8);
-        };
-        box.appendChild(btn);
-      });
-      document.getElementById("compareFeedback").textContent = "Tap a number";
-      if (!pivotOn) logSymptom("scramble");
-    }
-
-    function renderSymbols() {
-      const grid = document.getElementById("symbolGrid");
-      grid.innerHTML = "";
-      symbolPick = null;
-      if (pivotOn) {
-        const levels = Array.from({ length: 4 }, () => 20 + Math.floor(Math.random() * 70));
-        ["A", "B", "C", "D"].forEach((label, i) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "dc-num pickable";
-          btn.style.textAlign = "left";
-          btn.style.width = "46%";
-          btn.innerHTML = "Container " + label +
-            '<div style="height:10px;border-radius:999px;background:var(--bg-surface);border:1px solid var(--border);margin-top:0.45rem;overflow:hidden;">' +
-            '<div style="height:100%;width:' + levels[i] + '%;background:linear-gradient(90deg,var(--chroma-teal),var(--chroma-blue));"></div></div>';
-          btn.onclick = () => {
-            grid.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
-            btn.classList.add("selected");
-            symbolPick = i;
-            const max = Math.max(...levels);
-            document.getElementById("symbolFeedback").textContent = levels[i] === max
-              ? "Correct — fullest container"
-              : "Try again — compare fill length";
-          };
-          grid.appendChild(btn);
-        });
-        document.getElementById("symbolFeedback").textContent = "Tap the fullest container";
-        return;
-      }
-      const pick = SYMBOL_POOL.slice().sort(() => Math.random() - 0.5).slice(0, 4);
-      pick.forEach((sym, i) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "dc-num pickable" + (isSafe() ? "" : " scramble");
-        btn.textContent = sym;
-        btn.onclick = () => {
-          grid.querySelectorAll(".dc-num").forEach((n) => n.classList.remove("selected"));
-          btn.classList.add("selected");
-          symbolPick = i;
-          document.getElementById("symbolFeedback").textContent = "Selected: " + sym;
-        };
-        grid.appendChild(btn);
-      });
-      document.getElementById("symbolFeedback").textContent = "Tap a symbol";
-      logSymptom("flood");
-    }
-
-    function buildPile(el, count) {
-      el.innerHTML = "";
-      for (let i = 0; i < count; i++) {
-        const b = document.createElement("div");
-        b.className = "dc-block";
-        b.style.height = (12 + (i % 5) * 4) + "px";
-        el.appendChild(b);
-      }
-    }
-
-    function newPiles() {
-      pileA = 5 + Math.floor(Math.random() * 16);
-      pileB = 5 + Math.floor(Math.random() * 16);
-      while (pileA === pileB) pileB = 5 + Math.floor(Math.random() * 16);
-      buildPile(document.getElementById("pileA"), pileA);
-      buildPile(document.getElementById("pileB"), pileB);
-      const labelA = document.getElementById("labelA");
-      const labelB = document.getElementById("labelB");
-      if (pivotOn) {
-        labelA.classList.add("dc-hidden");
-        labelB.classList.add("dc-hidden");
-      } else {
-        labelA.classList.remove("dc-hidden");
-        labelB.classList.remove("dc-hidden");
-        let fakeA = pileA + (Math.random() > 0.5 ? 4 : -4);
-        let fakeB = pileB + (Math.random() > 0.5 ? 4 : -4);
-        if (fakeA < 1) fakeA = pileA + 5;
-        if (fakeB < 1) fakeB = pileB + 5;
-        labelA.textContent = fakeA;
-        labelB.textContent = fakeB;
-        logSymptom("label");
-      }
-      document.getElementById("pileFeedback").textContent = "Tap a pile";
-    }
-
-    function wirePiles() {
-      ["pileA", "pileB"].forEach((id) => {
-        document.getElementById(id).onclick = (e) => {
-          document.querySelectorAll(".dc-pile").forEach((p) => p.classList.remove("selected"));
-          e.currentTarget.classList.add("selected");
-          const isA = id === "pileA";
-          const ok = isA ? pileA > pileB : pileB > pileA;
-          document.getElementById("pileFeedback").textContent = ok ? "Correct — you compared blocks" : "Incorrect — label may have misled you";
-          if (!ok && !pivotOn) logSymptom("label");
-          addStress(6);
-        };
-      });
-    }
-
-    const AC = window.AudioContext || window.webkitAudioContext;
-    const ctx = AC ? new AC() : null;
-    let toneOsc = null;
-    let toneGain = null;
-
-    function qualLabel(v) {
-      if (v < 30) return "A little";
-      if (v < 55) return "About halfway";
-      if (v < 80) return "Mostly full";
-      return "Nearly complete";
-    }
-
-    function setTone(v) {
-      if (!ctx || !toneOsc) return;
-      if (ctx.state !== "running") ctx.resume();
-      toneOsc.frequency.value = 140 + v * 5.2;
-    }
-
-    function updateSpatial(v) {
-      document.getElementById("vesselFill").style.height = v + "%";
-      document.getElementById("qualLabel").textContent = qualLabel(v);
-      document.getElementById("pitchLabel").textContent = v < 40 ? "Low pitch" : v < 70 ? "Medium pitch" : "High pitch";
-      setTone(v);
-    }
-
-    function spawnFloat() {
-      if (pivotOn || isSafe()) return;
-      const el = document.createElement("div");
-      el.className = "dc-float";
-      el.textContent = FLOAT_SYMBOLS[Math.floor(Math.random() * FLOAT_SYMBOLS.length)];
-      el.style.left = (10 + Math.random() * 70) + "%";
-      el.style.top = (20 + Math.random() * 55) + "%";
-      floatLayer.appendChild(el);
-      logSymptom("float");
-      addStress(4);
-      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 2600);
-      while (floatLayer.children.length > 4) floatLayer.removeChild(floatLayer.firstChild);
-    }
-
-    function startChallengeFx() {
-      clearInterval(floatTimer);
-      clearInterval(scrambleTimer);
-      if (pivotOn || isSafe()) return;
-      floatTimer = setInterval(spawnFloat, isSafe() ? 6000 : 2800);
-      scrambleTimer = setInterval(() => {
-        document.querySelectorAll(".dc-num.scramble").forEach((n) => {
-          n.style.fontSize = (0.8 + Math.random() * 1) + "rem";
-        });
-      }, 1800);
-    }
-
-    function stopChallengeFx() {
-      clearInterval(floatTimer);
-      clearInterval(scrambleTimer);
-      floatLayer.innerHTML = "";
-    }
-
-    function setMode(pivot) {
-      pivotOn = pivot;
-      pivotBtn.textContent = pivot ? "Return to Challenge Mode" : "Activate Spatial Pivot";
-      document.getElementById("pivotTools").classList.toggle("dc-hidden", !pivot);
-      document.getElementById("challengeProgress").classList.toggle("dc-hidden", pivot);
-      document.getElementById("pivotProgress").classList.toggle("dc-hidden", !pivot);
-      document.getElementById("pileHint").textContent = pivot
-        ? "Numbers hidden — tap the pile with more blocks."
-        : "Digit labels may disagree with the blocks you see.";
-      document.getElementById("progressHint").textContent = pivot
-        ? "Drag until the vessel feels about halfway. Listen to pitch rise and fall."
-        : "Set the slider to about 50% — no visual container, only a number.";
-      document.getElementById("howList").innerHTML = pivot
-        ? "<li>Numbers and symbols are <strong>hidden or reduced</strong>.</li><li>Compare using <strong>fill level</strong>, <strong>pitch</strong>, and <strong>bar length</strong>.</li><li>Complete all 4 steps in pivot mode.</li>"
-        : "<li>Complete <strong>4 steps</strong> — each one asks you to judge quantity using numbers or symbols.</li><li>Digits <strong>scramble</strong>, labels <strong>lie</strong>, and symbols <strong>float across</strong> the screen.</li><li>Check the <strong>symptom log</strong> as you interact.</li><li>Use <strong>Spatial Pivot</strong> for non-numeric alternatives.</li>";
-
-      if (pivot && ctx && !toneOsc) {
-        toneOsc = ctx.createOscillator();
-        toneGain = ctx.createGain();
-        toneOsc.type = "sine";
-        toneGain.gain.value = 0.035;
-        toneOsc.connect(toneGain).connect(ctx.destination);
-        toneOsc.start();
-        updateSpatial(+document.getElementById("spatialSlider").value);
-      }
-
-      newCompare();
-      renderSymbols();
-      newPiles();
-      stopChallengeFx();
-      if (!pivot) startChallengeFx();
-      showStep(step);
-    }
-
-    document.getElementById("pivotBtn").onclick = () => setMode(!pivotOn);
-    document.getElementById("retryCompare").onclick = newCompare;
-    document.getElementById("reshuffleSymbols").onclick = renderSymbols;
-    document.getElementById("confirmSymbol").onclick = () => {
-      if (symbolPick === null) {
-        document.getElementById("symbolFeedback").textContent = "Select a symbol first";
-        return;
-      }
-      document.getElementById("symbolFeedback").textContent = pivotOn
-        ? "Spatial mode: compare containers in step 2 when pivot is on"
-        : "No single right answer — incomparable units create confusion";
-      logSymptom("flood");
-      addStress(10);
-    };
-    document.getElementById("newPiles").onclick = newPiles;
-
-    document.getElementById("pctSlider").oninput = (e) => {
-      document.getElementById("pctLabel").textContent = e.target.value + "%";
-      logSymptom("percent");
-      addStress(3);
-    };
-
-    document.getElementById("spatialSlider").oninput = (e) => updateSpatial(+e.target.value);
-
-    document.getElementById("submitProgress").onclick = () => {
-      if (pivotOn) {
-        const v = +document.getElementById("spatialSlider").value;
-        const ok = v >= 40 && v <= 60;
-        document.getElementById("progressFeedback").textContent = ok
-          ? "Correct — vessel and pitch showed halfway"
-          : "Adjust until fill feels halfway";
-      } else {
-        const v = +document.getElementById("pctSlider").value;
-        const ok = v >= 40 && v <= 60;
-        document.getElementById("progressFeedback").textContent = ok
-          ? "Correct — but % is hard to picture without a visual"
-          : "Target is about 50% — abstract scale is difficult";
-        logSymptom("percent");
-      }
-      addStress(5);
-    };
-
-    document.getElementById("prevStep").onclick = () => showStep(step - 1);
-    document.getElementById("nextStep").onclick = () => showStep(step + 1);
-
-    document.getElementById("barPickA").onclick = () => {
-      document.getElementById("barFeedback").textContent = priceA > priceB ? "Correct — bar length only" : "Try again";
-    };
-    document.getElementById("barPickB").onclick = () => {
-      document.getElementById("barFeedback").textContent = priceB > priceA ? "Correct — bar length only" : "Try again";
-    };
-
-    const maxBar = Math.max(priceA, priceB);
-    document.getElementById("barA").style.width = (priceA / maxBar * 100) + "%";
-    document.getElementById("barB").style.width = (priceB / maxBar * 100) + "%";
-
-    wirePiles();
-    newCompare();
-    renderSymbols();
-    newPiles();
-    showStep(1);
-    setMode(false);
-
-    document.addEventListener("chroma-seizure-safe-change", () => {
-      stopChallengeFx();
-      if (!pivotOn) startChallengeFx();
-      newCompare();
-      renderSymbols();
+    const SWAP_NUM = { "6": "9", "9": "6", "1": "7", "7": "1", "3": "8", "8": "3", "+": "×", "×": "+", "5": "S", "S": "5" };
+    document.getElementById("numIn").addEventListener("input", (e) => {
+      const out = [...e.target.value].map((c) => (SWAP_NUM[c] && Math.random() > 0.45 ? SWAP_NUM[c] : c)).join("");
+      document.getElementById("numOut").textContent = out || "—";
     });
+
+    function renderEq() {
+      const a = Math.floor(Math.random() * 9) + 2;
+      const b = Math.floor(Math.random() * 9) + 2;
+      const el = document.getElementById("floatEq");
+      el.dataset.answer = String(a + b);
+      el.innerHTML = "<span>" + a + "</span><span>+</span><span>" + b + "</span><span>=</span><span>?</span>";
+    }
+    renderEq();
+    document.getElementById("newEq").onclick = renderEq;
   </script>
 </body>
 </html>

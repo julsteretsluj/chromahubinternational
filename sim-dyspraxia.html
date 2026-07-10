@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dyspraxia — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
+  <script src="js/chroma-safety-gate.js"></script>
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+  <main id="main">
+    <header class="page-header pillar-digital"><div class="container"><h1>Dyspraxia</h1><p>Fine motor friction, delayed timing, and confusing spatial layouts that make everyday tasks harder than they look.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="motor" aria-selected="true">Fine motor</button>
+          <button type="button" class="cs-tab" data-cs-tab="timing" aria-selected="false">Timing</button>
+          <button type="button" class="cs-tab" data-cs-tab="visuo" aria-selected="false">Visuospatial</button>
+        </div>
+
+        <div class="cs-panel active" data-cs-panel="motor">
+          <p class="muted-note">Move your mouse — the visible cursor lags and drifts from where you intend to point.</p>
+          <div id="cursorZone" class="cs-cursor-zone">
+            <div id="cursorTarget" class="cs-cursor-target"></div>
+            <div id="cursorDot" class="cs-cursor-dot"></div>
+            <p style="position:absolute;bottom:8px;left:8px;font-size:0.8rem;color:var(--text-muted);margin:0;">Try to click the orange square</p>
+            <button id="motorTarget" type="button" style="position:absolute;top:40%;left:55%;transform:translate(-50%,-50%);padding:0.4rem 0.6rem;font-size:0.8rem;">Target</button>
+          </div>
+          <p id="motorResult" class="muted-note" style="margin-top:0.5rem;">Clicks: 0 — misses count when you don't hit the button</p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="timing" hidden>
+          <p class="muted-note">Typing appears delayed and sporadic — keystrokes don't land when you expect.</p>
+          <textarea id="laggyType" class="cs-input" rows="4" placeholder="Type here and wait for characters to appear…"></textarea>
+          <p class="muted-note" style="margin-top:0.5rem;">Pivot: speech-to-text, extended time, or keyboard alternatives remove motor-timing pressure.</p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="visuo" hidden>
+          <p class="muted-note">Tables and maps with illogical labels — finding the right cell takes extra scanning.</p>
+          <table class="cs-map-table">
+            <thead><tr><th>Room</th><th>Floor</th><th>Exit?</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="cs-wrong">B2</td><td>3</td><td>Maybe</td><td>← arrow points right</td></tr>
+              <tr><td>Lab</td><td class="cs-wrong">B2</td><td>YES</td><td>not this one</td></tr>
+              <tr><td>Exit</td><td>1</td><td class="cs-wrong">NO</td><td>through kitchen</td></tr>
+              <tr><td>Kitchen</td><td>2</td><td>?</td><td class="cs-wrong">Floor 3</td></tr>
+            </tbody>
+          </table>
+          <p class="muted-note" style="margin-top:0.65rem;">Which row lists the actual exit on floor 1? The layout fights you.</p>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Larger click targets, sticky keys, voice input, step-by-step maps, and predictable layouts.</div>
+      </div>
+    </div></section>
+  </main>
+  <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
+  <script>
+    const zone = document.getElementById("cursorZone");
+    const dot = document.getElementById("cursorDot");
+    const target = document.getElementById("cursorTarget");
+    let mx = 80, my = 80, cx = 80, cy = 80;
+    let clicks = 0, misses = 0;
+
+    zone.addEventListener("mousemove", (e) => {
+      const r = zone.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      target.style.left = mx + "px";
+      target.style.top = my + "px";
+    });
+
+    function tick() {
+      const safe = window.chromaSeizureSafe?.();
+      const lag = safe ? 0.35 : 0.12;
+      const jitter = safe ? 0 : (Math.random() - 0.5) * 8;
+      cx += (mx - cx) * lag + jitter;
+      cy += (my - cy) * lag + (Math.random() - 0.5) * (safe ? 0 : 6);
+      dot.style.left = cx + "px";
+      dot.style.top = cy + "px";
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    document.getElementById("motorTarget").addEventListener("click", () => {
+      clicks++;
+      document.getElementById("motorResult").textContent = "Hit! Clicks on target: " + clicks + " — misses: " + misses;
+    });
+    zone.addEventListener("click", (e) => {
+      if (e.target.id !== "motorTarget") {
+        misses++;
+        document.getElementById("motorResult").textContent = "Miss — cursor wasn't where you thought. Clicks: " + clicks + " — misses: " + misses;
+      }
+    });
+
+    const laggy = document.getElementById("laggyType");
+    let buf = "";
+    laggy.addEventListener("keydown", (e) => {
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        const ch = e.key;
+        const wait = (window.chromaSeizureSafe?.() ? 40 : 120) + Math.random() * 280;
+        setTimeout(() => {
+          buf += ch;
+          laggy.value = buf;
+        }, wait);
+      }
+    });
+  </script>
+</body>
+</html>

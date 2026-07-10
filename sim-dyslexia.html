@@ -7,82 +7,90 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
-      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
-      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
-      window.chromaSeizureSafe = function () {
-        return document.documentElement.getAttribute("data-seizure-safe") === "true";
-      };
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dyslexia Experience — ChromaSim</title>
+  <title>Dyslexia — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
 </head>
 <body>
   <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
   <main id="main">
-    <header class="page-header pillar-digital"><div class="container"><h1>Dyslexia: The Fluidity of Text</h1><p>Move your cursor over text to simulate drift. Activate Accessibility Anchor to stabilize and enable read-aloud.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <header class="page-header pillar-digital"><div class="container"><h1>Dyslexia</h1><p>Drifting text, letter confusion, and disorganized speech — with accessibility pivots that restore reading agency.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
     <section class="section"><div class="container">
-      <div class="experience-shell">
-        <div class="experience-controls">
-          <button id="toggleAnchor" class="btn btn-primary">Activate Accessibility Anchor</button>
-          <button id="readAloud" class="btn btn-secondary">Read Aloud</button>
-          <span id="readState" class="xp-badge">Idle</span>
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="drift" aria-selected="true">Drifting text</button>
+          <button type="button" class="cs-tab" data-cs-tab="misspell" aria-selected="false">Misspelling</button>
+          <button type="button" class="cs-tab" data-cs-tab="speech" aria-selected="false">Speech disorganization</button>
         </div>
-        <div class="experience-panel">
-          <p id="driftText">
-            ChromaSim demonstrates how dynamic letter movement can increase tracking fatigue, and how immediate accessibility anchors such as weighted fonts, spacing, and synchronized speech can restore reading agency.
-          </p>
-          <p class="muted-note">Tip: move the mouse over the paragraph before enabling the anchor mode.</p>
+
+        <div class="cs-panel active" data-cs-panel="drift">
+          <p class="muted-note">Hover over the paragraph — letters drift and warp, making tracking exhausting.</p>
+          <div class="cs-field">
+            <p id="driftPara">Reading should feel stable, but when letters shift under your cursor, every line costs extra energy. Accessibility anchors like OpenDyslexic, spacing, and read-aloud can restore agency.</p>
+          </div>
+          <div class="experience-controls" style="margin-top:0.75rem;">
+            <button id="anchorBtn" class="btn btn-primary">Accessibility anchor (stabilize)</button>
+          </div>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="misspell" hidden>
+          <p class="muted-note">Type below — output mirrors your text but swaps similar letters (b/d, p/q, i/l).</p>
+          <label class="muted-note">Your input</label>
+          <input id="typeIn" class="cs-input" type="text" placeholder="Type a sentence…" autocomplete="off">
+          <p class="muted-note" style="margin-top:0.65rem;">What you might read back</p>
+          <div id="typeOut" class="cs-output" aria-live="polite"></div>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="speech" hidden>
+          <p class="muted-note">A sentence is recorded word-by-word, then played back in scrambled order — how disorganized speech can feel.</p>
+          <blockquote id="speechSentence" style="margin:0.75rem 0;padding:0.75rem;border-left:3px solid var(--chroma-teal);font-size:1.05rem;">The quick brown fox jumps over the lazy dog near the river.</blockquote>
+          <div class="experience-controls">
+            <button id="playScrambled" class="btn btn-primary">Play scrambled playback</button>
+            <span id="speechStatus" class="xp-badge">Ready</span>
+          </div>
+          <p id="scrambledResult" class="muted-note" style="margin-top:0.65rem;"></p>
+        </div>
+
+        <div class="cs-pivot">
+          <strong>Inclusive pivot:</strong> OpenDyslexic font (Access panel), increased spacing, read-aloud, and plain-language layouts reduce tracking load.
         </div>
       </div>
     </div></section>
   </main>
   <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
   <script>
-    const p = document.getElementById("driftText");
-    const toggle = document.getElementById("toggleAnchor");
-    const readBtn = document.getElementById("readAloud");
+    const CS = window.ChromaSim;
     let anchored = false;
-    const chars = [...p.textContent].map((ch) => `<span class="drift-char">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
-    p.innerHTML = chars;
-    p.addEventListener("mousemove", (e) => {
-      if (anchored || window.chromaSeizureSafe?.() || window.chromaDyslexiaMode?.()) return;
-      const velocity = Math.min(4, Math.abs(e.movementX) + Math.abs(e.movementY));
-      p.querySelectorAll(".drift-char").forEach((el, i) => {
-        const x = (Math.sin((i + e.clientX) * 0.08) * velocity).toFixed(2);
-        const y = (Math.cos((i + e.clientY) * 0.08) * velocity).toFixed(2);
-        el.style.transform = `translate(${x}px, ${y}px)`;
-      });
-    });
-    toggle.addEventListener("click", () => {
+    const driftPara = document.getElementById("driftPara");
+    CS.bindDrift(driftPara, { paused: () => anchored });
+    document.getElementById("anchorBtn").onclick = () => {
       anchored = !anchored;
-      p.classList.toggle("anchor-font", anchored);
-      if (anchored) p.querySelectorAll(".drift-char").forEach((el) => (el.style.transform = "none"));
-      toggle.textContent = anchored ? "Disable Accessibility Anchor" : "Activate Accessibility Anchor";
+      driftPara.classList.toggle("anchor-font", anchored);
+      if (anchored) driftPara.querySelectorAll(".cs-drift-char").forEach((n) => (n.style.transform = ""));
+      document.getElementById("anchorBtn").textContent = anchored ? "Disable anchor" : "Accessibility anchor (stabilize)";
+    };
+    const typeIn = document.getElementById("typeIn");
+    const typeOut = document.getElementById("typeOut");
+    typeIn.addEventListener("input", () => {
+      typeOut.textContent = CS.dyslexiaSwap(typeIn.value, 0.38);
     });
-    readBtn.addEventListener("click", () => {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(p.textContent);
-      u.rate = anchored ? 0.9 : 1;
-      u.onstart = () => { document.getElementById("readState").textContent = "Reading"; };
-      u.onend = () => { document.getElementById("readState").textContent = "Idle"; };
-      window.speechSynthesis.speak(u);
-    });
-
-    function syncGlobalDyslexia() {
-      if (window.chromaDyslexiaMode?.()) {
-        p.classList.add("anchor-font");
-        p.querySelectorAll(".drift-char").forEach((el) => (el.style.transform = "none"));
-      } else if (!anchored) {
-        p.classList.remove("anchor-font");
-      }
-    }
-    syncGlobalDyslexia();
-    document.addEventListener("chroma-dyslexia-change", syncGlobalDyslexia);
+    document.getElementById("playScrambled").onclick = () => {
+      const s = document.getElementById("speechSentence").textContent.trim();
+      document.getElementById("speechStatus").textContent = "Playing…";
+      const order = CS.speakScrambled(s, (played) => {
+        document.getElementById("speechStatus").textContent = "Done";
+        document.getElementById("scrambledResult").textContent = "Playback order: " + played;
+      });
+      document.getElementById("scrambledResult").textContent = "Shuffled: " + order.join(" ");
+    };
   </script>
 </body>
 </html>

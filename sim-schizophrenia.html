@@ -7,429 +7,166 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
-      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
-      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
-      window.chromaSeizureSafe = function () {
-        return document.documentElement.getAttribute("data-seizure-safe") === "true";
-      };
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schizophrenia Experience — ChromaSim</title>
+  <title>Schizophrenia — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
   <style>
-    .sz-field {
-      position: relative;
-      min-height: 340px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-surface);
-      padding: 1rem;
-      overflow: hidden;
-    }
-    .sz-field.grounded {
-      border-color: var(--chroma-teal);
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--chroma-teal) 35%, transparent);
-    }
-    .sz-read-block {
-      position: relative;
-      z-index: 2;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg-elevated);
-      padding: 0.9rem;
-      max-width: 520px;
-    }
-    .sz-input {
-      width: 100%;
-      margin-top: 0.55rem;
-      padding: 0.65rem 0.8rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      font: inherit;
-    }
-    .sz-voice-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .sz-voice-caption {
-      position: absolute;
-      max-width: 200px;
-      padding: 0.45rem 0.65rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      line-height: 1.35;
-      background: color-mix(in srgb, var(--chroma-magenta) 18%, var(--bg-card));
-      border: 1px solid var(--border);
-      opacity: 0;
-      animation: szVoiceIn 0.35s ease forwards;
-    }
-    @keyframes szVoiceIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 0.92; transform: translateY(0); }
-    }
-    [data-seizure-safe="true"] .sz-voice-caption {
-      animation: none;
-      opacity: 0.92;
-    }
-    .sz-voice-caption.left { left: 4%; top: 18%; }
-    .sz-voice-caption.right { right: 4%; top: 28%; }
-    .sz-voice-caption.behind { left: 50%; top: 6%; transform: translateX(-50%); }
-    .sz-voice-caption.below { left: 12%; bottom: 10%; }
-    .sz-anchor {
-      position: absolute;
-      right: 1rem;
-      bottom: 1rem;
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: 2px solid var(--chroma-teal);
-      z-index: 3;
-    }
-    .sz-anchor.pulse {
-      animation: szPulse 1.6s ease infinite;
-    }
-    @keyframes szPulse {
-      0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--chroma-teal) 45%, transparent); }
-      50% { box-shadow: 0 0 0 14px transparent; }
-    }
-    [data-seizure-safe="true"] .sz-anchor.pulse {
-      animation: none;
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--chroma-teal) 25%, transparent);
-    }
-    .sz-ground-panel {
-      border: 1px dashed var(--chroma-teal);
-      border-radius: 10px;
-      padding: 0.85rem;
-      background: color-mix(in srgb, var(--chroma-teal) 8%, var(--bg-elevated));
-      margin-top: 0.85rem;
-    }
-    .sz-ground-step {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.45rem;
-      font-size: 0.9rem;
-    }
-    .sz-ground-step input { accent-color: var(--chroma-teal); }
-    .sz-warn {
-      border: 1px solid var(--chroma-orange);
-      border-radius: 10px;
-      padding: 0.75rem;
-      background: color-mix(in srgb, var(--chroma-orange) 10%, var(--bg-elevated));
-      margin-bottom: 0.85rem;
-      font-size: 0.9rem;
-    }
-    .sz-hidden { display: none !important; }
+    .sz-field { position:relative;min-height:280px;border:1px solid var(--border);border-radius:12px;background:var(--bg-surface);padding:1rem;overflow:hidden; }
+    .sz-voice-layer { position:absolute;inset:0;pointer-events:none;z-index:5; }
+    .sz-voice-caption { position:absolute;max-width:180px;padding:0.45rem;border-radius:8px;font-size:0.82rem;background:color-mix(in srgb,var(--chroma-magenta) 18%,var(--bg-card));border:1px solid var(--border); }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
-        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
-        <span class="logo-text">Chroma Hub International</span>
-      </a>
-      <nav class="site-nav">
-        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
-      </nav>
-    </div>
-  </header>
-
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
   <main id="main">
-    <header class="page-header pillar-digital">
-      <div class="container">
-        <h1>Schizophrenia: Grounding &amp; Auditory Voices</h1>
-        <p>Challenge mode layers spoken voices that comment, command, and interrupt. The grounding pivot quiets them and restores a stable anchor.</p>
-        <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
-      </div>
-    </header>
+    <header class="page-header pillar-digital"><div class="container"><h1>Schizophrenia</h1><p>Auditory voices, visual distortions on photos, and delusional thought branches — with grounding pivots.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="cs-warn"><strong>Content note:</strong> Intrusive audio and visual effects. Use low volume. Stop anytime.</div>
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="audio" aria-selected="true">Auditory</button>
+          <button type="button" class="cs-tab" data-cs-tab="visual" aria-selected="false">Visual</button>
+          <button type="button" class="cs-tab" data-cs-tab="delusion" aria-selected="false">Delusions</button>
+        </div>
 
-    <section class="section">
-      <div class="container">
-        <div class="experience-shell">
-          <div class="sz-warn">
-            <strong>Content note:</strong> This module uses spoken voice audio that may feel intrusive or distressing. Use headphones at low volume. Stop anytime.
-          </div>
-
+        <div class="cs-panel active" data-cs-panel="audio">
           <div class="experience-controls">
-            <button id="startBtn" class="btn btn-primary">Start Voice Layer</button>
-            <button id="anchorBtn" class="btn btn-secondary">Activate Grounding Pivot</button>
-            <span id="modeBadge" class="xp-badge">Voices off</span>
-            <span id="voiceBadge" class="xp-badge">Heard: 0</span>
+            <button id="startVoices" class="btn btn-primary">Start voice layer</button>
+            <button id="groundBtn" class="btn btn-secondary">Grounding pivot</button>
+            <span id="voiceBadge" class="xp-badge">Voices off</span>
           </div>
-
-          <div class="experience-grid">
-            <div class="experience-panel">
-              <h3>Focus Task: Read Through the Noise</h3>
-              <p class="muted-note" id="taskHint">Voices may speak over you. Try to read the line and answer the question.</p>
-
-              <div id="field" class="sz-field">
-                <div id="voiceLayer" class="sz-voice-layer" aria-live="polite"></div>
-                <div id="anchor" class="sz-anchor sz-hidden" title="Grounding anchor"></div>
-
-                <div class="sz-read-block">
-                  <p id="readLine" style="margin:0;line-height:1.55;">
-                    On a clear day, the sky often looks <strong>blue</strong> before sunset.
-                  </p>
-                  <label for="answerInput" class="muted-note" style="display:block;margin-top:0.75rem;">
-                    What color is the sky in this sentence?
-                  </label>
-                  <input id="answerInput" class="sz-input" type="text" placeholder="Type one word" autocomplete="off">
-                  <div class="experience-controls" style="margin-top:0.6rem;">
-                    <button id="checkBtn" class="btn btn-secondary">Check answer</button>
-                    <span id="taskResult" class="xp-badge">Waiting</span>
-                  </div>
-                </div>
-              </div>
-
-              <div id="groundPanel" class="sz-ground-panel sz-hidden">
-                <strong>Grounding sequence</strong>
-                <p class="muted-note" style="margin:0.35rem 0 0.55rem;">Check each step to steady attention.</p>
-                <label class="sz-ground-step"><input type="checkbox" class="g-step"> Name 5 things you can see</label>
-                <label class="sz-ground-step"><input type="checkbox" class="g-step"> Name 4 things you can touch</label>
-                <label class="sz-ground-step"><input type="checkbox" class="g-step"> Name 3 things you can hear now</label>
-                <label class="sz-ground-step"><input type="checkbox" class="g-step"> Name 2 things you can smell</label>
-                <label class="sz-ground-step"><input type="checkbox" class="g-step"> Name 1 thing you can taste</label>
-              </div>
-            </div>
-
-            <div class="experience-panel">
-              <h3>Voice Load</h3>
-              <p class="muted-note">How much competing speech is pulling attention away from the task.</p>
-              <div class="bar-meter"><div id="loadFill" class="bar-meter-fill" style="width:8%"></div></div>
-              <ul class="feature-list" style="margin-top:0.75rem;">
-                <li id="loadActive">Active voices: none</li>
-                <li id="loadSide">Spatial mix: left / right / behind</li>
-                <li id="loadAnchor">Anchor pulse: off</li>
-              </ul>
-              <p id="lastVoice" class="muted-note" style="margin-top:0.85rem;">Last voice: —</p>
-            </div>
+          <div id="audioField" class="sz-field" style="margin-top:0.65rem;">
+            <div id="voiceLayer" class="sz-voice-layer"></div>
+            <p style="margin:0;max-width:420px;position:relative;z-index:2;">Read: <strong>The meeting is at three o'clock by the fountain.</strong></p>
+            <input class="cs-input" type="text" placeholder="Repeat the time…" style="max-width:200px;margin-top:0.65rem;position:relative;z-index:2;">
           </div>
         </div>
+
+        <div class="cs-panel" data-cs-panel="visual" hidden>
+          <p class="muted-note">Upload a photo — overlays simulate visual hallucinations on familiar images.</p>
+          <input id="photoUpload" type="file" accept="image/*" class="cs-input">
+          <div id="visualField" class="sz-field" style="margin-top:0.65rem;min-height:240px;">
+            <div id="hallucinationLayer" class="cs-hallucination-layer"></div>
+            <p id="visualPlaceholder" class="muted-note" style="margin:0;">No image yet</p>
+            <img id="uploadPreview" alt="" style="max-width:100%;display:none;border-radius:8px;position:relative;z-index:2;">
+          </div>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="delusion" hidden>
+          <p class="muted-note">A guided thought path — each choice drifts more paranoid and illogical.</p>
+          <p id="delusionPrompt" class="cs-field" style="min-height:auto;">You notice a coworker whispering. What do you think?</p>
+          <div id="delusionChoices" class="cs-choice-grid"></div>
+          <p id="delusionLog" class="muted-note" style="margin-top:0.65rem;"></p>
+          <button id="delusionReset" class="btn btn-secondary" style="margin-top:0.5rem;">Reset path</button>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Grounding sequences, trusted support contacts, medication adherence support, and trauma-informed care — never punishment for symptoms.</div>
       </div>
-    </section>
+    </div></section>
   </main>
-
   <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
   <script>
-    const VOICE_LINES = [
-      "They're talking about you.",
-      "Don't believe what you're reading.",
-      "You need to leave now.",
-      "Can you hear me?",
-      "It's not safe here.",
-      "Why won't you answer?",
-      "Look at the door.",
-      "That thought isn't yours.",
-      "Everyone is watching.",
-      "Stop pretending.",
-      "We know what you did.",
-      "Don't trust the screen.",
-      "Listen to me instead.",
-      "You're being followed.",
-      "Put it down.",
-      "They can hear you thinking."
-    ];
+    const LINES = ["They're talking about you.", "Don't trust what you read.", "Leave now.", "Can you hear me?", "Everyone is watching."];
+    let voicesOn = false, grounded = false, timer = null;
 
-    const SIDES = ["left", "right", "behind", "below"];
-    let voices = [];
-    let voicesOn = false;
-    let grounded = false;
-    let heard = 0;
-    let voiceTimer = null;
-    let murmurCtx = null;
-    let murmurNodes = [];
-
-    function isSafe() {
-      return window.chromaSeizureSafe?.();
-    }
-
-    const voiceLayer = document.getElementById("voiceLayer");
-    const field = document.getElementById("field");
-    const loadFill = document.getElementById("loadFill");
-
-    function loadVoices() {
-      voices = speechSynthesis.getVoices().filter((v) => v.lang.startsWith("en"));
-    }
-    speechSynthesis.addEventListener("voiceschanged", loadVoices);
-    loadVoices();
-
-    function updateLoad(active) {
-      const load = grounded ? Math.max(4, 12 - active * 2) : Math.min(100, heard * 5 + active * 22);
-      loadFill.style.width = load + "%";
-      document.getElementById("voiceBadge").textContent = "Heard: " + heard;
-      document.getElementById("loadActive").textContent = active
-        ? "Active voices: speaking"
-        : grounded ? "Active voices: muted" : "Active voices: idle";
-    }
-
-    function showCaption(text, side) {
-      const el = document.createElement("div");
-      el.className = "sz-voice-caption " + side;
-      el.textContent = "“" + text + "”";
-      voiceLayer.appendChild(el);
-      document.getElementById("lastVoice").textContent = "Last voice (" + side + "): " + text;
-      while (voiceLayer.children.length > 4) {
-        voiceLayer.removeChild(voiceLayer.firstElementChild);
-      }
-      setTimeout(() => {
-        if (el.parentNode) el.parentNode.removeChild(el);
-      }, isSafe() ? 5000 : 3200);
-    }
-
-    function startMurmur() {
-      if (murmurCtx || grounded || isSafe()) return;
-      murmurCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const sides = [-0.7, 0.65, -0.35];
-      sides.forEach((pan, i) => {
-        const osc = murmurCtx.createOscillator();
-        const gain = murmurCtx.createGain();
-        const panner = murmurCtx.createStereoPanner();
-        osc.type = "sine";
-        osc.frequency.value = 110 + i * 37;
-        gain.gain.value = 0.012;
-        panner.pan.value = pan;
-        osc.connect(gain).connect(panner).connect(murmurCtx.destination);
-        osc.start();
-        murmurNodes.push({ osc, gain, panner });
-      });
-    }
-
-    function stopMurmur() {
-      murmurNodes.forEach((n) => {
-        try { n.osc.stop(); } catch (_) {}
-      });
-      murmurNodes = [];
-      if (murmurCtx) {
-        murmurCtx.close();
-        murmurCtx = null;
-      }
-    }
-
-    function speakLine() {
+    function speak() {
       if (!voicesOn || grounded) return;
-
-      if (Math.random() > 0.35) speechSynthesis.cancel();
-
-      const text = VOICE_LINES[Math.floor(Math.random() * VOICE_LINES.length)];
-      const side = SIDES[Math.floor(Math.random() * SIDES.length)];
-      showCaption(text, side);
-
-      const utter = new SpeechSynthesisUtterance(text);
-      if (voices.length) {
-        utter.voice = voices[Math.floor(Math.random() * voices.length)];
-      }
-      utter.rate = 0.82 + Math.random() * 0.38;
-      utter.pitch = 0.65 + Math.random() * 0.55;
-      utter.volume = isSafe() ? 0.35 : 0.5 + Math.random() * 0.35;
-
-      updateLoad(true);
-      utter.onend = () => updateLoad(false);
-      utter.onerror = () => updateLoad(false);
-
-      speechSynthesis.speak(utter);
-      heard++;
-      document.getElementById("loadSide").textContent = "Spatial mix: " + side;
-      updateLoad(true);
+      const t = LINES[Math.floor(Math.random() * LINES.length)];
+      const cap = document.createElement("div");
+      cap.className = "sz-voice-caption";
+      cap.style.left = (10 + Math.random() * 50) + "%";
+      cap.style.top = (10 + Math.random() * 60) + "%";
+      cap.textContent = "“" + t + "”";
+      document.getElementById("voiceLayer").appendChild(cap);
+      const u = new SpeechSynthesisUtterance(t);
+      u.volume = window.chromaSeizureSafe?.() ? 0.3 : 0.55;
+      speechSynthesis.speak(u);
+      setTimeout(() => cap.remove(), 3500);
     }
 
-    function scheduleVoices() {
-      clearInterval(voiceTimer);
-      if (!voicesOn || grounded) return;
-      const gap = isSafe() ? 5200 : 2200 + Math.random() * 2400;
-      voiceTimer = setInterval(speakLine, gap);
-    }
-
-    function startVoices() {
+    document.getElementById("startVoices").onclick = () => {
       voicesOn = true;
-      document.getElementById("startBtn").textContent = "Voices running";
-      document.getElementById("startBtn").disabled = true;
-      document.getElementById("modeBadge").textContent = "Challenge mode: voices active";
-      document.getElementById("taskHint").textContent =
-        "Spoken voices comment and interrupt. See if you can still answer the reading question.";
-      startMurmur();
-      speakLine();
-      scheduleVoices();
-    }
-
-    function setGrounding(on) {
-      grounded = on;
-      field.classList.toggle("grounded", on);
-      document.getElementById("groundPanel").classList.toggle("sz-hidden", !on);
-      document.getElementById("anchor").classList.toggle("sz-hidden", !on);
-      document.getElementById("anchor").classList.toggle("pulse", on);
-      document.getElementById("anchorBtn").textContent = on ? "Return to Challenge Mode" : "Activate Grounding Pivot";
-      document.getElementById("modeBadge").textContent = on
-        ? "Grounding pivot: voices muted"
-        : voicesOn ? "Challenge mode: voices active" : "Voices off";
-      document.getElementById("loadAnchor").textContent = "Anchor pulse: " + (on ? "on" : "off");
-      document.getElementById("taskHint").textContent = on
-        ? "Voices are quiet. Use the anchor pulse and 5-4-3-2-1 checklist to steady focus."
-        : "Spoken voices comment and interrupt. See if you can still answer the reading question.";
-
-      if (on) {
-        speechSynthesis.cancel();
-        clearInterval(voiceTimer);
-        stopMurmur();
-        voiceLayer.innerHTML = "";
-        updateLoad(false);
-      } else if (voicesOn) {
-        startMurmur();
-        scheduleVoices();
-        setTimeout(speakLine, 1200);
-      }
-    }
-
-    document.getElementById("startBtn").onclick = () => {
-      startVoices();
+      document.getElementById("voiceBadge").textContent = "Voices on";
+      speak();
+      timer = setInterval(speak, window.chromaSeizureSafe?.() ? 5000 : 2800);
+    };
+    document.getElementById("groundBtn").onclick = () => {
+      grounded = !grounded;
+      if (grounded) { clearInterval(timer); speechSynthesis.cancel(); document.getElementById("voiceLayer").innerHTML = ""; }
+      else if (voicesOn) timer = setInterval(speak, 2800);
+      document.getElementById("groundBtn").textContent = grounded ? "Exit grounding" : "Grounding pivot";
     };
 
-    document.getElementById("anchorBtn").onclick = () => setGrounding(!grounded);
-
-    document.getElementById("checkBtn").onclick = () => {
-      const val = document.getElementById("answerInput").value.trim().toLowerCase();
-      const result = document.getElementById("taskResult");
-      if (!val) {
-        result.textContent = "Type an answer";
-        return;
-      }
-      if (val === "blue") {
-        result.textContent = grounded ? "Correct — grounding helped" : "Correct — despite the voices";
-      } else {
-        result.textContent = "Not quite — voices may have broken focus";
-        if (voicesOn && !grounded) speakLine();
+    document.getElementById("photoUpload").onchange = (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      const img = document.getElementById("uploadPreview");
+      img.src = url;
+      img.style.display = "block";
+      document.getElementById("visualPlaceholder").hidden = true;
+      const layer = document.getElementById("hallucinationLayer");
+      layer.innerHTML = "";
+      for (let i = 0; i < 3; i++) {
+        const h = document.createElement("img");
+        h.src = url;
+        h.className = "cs-hallucination-img";
+        h.style.left = (15 + i * 28) + "%";
+        h.style.top = (20 + i * 15) + "%";
+        layer.appendChild(h);
       }
     };
 
-    document.querySelectorAll(".g-step").forEach((box) => {
-      box.addEventListener("change", () => {
-        const done = [...document.querySelectorAll(".g-step")].every((b) => b.checked);
-        if (done) document.getElementById("taskResult").textContent = "Grounded — attention steadied";
+    const DELUSION_TREE = {
+      start: { text: "You notice a coworker whispering. What do you think?", choices: [
+        { label: "Probably unrelated", next: "mild" },
+        { label: "Maybe about the project", next: "mid" },
+        { label: "They're plotting against me", next: "high" },
+      ]},
+      mild: { text: "You feel uneasy anyway. A door closes down the hall.", choices: [
+        { label: "Ignore it", next: "end_ok" },
+        { label: "They planned that sound", next: "mid" },
+      ]},
+      mid: { text: "Your phone buzzes with no message. Coincidence?", choices: [
+        { label: "Glitch", next: "mild" },
+        { label: "They're monitoring my screen", next: "high" },
+      ]},
+      high: { text: "The pattern is obvious now. Everyone knows. The building feels hostile.", choices: [
+        { label: "I need to leave", next: "end_bad" },
+        { label: "It's all connected", next: "end_bad" },
+      ]},
+      end_ok: { text: "You ground yourself. The whisper might have been nothing.", choices: [] },
+      end_bad: { text: "Thoughts spiral — relief only comes with support, grounding, or care. This sim stops here.", choices: [] },
+    };
+    let node = "start";
+    function renderDelusion() {
+      const n = DELUSION_TREE[node];
+      document.getElementById("delusionPrompt").textContent = n.text;
+      const box = document.getElementById("delusionChoices");
+      box.innerHTML = "";
+      n.choices.forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cs-choice-btn" + (c.next === "high" || c.next === "end_bad" ? " intense" : "");
+        b.textContent = c.label;
+        b.onclick = () => {
+          node = c.next;
+          document.getElementById("delusionLog").textContent = "Path depth: " + (c.next.includes("high") || c.next.includes("bad") ? "high" : "building");
+          renderDelusion();
+        };
+        box.appendChild(b);
       });
-    });
-
-    updateLoad(false);
-
-    document.addEventListener("chroma-seizure-safe-change", (e) => {
-      if (e.detail.enabled) {
-        speechSynthesis.cancel();
-        clearInterval(voiceTimer);
-        stopMurmur();
-        voiceLayer.innerHTML = "";
-        updateLoad(false);
-      } else if (voicesOn && !grounded) {
-        scheduleVoices();
-      }
-    });
+    }
+    renderDelusion();
+    document.getElementById("delusionReset").onclick = () => { node = "start"; renderDelusion(); document.getElementById("delusionLog").textContent = ""; };
   </script>
 </body>
 </html>

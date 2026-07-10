@@ -7,466 +7,163 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
-      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
-      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
-      window.chromaSeizureSafe = function () {
-        return document.documentElement.getAttribute("data-seizure-safe") === "true";
-      };
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADHD Experience — ChromaSim</title>
+  <title>ADHD — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
   <style>
-    .adhd-workspace {
-      position: relative;
-      min-height: 320px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--bg-surface);
-      padding: 1rem;
-      overflow: hidden;
-    }
-    .adhd-workspace.masked .adhd-step:not(.active) {
-      opacity: 0.35;
-      pointer-events: none;
-    }
-    .adhd-step {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.85rem;
-      margin-bottom: 0.75rem;
-      background: var(--bg-elevated);
-      transition: opacity 0.2s ease, box-shadow 0.2s ease;
-    }
-    .adhd-step.active {
-      box-shadow: 0 0 0 2px var(--chroma-teal);
-    }
-    .adhd-step.done {
-      border-color: var(--chroma-green);
-    }
-    .adhd-input {
-      width: 100%;
-      margin-top: 0.45rem;
-      padding: 0.65rem 0.8rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      font: inherit;
-    }
-    .adhd-popup-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 20;
-    }
-    .adhd-popup {
-      position: absolute;
-      pointer-events: auto;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg-card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
-      padding: 0.7rem 0.85rem;
-      max-width: 240px;
-      font-size: 0.88rem;
-      line-height: 1.35;
-      animation: adhdPop 0.25s ease;
-    }
-    @keyframes adhdPop {
-      from { transform: scale(0.92); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    [data-seizure-safe="true"] .adhd-popup {
-      animation: none;
-    }
-    .adhd-popup.toast {
-      bottom: 12px;
-      right: 12px;
-      border-left: 4px solid var(--chroma-orange);
-    }
-    .adhd-popup.modal {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 280px;
-      z-index: 30;
-    }
-    [data-seizure-safe="true"] .adhd-popup.modal {
-      transform: translate(-50%, -50%);
-    }
-    .adhd-popup.thought {
-      top: 18%;
-      left: 8%;
-      border-style: dashed;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-    .adhd-popup.banner {
-      top: 0;
-      left: 0;
-      right: 0;
-      max-width: none;
-      border-radius: 0 0 10px 10px;
-      background: linear-gradient(90deg, var(--chroma-magenta), var(--chroma-indigo));
-      color: #fff;
-      text-align: center;
-    }
-    .adhd-popup-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
-      font-weight: 700;
-      font-size: 0.8rem;
-    }
-    .adhd-popup-close {
-      border: none;
-      background: transparent;
-      color: inherit;
-      cursor: pointer;
-      font-size: 1rem;
-      line-height: 1;
-      padding: 0;
-    }
-    .adhd-popup-actions {
-      display: flex;
-      gap: 0.4rem;
-      margin-top: 0.55rem;
-      flex-wrap: wrap;
-    }
-    .adhd-popup-btn {
-      border: 1px solid var(--border);
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      border-radius: 6px;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-    .adhd-meter-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.75rem;
-    }
-    .adhd-shield {
-      border: 1px dashed var(--chroma-teal);
-      border-radius: 10px;
-      padding: 0.75rem;
-      background: color-mix(in srgb, var(--chroma-teal) 8%, var(--bg-elevated));
-    }
-    .adhd-hidden { display: none !important; }
+    .adhd-workspace { position:relative;min-height:280px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-surface);padding:1rem;overflow:hidden; }
+    .adhd-workspace.masked .adhd-step:not(.active) { opacity:0.35;pointer-events:none; }
+    .adhd-step { border:1px solid var(--border);border-radius:10px;padding:0.85rem;margin-bottom:0.65rem;background:var(--bg-elevated); }
+    .adhd-step.active { box-shadow:0 0 0 2px var(--chroma-teal); }
+    .adhd-popup-layer { position:absolute;inset:0;pointer-events:none;z-index:20; }
+    .adhd-popup { position:absolute;pointer-events:auto;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);box-shadow:0 8px 28px rgba(0,0,0,.28);padding:0.7rem;max-width:220px;font-size:0.85rem; }
+    .adhd-popup-head { display:flex;justify-content:space-between;font-weight:700;font-size:0.78rem;margin-bottom:0.3rem; }
+    .adhd-popup-close { border:none;background:transparent;cursor:pointer;font-size:1rem; }
+    .adhd-alert-missed { border-left:3px solid var(--chroma-magenta);padding:0.4rem 0.6rem;margin-bottom:0.4rem;font-size:0.84rem;background:var(--bg-elevated);opacity:0.5;text-decoration:line-through; }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44">
-        <img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44">
-        <span class="logo-text">Chroma Hub International</span>
-      </a>
-      <nav class="site-nav">
-        <ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul>
-      </nav>
-    </div>
-  </header>
-
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
   <main id="main">
-    <header class="page-header pillar-digital">
-      <div class="container">
-        <h1>ADHD: Dynamic Pacing &amp; Interest-Driven Flow</h1>
-        <p>Try to finish a simple three-step task while pop-up distractions compete for attention. The focus pivot quiets the noise so one step stays in view.</p>
-        <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
-      </div>
-    </header>
+    <header class="page-header pillar-digital"><div class="container"><h1>ADHD</h1><p>Distractions, hyperfocus traps, and forgotten alerts — with a focus pivot that quiets the noise.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="distract" aria-selected="true">Distractions</button>
+          <button type="button" class="cs-tab" data-cs-tab="hyper" aria-selected="false">Hyperfocus</button>
+          <button type="button" class="cs-tab" data-cs-tab="forget" aria-selected="false">Forgetting</button>
+        </div>
 
-    <section class="section">
-      <div class="container">
-        <div class="experience-shell">
+        <div class="cs-panel active" data-cs-panel="distract">
           <div class="experience-controls">
-            <button id="maskBtn" class="btn btn-primary">Activate Focus Pivot</button>
-            <button id="saveBtn" class="btn btn-secondary">Save Checkpoint</button>
-            <span id="adhdState" class="xp-badge">Challenge mode: pop-ups active</span>
+            <button id="maskBtn" class="btn btn-primary">Focus pivot</button>
             <span id="distractionBadge" class="xp-badge">Distractions: 0</span>
           </div>
-
-          <div class="experience-grid">
-            <div class="experience-panel">
-              <h3>Your Task: Finish Before You Forget</h3>
-              <p class="muted-note" id="taskHint">Pop-ups will interrupt you. Closing them still costs attention — the task keeps waiting.</p>
-              <div class="adhd-meter-row">
-                <span id="progressBadge" class="xp-badge">Progress: 0 / 3</span>
-                <span id="interruptBadge" class="xp-badge">Interruptions: 0</span>
-              </div>
-
-              <div id="workspace" class="adhd-workspace">
-                <div class="adhd-popup-layer" id="popupLayer" aria-live="polite"></div>
-
-                <div class="adhd-step active" data-step="1">
-                  <strong>Step 1:</strong> Name today&apos;s goal
-                  <input id="goalInput" class="adhd-input" type="text" placeholder="e.g. finish this form" maxlength="80">
-                </div>
-                <div class="adhd-step" data-step="2">
-                  <strong>Step 2:</strong> Write one sentence about why it matters
-                  <input id="whyInput" class="adhd-input" type="text" placeholder="Because..." maxlength="120">
-                </div>
-                <div class="adhd-step" data-step="3">
-                  <strong>Step 3:</strong> Mark complete
-                  <div class="experience-controls" style="margin-top:0.55rem;">
-                    <button id="completeBtn" class="btn btn-secondary">Mark task done</button>
-                    <span id="taskFeedback" class="xp-badge">Not finished</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="experience-panel">
-              <h3>Attention Load</h3>
-              <p class="muted-note">How much competing input is pulling focus away from the task.</p>
-              <div class="bar-meter"><div id="loadFill" class="bar-meter-fill" style="width:12%"></div></div>
-              <ul class="feature-list" style="margin-top:0.75rem;">
-                <li id="loadOpen">Open pop-ups: 0</li>
-                <li id="loadRate">Spawn rate: high</li>
-                <li id="loadFocus">Single-step focus: off</li>
-              </ul>
-
-              <div id="pivotShield" class="adhd-shield adhd-hidden" style="margin-top:0.85rem;">
-                <strong>Focus pivot active</strong>
-                <p class="muted-note" style="margin:0.35rem 0 0;">New distractions are blocked. One step stays highlighted. Save your checkpoint anytime.</p>
-              </div>
-
-              <p id="status" class="muted-note" style="margin-top:0.85rem;">No checkpoint saved yet.</p>
-            </div>
+          <div id="workspace" class="adhd-workspace" style="margin-top:0.65rem;">
+            <div id="popupLayer" class="adhd-popup-layer"></div>
+            <div class="adhd-step active" data-step="1"><strong>Step 1:</strong> Name your goal<input id="goalInput" class="cs-input" type="text" placeholder="e.g. finish this form"></div>
+            <div class="adhd-step" data-step="2"><strong>Step 2:</strong> Why it matters<input id="whyInput" class="cs-input" type="text" placeholder="Because…"></div>
+            <div class="adhd-step" data-step="3"><button id="completeBtn" class="btn btn-secondary">Mark done</button></div>
           </div>
         </div>
+
+        <div class="cs-panel" data-cs-panel="hyper" hidden>
+          <p class="muted-note">A &quot;quick video&quot; becomes a trap — no obvious escape unless you find the hidden PIN.</p>
+          <button id="openHyper" class="btn btn-primary">Open recommended video</button>
+          <p class="muted-note" style="margin-top:0.5rem;">Hint: PIN digits may hide in plain sight on this page.</p>
+          <button id="pinClue" type="button" class="cs-hyper-pin" style="bottom:12px;left:12px;" title="">4</button>
+          <button type="button" class="cs-hyper-pin" style="top:120px;right:8px;" title="">7</button>
+          <button type="button" class="cs-hyper-pin" style="bottom:48px;right:24px;" title="">2</button>
+          <button type="button" class="cs-hyper-pin" style="top:200px;left:40%;" title="">9</button>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="forget" hidden>
+          <p class="muted-note">Missed alerts stack. Emotional bandwidth drains as you try to catch up.</p>
+          <div class="cs-energy-bar"><div id="bandwidthFill" class="cs-energy-fill" style="width:100%"></div></div>
+          <p id="bandwidthLabel" class="muted-note">Emotional bandwidth: 100%</p>
+          <div id="missedAlerts"></div>
+          <button id="dismissMissed" class="btn btn-secondary" style="margin-top:0.5rem;">Try to catch up</button>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Body doubling, timers, single-task mode, notification batching, and written instructions protect executive function.</div>
       </div>
-    </section>
+    </div></section>
   </main>
 
+  <div id="hyperOverlay" class="cs-hyper-overlay" hidden>
+    <div class="cs-hyper-player">
+      <p style="color:#fff;padding:1rem;margin:0;">10-HOUR productivity deep dive (you cannot skip)</p>
+      <div class="cs-hyper-bar"><div id="hyperProgress" class="cs-hyper-progress"></div></div>
+    </div>
+    <div class="cs-hyper-modal" style="margin-top:1rem;">
+      <p>Enter PIN to exit</p>
+      <input id="pinInput" class="cs-input" type="text" maxlength="4" placeholder="PIN" style="max-width:120px;margin:0 auto;">
+      <button id="pinSubmit" class="btn btn-primary" style="margin-top:0.5rem;">Unlock</button>
+      <p id="pinMsg" class="muted-note" style="margin-top:0.35rem;"></p>
+    </div>
+  </div>
+
   <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
   <script>
     const POPUPS = [
-      { type: "toast", title: "New message", body: "Hey — quick question?", actions: ["Open", "Later"] },
-      { type: "toast", title: "Reminder", body: "Did you remember to reply?", actions: ["Yes", "Dismiss"] },
-      { type: "modal", title: "Wait —", body: "What were you doing again?", actions: ["Back to task", "Not sure"] },
-      { type: "modal", title: "URGENT", body: "(nothing actually urgent)", actions: ["OK", "Snooze"] },
-      { type: "thought", title: "Intrusive thought", body: "That embarrassing thing from years ago.", actions: ["Ignore"] },
-      { type: "thought", title: "New idea", body: "You should reorganize your entire desk right now.", actions: ["Do it", "Later"] },
-      { type: "banner", title: "Tab switch", body: "Wikipedia rabbit hole opened in another tab.", actions: ["Go look", "Stay here"] },
-      { type: "toast", title: "App update", body: "Restart now for tiny fixes.", actions: ["Restart", "Not now"] },
-      { type: "modal", title: "Quick break?", body: "You've been working for… some amount of time.", actions: ["Break", "Keep going"] },
-      { type: "toast", title: "Social", body: "Someone liked your post from last month.", actions: ["View", "Dismiss"] },
-      { type: "thought", title: "Hyperfocus bait", body: "This one tiny detail could be researched for hours.", actions: ["Research", "Skip"] },
-      { type: "banner", title: "Notification flood", body: "12 unread items just arrived.", actions: ["Check all", "Mute"] }
+      { title: "New message", body: "Quick question?" },
+      { title: "Reminder", body: "Did you reply yet?" },
+      { title: "URGENT", body: "(not actually urgent)" },
+      { title: "New idea", body: "Reorganize your entire desk NOW." },
+      { title: "Tab switch", body: "Wikipedia rabbit hole opened." },
     ];
-
-    let masking = false;
-    let distractions = 0;
-    let interruptions = 0;
-    let openPopups = 0;
-    let completedSteps = 0;
-    let spawnTimer = null;
-    let activeStep = 1;
-
-    function isSafe() {
-      return window.chromaSeizureSafe?.();
-    }
-
+    let masking = false, distractions = 0, spawnTimer = null;
     const popupLayer = document.getElementById("popupLayer");
     const workspace = document.getElementById("workspace");
-    const loadFill = document.getElementById("loadFill");
-    const steps = [...document.querySelectorAll(".adhd-step")];
-
-    function updateLoad() {
-      const load = Math.min(100, openPopups * 18 + distractions * 4);
-      loadFill.style.width = load + "%";
-      document.getElementById("loadOpen").textContent = "Open pop-ups: " + openPopups;
-      document.getElementById("distractionBadge").textContent = "Distractions: " + distractions;
-      document.getElementById("interruptBadge").textContent = "Interruptions: " + interruptions;
-      document.getElementById("progressBadge").textContent = "Progress: " + completedSteps + " / 3";
-    }
-
-    function setActiveStep(n) {
-      activeStep = n;
-      steps.forEach((s) => {
-        const stepNum = +s.dataset.step;
-        s.classList.toggle("active", masking && stepNum === n);
-      });
-    }
-
-    function closePopup(el, counted) {
-      if (el && el.parentNode) el.parentNode.removeChild(el);
-      openPopups = Math.max(0, openPopups - 1);
-      if (counted) interruptions++;
-      updateLoad();
-    }
 
     function spawnPopup() {
-      if (masking) return;
-      const data = POPUPS[Math.floor(Math.random() * POPUPS.length)];
+      if (masking || window.chromaSeizureSafe?.()) return;
       distractions++;
-
-      while (popupLayer.children.length >= 5) {
-        closePopup(popupLayer.firstElementChild, false);
-      }
-
+      document.getElementById("distractionBadge").textContent = "Distractions: " + distractions;
+      const d = POPUPS[Math.floor(Math.random() * POPUPS.length)];
       const el = document.createElement("div");
-      el.className = "adhd-popup " + data.type;
-      el.setAttribute("role", "dialog");
-
-      const head = document.createElement("div");
-      head.className = "adhd-popup-head";
-      head.innerHTML = "<span>" + data.title + "</span>";
-      const close = document.createElement("button");
-      close.className = "adhd-popup-close";
-      close.type = "button";
-      close.setAttribute("aria-label", "Close");
-      close.textContent = "×";
-      close.onclick = () => closePopup(el, true);
-      head.appendChild(close);
-
-      const body = document.createElement("p");
-      body.style.margin = "0";
-      body.textContent = data.body;
-
-      const actions = document.createElement("div");
-      actions.className = "adhd-popup-actions";
-      data.actions.forEach((label) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "adhd-popup-btn";
-        btn.textContent = label;
-        btn.onclick = () => closePopup(el, true);
-        actions.appendChild(btn);
-      });
-
-      el.append(head, body, actions);
-
-      if (data.type !== "banner" && data.type !== "modal") {
-        const maxX = Math.max(20, workspace.clientWidth - 260);
-        const maxY = Math.max(20, workspace.clientHeight - 120);
-        el.style.left = Math.floor(Math.random() * maxX) + "px";
-        el.style.top = Math.floor(Math.random() * maxY) + "px";
-      }
-
+      el.className = "adhd-popup";
+      el.style.left = Math.random() * 120 + "px";
+      el.style.top = Math.random() * 80 + "px";
+      el.innerHTML = '<div class="adhd-popup-head"><span>' + d.title + '</span><button type="button" class="adhd-popup-close">×</button></div><p style="margin:0">' + d.body + '</p>';
+      el.querySelector(".adhd-popup-close").onclick = () => el.remove();
       popupLayer.appendChild(el);
-      openPopups++;
-      updateLoad();
-
-      if (!isSafe() && Math.random() > 0.55) {
-        setTimeout(() => {
-          if (el.parentNode && !masking) closePopup(el, false);
-        }, 2800 + Math.random() * 2200);
-      }
     }
 
     function startSpawning() {
       clearInterval(spawnTimer);
-      if (masking) {
-        document.getElementById("loadRate").textContent = "Spawn rate: blocked";
-        return;
-      }
-      const base = isSafe() ? 4200 : 1600;
-      document.getElementById("loadRate").textContent = isSafe() ? "Spawn rate: reduced" : "Spawn rate: high";
-      spawnTimer = setInterval(spawnPopup, base);
+      if (masking) return;
+      spawnTimer = setInterval(spawnPopup, window.chromaSeizureSafe?.() ? 4500 : 1800);
     }
 
-    function clearPopups() {
-      popupLayer.innerHTML = "";
-      openPopups = 0;
-      updateLoad();
-    }
-
-    function checkProgress() {
-      const goal = document.getElementById("goalInput").value.trim();
-      const why = document.getElementById("whyInput").value.trim();
-      completedSteps = 0;
-      if (goal.length >= 3) {
-        completedSteps++;
-        steps[0].classList.add("done");
-      } else {
-        steps[0].classList.remove("done");
-      }
-      if (why.length >= 8) {
-        completedSteps++;
-        steps[1].classList.add("done");
-      } else {
-        steps[1].classList.remove("done");
-      }
-      if (completedSteps === 2) setActiveStep(3);
-      else if (completedSteps === 1) setActiveStep(2);
-      else setActiveStep(1);
-      updateLoad();
-    }
-
-    function setMode(on) {
-      masking = on;
-      workspace.classList.toggle("masked", on);
-      document.getElementById("pivotShield").classList.toggle("adhd-hidden", !on);
-      document.getElementById("maskBtn").textContent = on ? "Return to Challenge Mode" : "Activate Focus Pivot";
-      document.getElementById("adhdState").textContent = on
-        ? "Inclusive pivot: distractions blocked"
-        : "Challenge mode: pop-ups active";
-      document.getElementById("taskHint").textContent = on
-        ? "One step at a time. Pop-ups are muted so you can finish the sequence."
-        : "Pop-ups will interrupt you. Closing them still costs attention — the task keeps waiting.";
-      document.getElementById("loadFocus").textContent = "Single-step focus: " + (on ? "on" : "off");
-      if (on) {
-        clearPopups();
-        setActiveStep(activeStep);
-      } else {
-        steps.forEach((s) => s.classList.remove("active"));
-        startSpawning();
-      }
+    document.getElementById("maskBtn").onclick = () => {
+      masking = !masking;
+      workspace.classList.toggle("masked", masking);
+      document.getElementById("maskBtn").textContent = masking ? "Exit focus pivot" : "Focus pivot";
+      if (masking) popupLayer.innerHTML = "";
       startSpawning();
-    }
-
-    document.getElementById("maskBtn").onclick = () => setMode(!masking);
-
-    document.getElementById("saveBtn").onclick = () => {
-      const stamp = "Saved at " + new Date().toLocaleTimeString();
-      localStorage.setItem("chroma-adhd-checkpoint", stamp);
-      document.getElementById("status").textContent = stamp;
-      if (navigator.vibrate) navigator.vibrate([15]);
     };
-
-    document.getElementById("completeBtn").onclick = () => {
-      checkProgress();
-      const fb = document.getElementById("taskFeedback");
-      if (completedSteps < 2) {
-        fb.textContent = "Finish steps 1 and 2 first";
-        interruptions++;
-        spawnPopup();
-        updateLoad();
-        return;
-      }
-      completedSteps = 3;
-      steps[2].classList.add("done");
-      fb.textContent = "Task complete";
-      updateLoad();
-    };
-
-    document.getElementById("goalInput").addEventListener("input", checkProgress);
-    document.getElementById("whyInput").addEventListener("input", checkProgress);
-
-    document.getElementById("status").textContent =
-      localStorage.getItem("chroma-adhd-checkpoint") || "No checkpoint saved yet.";
-
-    setMode(false);
+    startSpawning();
     spawnPopup();
-    setTimeout(spawnPopup, 800);
 
-    document.addEventListener("chroma-seizure-safe-change", (e) => {
-      if (e.detail.enabled) clearPopups();
-      startSpawning();
-    });
+    const PIN = "4729";
+    document.getElementById("openHyper").onclick = () => {
+      document.getElementById("hyperOverlay").hidden = false;
+      let w = 2;
+      setInterval(() => { w = Math.min(98, w + 0.02); document.getElementById("hyperProgress").style.width = w + "%"; }, 200);
+    };
+    document.getElementById("pinSubmit").onclick = () => {
+      const v = document.getElementById("pinInput").value;
+      if (v === PIN) {
+        document.getElementById("hyperOverlay").hidden = true;
+        document.getElementById("pinMsg").textContent = "";
+      } else {
+        document.getElementById("pinMsg").textContent = "Wrong PIN — keep watching or search the page.";
+      }
+    };
+
+    const MISSED = ["Meeting in 5 min (missed)", "Mom called (missed)", "Deadline moved (unread)", "Friend: are you OK? (ignored)", "Doctor reminder (dismissed)"];
+    let bw = 100, mi = 0;
+    function addMissed() {
+      const el = document.createElement("div");
+      el.className = "adhd-alert-missed";
+      el.textContent = MISSED[mi % MISSED.length];
+      document.getElementById("missedAlerts").appendChild(el);
+      mi++;
+      bw = Math.max(8, bw - 18);
+      document.getElementById("bandwidthFill").style.width = bw + "%";
+      document.getElementById("bandwidthLabel").textContent = "Emotional bandwidth: " + bw + "%";
+    }
+    MISSED.slice(0, 2).forEach(addMissed);
+    document.getElementById("dismissMissed").onclick = () => { addMissed(); bw = Math.max(5, bw - 12); };
   </script>
 </body>
 </html>

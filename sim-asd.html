@@ -18,6 +18,7 @@
   <title>ASD Experience — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
   <style>
@@ -224,7 +225,13 @@
 
     <section class="section">
       <div class="container">
-        <div id="asdShell" class="experience-shell">
+        <div id="asdShell" class="experience-shell" data-cs-tabs>
+          <div class="cs-tabs" role="tablist" style="margin-bottom:0.85rem;">
+            <button type="button" class="cs-tab active" data-cs-tab="social" aria-selected="true">Social communication</button>
+            <button type="button" class="cs-tab" data-cs-tab="exec" aria-selected="false">Executive functioning</button>
+          </div>
+
+          <div class="cs-panel active" data-cs-panel="social">
           <div class="asd-how">
             <strong>How this simulation works</strong>
             <ol>
@@ -307,12 +314,22 @@
             <p class="muted-note">Literal steps, muted palette, no decorative motion. One task block visible at a time.</p>
             <p class="muted-note" id="pivotStatus">All three steps use plain language and fixed layout.</p>
           </div>
+          </div>
+
+          <div class="cs-panel" data-cs-panel="exec" hidden>
+            <p class="muted-note">Daily tasks with limited energy — each click costs spoons. You cannot finish everything.</p>
+            <div class="cs-energy-bar"><div id="asdEnergyFill" class="cs-energy-fill" style="width:55%"></div></div>
+            <p id="asdEnergyLabel" class="muted-note">Energy reserve: 55 (not enough for all tasks)</p>
+            <ul class="cs-task-list" id="asdTasks"></ul>
+            <p id="asdExecResult" class="muted-note" style="margin-top:0.65rem;">Complete what you can — the rest waits until tomorrow.</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
   <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
   <script>
     const SYMPTOMS = {
       figurative: "Figurative instruction: metaphor replaces clear task wording",
@@ -621,6 +638,40 @@
       stopChallengeFx();
       if (!pivotOn) startChallengeFx();
       applyBodyFilter();
+    });
+
+    const ASD_TASKS = [
+      { label: "Reply to email", cost: 12 },
+      { label: "Shower", cost: 18 },
+      { label: "Make food", cost: 15 },
+      { label: "Tidy one surface", cost: 10 },
+      { label: "Pay bill", cost: 14 },
+      { label: "Call pharmacy", cost: 22 },
+      { label: "Walk outside", cost: 16 },
+    ];
+    let asdEnergy = 55;
+    const asdList = document.getElementById("asdTasks");
+    ASD_TASKS.forEach((t) => {
+      const li = document.createElement("li");
+      li.innerHTML = "<span>" + t.label + " (−" + t.cost + " energy)</span>";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-secondary btn-sm";
+      btn.textContent = "Do";
+      btn.onclick = () => {
+        if (li.classList.contains("done")) return;
+        if (asdEnergy < t.cost) {
+          document.getElementById("asdExecResult").textContent = "Not enough energy — shutdown or rest needed.";
+          return;
+        }
+        asdEnergy -= t.cost;
+        li.classList.add("done");
+        btn.disabled = true;
+        document.getElementById("asdEnergyFill").style.width = asdEnergy + "%";
+        document.getElementById("asdEnergyLabel").textContent = "Energy reserve: " + asdEnergy;
+      };
+      li.appendChild(btn);
+      asdList.appendChild(li);
     });
   </script>
 </body>

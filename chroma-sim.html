@@ -10,14 +10,14 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ChromaSim — empathy simulation lab for cognitive diversity (placeholder).">
+  <meta name="description" content="ChromaSim — interactive empathy simulations for dyslexia, dyspraxia, dyscalculia, ADHD, ASD, schizophrenia, borderline, and more.">
   <title>ChromaSim — Chroma Hub International</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="emblem.png">
-  <link rel="apple-touch-icon" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
 </head>
@@ -65,36 +65,73 @@
         </nav>
         <span class="pillar-tag">Chroma Digital</span>
         <h1>ChromaSim</h1>
-        <p>An empathy simulation lab that helps people experience the world through different cognitive lenses — and practice inclusive design pivots.</p>
+        <p>Interactive empathy simulations — experience cognitive friction, then practice inclusive design pivots. Use the safety screen and Safe mode for photosensitive content.</p>
         <div class="project-cta" style="margin-top:1.25rem;">
-          <a href="#modules" class="btn btn-primary">View Modules</a>
           <a href="digital.html" class="btn btn-secondary">Back to Digital</a>
         </div>
       </div>
     </header>
 
     <section class="section">
-      <div class="container" style="max-width:720px;">
-        <p class="muted-note" style="margin-bottom:1rem;">This project page is a placeholder. A full overview is coming soon.</p>
-        <div class="value-item">
-          <h4>Status</h4>
-          <p>Early pilot content may already be available. Use the buttons above to open the current experience or return to the pillar page.</p>
+      <div class="container">
+        <div class="sim-grid" id="modules">
+          <article class="sim-card">
+            <span class="sim-kicker">Reading</span>
+            <h3><a href="sim-dyslexia.html">Dyslexia</a></h3>
+            <p>Drifting text, letter confusion, scrambled speech playback.</p>
+            <ul class="feature-list"><li>Drifting text</li><li>Misspelling mirror</li><li>Speech disorganization</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Motor</span>
+            <h3><a href="sim-dyspraxia.html">Dyspraxia</a></h3>
+            <p>Fine motor lag, delayed typing, confusing spatial tables.</p>
+            <ul class="feature-list"><li>Cursor offset</li><li>Sporadic timing</li><li>Visuospatial maps</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Writing</span>
+            <h3><a href="sim-dysgraphia.html">Dysgraphia</a></h3>
+            <p>Motor friction while copying text — letter drift and fatigue.</p>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Numbers</span>
+            <h3><a href="sim-dyscalculia.html">Dyscalculia</a></h3>
+            <p>Symbol swaps and floating equations that break magnitude sense.</p>
+            <ul class="feature-list"><li>Symbol confusion</li><li>Floating maths</li><li>Spatial pivot</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Attention</span>
+            <h3><a href="sim-adhd.html">ADHD</a></h3>
+            <p>Pop-up distractions, hyperfocus trap, missed alerts.</p>
+            <ul class="feature-list"><li>Interactive pop-ups</li><li>Video hyperfocus</li><li>Forgetting / bandwidth</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Autism</span>
+            <h3><a href="sim-asd.html">ASD</a></h3>
+            <p>Figurative social cues and limited energy for daily tasks.</p>
+            <ul class="feature-list"><li>Social communication</li><li>Executive functioning</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Psychosis</span>
+            <h3><a href="sim-schizophrenia.html">Schizophrenia</a></h3>
+            <p>Voices, photo hallucinations, paranoid thought branches.</p>
+            <ul class="feature-list"><li>Auditory layer</li><li>Visual upload</li><li>Delusion paths</li></ul>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Emotion</span>
+            <h3><a href="sim-borderline.html">Borderline</a></h3>
+            <p>Reactivity, splitting, black-and-white thinking, abandonment fear.</p>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Face</span>
+            <h3><a href="sim-prosopagnosia.html">Prosopagnosia</a></h3>
+            <p>Identity through context instead of facial recognition.</p>
+          </article>
+          <article class="sim-card">
+            <span class="sim-kicker">Sensory</span>
+            <h3><a href="sim-synesthesia.html">Synesthesia</a></h3>
+            <p>Cross-modal color and sound from text input.</p>
+          </article>
         </div>
-
-        <div class="value-item" id="modules" style="margin-top:1rem;">
-          <h4>Simulation modules</h4>
-          <ul class="feature-list">
-            <li><a href="sim-dyslexia.html">Dyslexia</a></li>
-            <li><a href="sim-dysgraphia.html">Dysgraphia</a></li>
-            <li><a href="sim-dyscalculia.html">Dyscalculia</a></li>
-            <li><a href="sim-adhd.html">ADHD</a></li>
-            <li><a href="sim-asd.html">ASD</a></li>
-            <li><a href="sim-schizophrenia.html">Schizophrenia</a></li>
-            <li><a href="sim-prosopagnosia.html">Prosopagnosia</a></li>
-            <li><a href="sim-synesthesia.html">Synesthesia</a></li>
-          </ul>
-        </div>
-
       </div>
     </section>
   </main>
@@ -126,6 +163,7 @@
             <li><a href="about.html#values">Values</a></li>
             <li><a href="https://forms.gle/uxj8MjCKuXfVK2XB7" target="_blank" rel="noopener noreferrer">Apply</a></li>
             <li><a href="contact.html">Contact</a></li>
+            <li><a href="https://www.linkedin.com/in/chroma-hub-international" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
           </ul>
         </div>
         <div class="footer-col">
