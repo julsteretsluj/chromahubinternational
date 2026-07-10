@@ -21,6 +21,25 @@
     .sz-field { position:relative;min-height:280px;border:1px solid var(--border);border-radius:12px;background:var(--bg-surface);padding:1rem;overflow:hidden; }
     .sz-voice-layer { position:absolute;inset:0;pointer-events:none;z-index:5; }
     .sz-voice-caption { position:absolute;max-width:180px;padding:0.45rem;border-radius:8px;font-size:0.82rem;background:color-mix(in srgb,var(--chroma-magenta) 18%,var(--bg-card));border:1px solid var(--border); }
+    .sz-shell { position:relative;overflow:hidden; }
+    .sz-shell > .cs-redo-bar,
+    .sz-shell > .cs-tabs,
+    .sz-shell > .cs-panel,
+    .sz-shell > .cs-pivot { position:relative;z-index:2; }
+    .sz-global-hallucinations { z-index:3; }
+    .sz-visual-delusion {
+      position:absolute;
+      max-width:200px;
+      padding:0.4rem 0.55rem;
+      border-radius:8px;
+      font-size:0.8rem;
+      font-style:italic;
+      color:var(--chroma-magenta);
+      background:color-mix(in srgb,var(--chroma-magenta) 12%,transparent);
+      border:1px dashed color-mix(in srgb,var(--chroma-magenta) 40%,var(--border));
+      pointer-events:none;
+      animation:csHallucinate 5s ease-in-out infinite alternate;
+    }
   </style>
 </head>
 <body>
@@ -29,11 +48,14 @@
     <header class="page-header pillar-digital"><div class="container"><h1>Schizophrenia</h1><p>Auditory voices, visual distortions on photos, and delusional thought branches — with grounding pivots.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
     <section class="section"><div class="container">
       <div class="cs-warn"><strong>Content note:</strong> Intrusive audio and visual effects. Use low volume. Stop anytime.</div>
-      <div class="experience-shell" data-cs-tabs>
+      <div class="experience-shell sz-shell" data-cs-tabs>
+        <div id="szGlobalHallucinationLayer" class="cs-hallucination-layer sz-global-hallucinations" aria-hidden="true"></div>
         <div class="cs-redo-bar">
           <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
-          <p class="cs-redo-hint muted-note">Different voices, visual overlays, and delusion paths.</p>
+          <button type="button" id="visualGround" class="btn btn-secondary">Visual grounding</button>
+          <p class="cs-redo-hint muted-note">Visual delusions follow you across every tab until grounded.</p>
           <span id="szProgress" class="xp-badge">Tasks: 0 / 3 complete</span>
+          <span id="visualTaskBadge" class="xp-badge">Visual: active</span>
         </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="audio" aria-selected="true">Auditory</button>
@@ -61,18 +83,13 @@
         </div>
 
         <div class="cs-panel" data-cs-panel="visual" hidden>
-          <p class="muted-note">Upload a photo — overlays simulate visual hallucinations on familiar images. Use grounding to see the real picture again.</p>
+          <p class="muted-note">Upload a photo — the same visual delusions that appear on every tab will use your image. Use <strong>Visual grounding</strong> above to clear overlays everywhere.</p>
           <input id="photoUpload" type="file" accept="image/*" class="cs-input">
-          <div class="experience-controls" style="margin-top:0.65rem;">
-            <button type="button" id="visualGround" class="btn btn-secondary" disabled>Grounding pivot — show real image</button>
-            <span id="visualTaskBadge" class="xp-badge">Not complete</span>
-          </div>
           <div id="visualField" class="sz-field" style="margin-top:0.65rem;min-height:240px;">
-            <div id="hallucinationLayer" class="cs-hallucination-layer"></div>
-            <p id="visualPlaceholder" class="muted-note" style="margin:0;">No image yet</p>
+            <p id="visualPlaceholder" class="muted-note" style="margin:0;">No upload yet — default delusions use the site emblem across all tabs.</p>
             <img id="uploadPreview" alt="" style="max-width:100%;display:none;border-radius:8px;position:relative;z-index:2;">
           </div>
-          <p id="visualResult" class="muted-note" style="margin-top:0.65rem;">Upload a photo, then use grounding to complete this task.</p>
+          <p id="visualResult" class="muted-note" style="margin-top:0.65rem;">Switch tabs — the overlays stay with you until you ground.</p>
         </div>
 
         <div class="cs-panel" data-cs-panel="delusion" hidden>
@@ -127,7 +144,18 @@
         answers: ["quarter past six", "6:15", "6.15", "6 15", "six fifteen", "6:15pm", "6.15pm"],
       },
     ];
+    const VISUAL_DELUSIONS = [
+      "Someone's behind you.",
+      "Face in the corner.",
+      "That wasn't there before.",
+      "They're watching from the hall.",
+      "Shadow moved on its own.",
+      "Do you see them too?",
+    ];
+    const DEFAULT_VISUAL_SRC = "emblem.png";
     let voicesOn = false, grounded = false, timer = null;
+    let hallTimer = null;
+    let hallUrl = DEFAULT_VISUAL_SRC;
     let readIdx = 0;
     let audioDone = false;
     let visualDone = false;
@@ -173,9 +201,64 @@
 
     function setVisualComplete() {
       visualDone = true;
-      document.getElementById("visualTaskBadge").textContent = "Complete";
+      document.getElementById("visualTaskBadge").textContent = "Visual: grounded";
       document.getElementById("visualGround").disabled = true;
       updateOverallProgress();
+    }
+
+    function setVisualActive() {
+      visualDone = false;
+      document.getElementById("visualTaskBadge").textContent = "Visual: active";
+      document.getElementById("visualGround").disabled = false;
+      updateOverallProgress();
+    }
+
+    function renderGlobalHallucinations() {
+      if (visualGrounded || window.chromaSeizureSafe?.()) return;
+      const layer = document.getElementById("szGlobalHallucinationLayer");
+      layer.innerHTML = "";
+      const count = CS.randInt(3, 6);
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement("img");
+        h.src = hallUrl;
+        h.alt = "";
+        h.className = "cs-hallucination-img";
+        h.style.left = CS.randInt(2, 72) + "%";
+        h.style.top = CS.randInt(4, 68) + "%";
+        h.style.transform = "rotate(" + CS.randInt(-22, 22) + "deg) scale(" + (0.55 + Math.random() * 0.55).toFixed(2) + ")";
+        layer.appendChild(h);
+      }
+      const captions = CS.randInt(1, 3);
+      for (let i = 0; i < captions; i++) {
+        const cap = document.createElement("div");
+        cap.className = "sz-visual-delusion";
+        cap.textContent = CS.pick(VISUAL_DELUSIONS);
+        cap.style.left = CS.randInt(4, 62) + "%";
+        cap.style.top = CS.randInt(8, 72) + "%";
+        layer.appendChild(cap);
+      }
+    }
+
+    function startVisualDelusions(url) {
+      if (window.chromaSeizureSafe?.()) {
+        document.getElementById("szGlobalHallucinationLayer").innerHTML = "";
+        return;
+      }
+      hallUrl = url || DEFAULT_VISUAL_SRC;
+      visualGrounded = false;
+      setVisualActive();
+      renderGlobalHallucinations();
+      clearInterval(hallTimer);
+      hallTimer = setInterval(renderGlobalHallucinations, CS.randInt(3800, 6200));
+    }
+
+    function groundVisualDelusions() {
+      visualGrounded = true;
+      clearInterval(hallTimer);
+      document.getElementById("szGlobalHallucinationLayer").innerHTML = "";
+      document.getElementById("visualResult").textContent =
+        "Grounded — visual delusions cleared on every tab.";
+      if (!visualDone) setVisualComplete();
     }
 
     function setDelusionComplete(kind) {
@@ -190,6 +273,16 @@
 
     renderReadTask();
     updateOverallProgress();
+    startVisualDelusions(DEFAULT_VISUAL_SRC);
+
+    document.addEventListener("chroma-seizure-safe-change", () => {
+      if (window.chromaSeizureSafe?.()) {
+        clearInterval(hallTimer);
+        document.getElementById("szGlobalHallucinationLayer").innerHTML = "";
+      } else if (!visualGrounded) {
+        startVisualDelusions(hallUrl);
+      }
+    });
 
     function speak() {
       if (!voicesOn || grounded) return;
@@ -235,21 +328,6 @@
       }
     };
 
-    function renderHallucinations(url) {
-      const layer = document.getElementById("hallucinationLayer");
-      layer.innerHTML = "";
-      const count = CS.randInt(2, 5);
-      for (let i = 0; i < count; i++) {
-        const h = document.createElement("img");
-        h.src = url;
-        h.className = "cs-hallucination-img";
-        h.style.left = CS.randInt(5, 65) + "%";
-        h.style.top = CS.randInt(8, 55) + "%";
-        h.style.transform = "rotate(" + CS.randInt(-18, 18) + "deg) scale(" + (0.7 + Math.random() * 0.5).toFixed(2) + ")";
-        layer.appendChild(h);
-      }
-    }
-
     document.getElementById("photoUpload").onchange = (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -259,21 +337,12 @@
       img.dataset.hallUrl = url;
       img.style.display = "block";
       document.getElementById("visualPlaceholder").hidden = true;
-      visualGrounded = false;
-      document.getElementById("visualGround").disabled = false;
       document.getElementById("visualResult").textContent =
-        "Hallucination overlays added — use grounding to see the real image and finish.";
-      renderHallucinations(url);
+        "Your photo now fuels the delusions on every tab — ground when ready.";
+      startVisualDelusions(url);
     };
 
-    document.getElementById("visualGround").onclick = () => {
-      if (!document.getElementById("uploadPreview").dataset.hallUrl) return;
-      document.getElementById("hallucinationLayer").innerHTML = "";
-      visualGrounded = true;
-      document.getElementById("visualResult").textContent =
-        "Grounded — the real photo is visible again without the overlays.";
-      if (!visualDone) setVisualComplete();
-    };
+    document.getElementById("visualGround").onclick = groundVisualDelusions;
 
     const DELUSION_TREES = [
       {
@@ -383,14 +452,10 @@
 
     function resetTasks() {
       audioDone = false;
-      visualDone = false;
       delusionDone = false;
-      visualGrounded = false;
       document.getElementById("audioTaskBadge").textContent = "Not complete";
-      document.getElementById("visualTaskBadge").textContent = "Not complete";
       document.getElementById("delusionTaskBadge").textContent = "Not complete";
       document.getElementById("audioSubmit").disabled = false;
-      document.getElementById("visualGround").disabled = !document.getElementById("uploadPreview").dataset.hallUrl;
       updateOverallProgress();
     }
 
@@ -410,13 +475,13 @@
       document.getElementById("voiceLayer").innerHTML = "";
       document.getElementById("groundBtn").textContent = "Grounding pivot";
       const img = document.getElementById("uploadPreview");
+      const nextUrl = img.dataset.hallUrl || DEFAULT_VISUAL_SRC;
+      startVisualDelusions(nextUrl);
       if (img.dataset.hallUrl) {
-        renderHallucinations(img.dataset.hallUrl);
-        document.getElementById("visualGround").disabled = false;
         document.getElementById("visualResult").textContent =
-          "Hallucination overlays added — use grounding to see the real image and finish.";
+          "Your photo fuels delusions on every tab — ground when ready.";
       } else {
-        document.getElementById("visualResult").textContent = "Upload a photo, then use grounding to complete this task.";
+        document.getElementById("visualResult").textContent = "Switch tabs — the overlays stay with you until you ground.";
       }
       CS.toast("New scenario — fresh tasks and delusion branch.");
     };

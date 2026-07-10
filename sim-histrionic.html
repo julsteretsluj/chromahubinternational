@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histrionic — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
+  <script src="js/chroma-safety-gate.js"></script>
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+  <main id="main">
+    <header class="page-header pillar-digital"><div class="container"><h1>Histrionic Pattern</h1><p>Silence distress, broad interpretation of neutral cues, and exaggerated sensory feedback — educational framing only.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="cs-warn"><strong>Content note:</strong> Includes red screen pulses when idle. Use Safe mode if photosensitive.</div>
+      <div id="histShell" class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+        </div>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="silence" aria-selected="true">Silence distress</button>
+          <button type="button" class="cs-tab" data-cs-tab="broad" aria-selected="false">Broad processing</button>
+          <button type="button" class="cs-tab" data-cs-tab="loud" aria-selected="false">Exaggerated interactions</button>
+        </div>
+
+        <div class="cs-panel active" data-cs-panel="silence">
+          <p class="muted-note">Stay engaged — if you stop interacting, distress rises and the screen may flash red.</p>
+          <div class="cs-distress-bar"><div id="distressFill" class="cs-distress-fill"></div></div>
+          <p id="distressLabel" class="muted-note">Distress: 0% — tap, type, or click to stay regulated</p>
+          <input id="silenceInput" class="cs-input" type="text" placeholder="Say something…" autocomplete="off">
+          <button type="button" id="silenceTap" class="btn btn-secondary" style="margin-top:0.5rem;">Tap for attention</button>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="broad" hidden>
+          <p class="muted-note">A neutral statement appears first — then a broader, more dramatic interpretation.</p>
+          <p id="broadStatement" class="cs-field" style="min-height:auto;"></p>
+          <button type="button" id="showInterp" class="btn btn-primary">Reveal how it might land</button>
+          <p id="broadInterp" class="cs-output" style="margin-top:0.65rem;min-height:3rem;" hidden></p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="loud" hidden>
+          <p class="muted-note">Every interaction feels louder and bigger than it is.</p>
+          <div class="cs-choice-grid" id="loudGrid"></div>
+          <p id="loudResult" class="muted-note" style="margin-top:0.65rem;"></p>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Predictable response times, explicit reassurance, and calm sensory environments reduce urgency to perform or fill silence.</div>
+      </div>
+    </div></section>
+  </main>
+  <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
+  <script>
+    const CS = window.ChromaSim;
+    const shell = document.getElementById("histShell");
+    let distress = 0;
+    let idleTimer = null;
+    let broadIdx = 0;
+
+    const BROAD = [
+      { statement: "They said: \"See you later.\"", interp: "Interpretation: They might never come back. That goodbye felt final — you need to reach out again right now." },
+      { statement: "A colleague walked past without waving.", interp: "Interpretation: Everyone in the room noticed and chose to ignore you on purpose." },
+      { statement: "Your message was left on read for 20 minutes.", interp: "Interpretation: You're being phased out. Silence means rejection — do something dramatic to fix it." },
+      { statement: "Someone laughed in the hallway.", interp: "Interpretation: The laugh was about you. Your presence changed the whole mood." },
+    ];
+
+    const LOUD = ["Wave hello", "Share a story", "Ask a question", "Leave a comment"];
+
+    function isSafe() {
+      return window.chromaSeizureSafe?.();
+    }
+
+    function resetDistress() {
+      distress = Math.max(0, distress - 28);
+      updateDistress();
+    }
+
+    function updateDistress() {
+      document.getElementById("distressFill").style.width = distress + "%";
+      document.getElementById("distressLabel").textContent =
+        "Distress: " + distress + "% — tap, type, or click to stay regulated";
+      if (distress >= 85 && !isSafe()) {
+        shell.classList.remove("cs-red-flash");
+        void shell.offsetWidth;
+        shell.classList.add("cs-red-flash");
+      }
+    }
+
+    function tickDistress() {
+      distress = Math.min(100, distress + (isSafe() ? 4 : 9));
+      updateDistress();
+    }
+
+    function startIdleWatch() {
+      clearInterval(idleTimer);
+      idleTimer = setInterval(tickDistress, isSafe() ? 2200 : 1400);
+    }
+
+    function renderBroad() {
+      const item = BROAD[broadIdx];
+      document.getElementById("broadStatement").textContent = item.statement;
+      const interp = document.getElementById("broadInterp");
+      interp.hidden = true;
+      interp.textContent = "";
+    }
+
+    function renderLoud() {
+      const grid = document.getElementById("loudGrid");
+      grid.innerHTML = "";
+      CS.shuffle(LOUD.slice()).forEach((label) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cs-choice-btn";
+        b.textContent = label;
+        b.onclick = () => {
+          b.classList.add("cs-loud-hit");
+          setTimeout(() => b.classList.remove("cs-loud-hit"), 260);
+          if (!isSafe()) {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            const o = ac.createOscillator();
+            const g = ac.createGain();
+            o.frequency.value = 280 + Math.random() * 200;
+            g.gain.value = 0.14;
+            o.connect(g).connect(ac.destination);
+            o.start();
+            o.stop(ac.currentTime + 0.18);
+          }
+          document.getElementById("loudResult").textContent =
+            "That small action felt huge — like the whole room reacted.";
+          resetDistress();
+        };
+        grid.appendChild(b);
+      });
+    }
+
+    document.getElementById("silenceInput").addEventListener("input", resetDistress);
+    document.getElementById("silenceTap").onclick = resetDistress;
+    shell.addEventListener("click", (e) => {
+      if (e.target.closest("#silenceTap, #silenceInput, .cs-tab")) return;
+      if (document.querySelector('[data-cs-panel="silence"].active')) resetDistress();
+    });
+
+    document.getElementById("showInterp").onclick = () => {
+      const interp = document.getElementById("broadInterp");
+      interp.hidden = false;
+      interp.textContent = BROAD[broadIdx].interp;
+      resetDistress();
+    };
+
+    document.getElementById("redoSim").onclick = () => {
+      distress = 0;
+      updateDistress();
+      broadIdx = CS.randInt(0, BROAD.length - 1);
+      renderBroad();
+      renderLoud();
+      CS.toast("New scenario loaded.");
+    };
+
+    renderBroad();
+    renderLoud();
+    startIdleWatch();
+    document.addEventListener("chroma-seizure-safe-change", startIdleWatch);
+  </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Narcissistic — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
+  <script src="js/chroma-safety-gate.js"></script>
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+  <main id="main">
+    <header class="page-header pillar-digital"><div class="container"><h1>Narcissistic Pattern</h1><p>Spotlight pressure and ego protection when criticism lands — educational simulation, not diagnosis.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar"><button type="button" id="redoSim" class="btn btn-secondary">New scenario</button></div>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="spot" aria-selected="true">Self-centered spotlight</button>
+          <button type="button" class="cs-tab" data-cs-tab="ego" aria-selected="false">Ego protection</button>
+        </div>
+
+        <div class="cs-panel active" data-cs-panel="spot">
+          <p class="muted-note">The spotlight drifts — keep your pointer in the light to stay centered. Leaving it feels like disappearing.</p>
+          <div id="spotArena" class="cs-spot-arena">
+            <div id="spotBeam" class="cs-spot-beam" style="left:50%;top:50%;"></div>
+            <div id="spotTarget" class="cs-spot-target"></div>
+            <p style="position:absolute;bottom:10px;left:10px;font-size:0.8rem;color:#aaa;margin:0;">Stay in the spotlight</p>
+          </div>
+          <p id="spotScore" class="muted-note" style="margin-top:0.5rem;">Time in spotlight: 0s</p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="ego" hidden>
+          <p class="muted-note">Someone criticizes you — every response option deflects and elevates you.</p>
+          <p id="egoPrompt" class="cs-field" style="min-height:auto;"></p>
+          <div id="egoChoices" class="cs-choice-grid"></div>
+          <p id="egoResult" class="muted-note" style="margin-top:0.65rem;"></p>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Balanced feedback, shared credit, and spaces that don't require constant center-stage validation support healthier self-worth.</div>
+      </div>
+    </div></section>
+  </main>
+  <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
+  <script>
+    const CS = window.ChromaSim;
+    const arena = document.getElementById("spotArena");
+    const beam = document.getElementById("spotBeam");
+    let bx = 50, by = 50;
+    let inSpot = 0, outSpot = 0;
+    let egoIdx = 0;
+
+    const EGO = [
+      {
+        prompt: "A teammate says your draft missed the brief.",
+        choices: [
+          { label: "They wouldn't recognize good work if it hit them.", result: "You feel superior — their taste is the problem, not your draft." },
+          { label: "I was carrying this project anyway.", result: "Credit stays yours. Criticism bounces off." },
+          { label: "Maybe they're intimidated by me.", result: "The critique becomes proof of your importance." },
+        ],
+      },
+      {
+        prompt: "Your manager suggests slowing down and listening more.",
+        choices: [
+          { label: "I listen plenty — they just don't hear genius.", result: "Feedback reframed as their limitation." },
+          { label: "No one else here operates at my level.", result: "Isolation feels like elevation." },
+          { label: "They need me more than I need them.", result: "Power fantasy restores the spotlight." },
+        ],
+      },
+      {
+        prompt: "A friend says you dominated the conversation.",
+        choices: [
+          { label: "Someone had to make it interesting.", result: "You were the entertainment — of course you talked." },
+          { label: "They're jealous of the attention I get.", result: "Their boundary becomes envy." },
+          { label: "I was helping them by shining.", result: "Self-focus reframed as generosity." },
+        ],
+      },
+    ];
+
+    function moveSpotlight() {
+      bx = CS.randInt(18, 82);
+      by = CS.randInt(18, 78);
+      beam.style.left = bx + "%";
+      beam.style.top = by + "%";
+    }
+
+    arena.addEventListener("mousemove", (e) => {
+      const r = arena.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * 100;
+      const y = ((e.clientY - r.top) / r.height) * 100;
+      const dist = Math.hypot(x - bx, y - by);
+      if (dist < 14) inSpot++;
+      else outSpot++;
+      document.getElementById("spotScore").textContent =
+        "Time in spotlight: " + inSpot + " ticks — outside: " + outSpot;
+    });
+
+    setInterval(moveSpotlight, 2200);
+    moveSpotlight();
+
+    function renderEgo() {
+      const s = EGO[egoIdx];
+      document.getElementById("egoPrompt").textContent = s.prompt;
+      const box = document.getElementById("egoChoices");
+      box.innerHTML = "";
+      document.getElementById("egoResult").textContent = "";
+      CS.shuffle(s.choices).forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cs-choice-btn intense";
+        b.textContent = c.label;
+        b.onclick = () => { document.getElementById("egoResult").textContent = c.result; };
+        box.appendChild(b);
+      });
+    }
+
+    document.getElementById("redoSim").onclick = () => {
+      inSpot = 0;
+      outSpot = 0;
+      egoIdx = CS.randInt(0, EGO.length - 1);
+      renderEgo();
+      moveSpotlight();
+      CS.toast("New scenario — spotlight and criticism rotated.");
+    };
+
+    renderEgo();
+  </script>
+</body>
+</html>

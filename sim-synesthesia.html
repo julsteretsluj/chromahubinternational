@@ -7,15 +7,11 @@
       const s = localStorage.getItem("chroma-theme");
       const p = window.matchMedia("(prefers-color-scheme: light)").matches;
       document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
-      const safeOn = localStorage.getItem("chroma-seizure-safe") === "true";
-      if (safeOn) document.documentElement.setAttribute("data-seizure-safe", "true");
-      window.chromaSeizureSafe = function () {
-        return document.documentElement.getAttribute("data-seizure-safe") === "true";
-      };
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Synesthesia Experience — ChromaSim</title>
+  <title>Synesthesia — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/chroma-sim.css">
@@ -37,23 +33,44 @@
     <header class="page-header pillar-digital">
       <div class="container">
         <h1>Synesthesia: Cross-Wired Sensorium</h1>
-        <p>Typing creates color blooms and tone shifts to model cross-modal sensory feedback.</p>
+        <p>Text and sound both bloom into color and tone — cross-modal sensory feedback.</p>
         <div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div>
       </div>
     </header>
     <section class="section">
       <div class="container">
-        <div class="experience-shell">
+        <div class="experience-shell" data-cs-tabs>
           <div class="cs-redo-bar">
             <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
-            <p class="cs-redo-hint muted-note">Clears blooms and shifts color mapping.</p>
+            <p class="cs-redo-hint muted-note">Clears canvas and shifts color mapping.</p>
           </div>
-          <div class="experience-controls">
-            <input id="synInput" class="xp-input" placeholder="Type here to generate color + sound">
-            <span id="synState" class="xp-badge">Idle</span>
+          <div class="cs-tabs" role="tablist">
+            <button type="button" class="cs-tab active" data-cs-tab="text" aria-selected="true">Text → visual/audio</button>
+            <button type="button" class="cs-tab" data-cs-tab="mic" aria-selected="false">Sound → visual</button>
           </div>
-          <canvas id="synCanvas" class="syn-canvas" width="900" height="240"></canvas>
-          <p class="muted-note" id="synNote">Each key maps to a hue and oscillator frequency.</p>
+
+          <div class="cs-panel active" data-cs-panel="text">
+            <div class="experience-controls">
+              <input id="synInput" class="cs-input" placeholder="Type here to generate color + sound" style="flex:1;">
+              <span id="synState" class="xp-badge">Idle</span>
+            </div>
+            <canvas id="synCanvas" class="syn-canvas" width="900" height="240"></canvas>
+            <p class="muted-note" id="synNote">Each key maps to a hue and oscillator frequency.</p>
+          </div>
+
+          <div class="cs-panel" data-cs-panel="mic" hidden>
+            <p class="muted-note">Use your microphone — sound levels paint color blooms on the canvas.</p>
+            <div class="experience-controls">
+              <button type="button" id="micStart" class="btn btn-primary">Start microphone</button>
+              <button type="button" id="micStop" class="btn btn-secondary" disabled>Stop</button>
+              <span id="micState" class="xp-badge">Mic off</span>
+            </div>
+            <div class="cs-mic-meter"><div id="micMeterFill" class="cs-mic-meter-fill"></div></div>
+            <canvas id="micCanvas" class="syn-canvas" width="900" height="240" style="margin-top:0.75rem;"></canvas>
+            <p id="micNote" class="muted-note" style="margin-top:0.5rem;">Speak, hum, or clap — visuals follow your voice.</p>
+          </div>
+
+          <div class="cs-pivot"><strong>Inclusive pivot:</strong> Optional sensory intensity controls and predictable UI reduce overload while preserving creative expression.</div>
         </div>
       </div>
     </section>
@@ -62,33 +79,42 @@
   <script src="js/sim-common.js"></script>
   <script>
     const CS = window.ChromaSim;
-    const c = document.getElementById("synCanvas");
-    const ctx2 = c.getContext("2d");
+    const textCanvas = document.getElementById("synCanvas");
+    const textCtx = textCanvas.getContext("2d");
+    const micCanvas = document.getElementById("micCanvas");
+    const micCtx = micCanvas.getContext("2d");
     const input = document.getElementById("synInput");
     const state = document.getElementById("synState");
     const note = document.getElementById("synNote");
     const ac = new (window.AudioContext || window.webkitAudioContext)();
     let hueShift = Math.floor(Math.random() * 360);
+    let micStream = null;
+    let micAnalyser = null;
+    let micAnim = null;
 
     function isSafe() {
       return window.chromaSeizureSafe?.();
     }
 
-    function clearCanvas() {
-      ctx2.fillStyle = "#050509";
-      ctx2.fillRect(0, 0, c.width, c.height);
+    function clearCanvas(ctx, c) {
+      ctx.fillStyle = "#050509";
+      ctx.fillRect(0, 0, c.width, c.height);
     }
 
-    function bloom(char, x, y) {
+    function bloom(ctx, c, hue, x, y, size) {
+      ctx.fillStyle = `hsla(${hue},90%,60%,0.28)`;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function textBloom(char, x, y) {
       if (isSafe()) return;
       const code = char.charCodeAt(0) || 60;
-      const px = x ?? Math.random() * c.width;
-      const py = y ?? Math.random() * c.height;
+      const px = x ?? Math.random() * textCanvas.width;
+      const py = y ?? Math.random() * textCanvas.height;
       const hue = (code * 7 + hueShift) % 360;
-      ctx2.fillStyle = `hsla(${hue},90%,60%,0.25)`;
-      ctx2.beginPath();
-      ctx2.arc(px, py, 25 + Math.random() * 40, 0, Math.PI * 2);
-      ctx2.fill();
+      bloom(textCtx, textCanvas, hue, px, py, 25 + Math.random() * 40);
       const o = ac.createOscillator();
       const g = ac.createGain();
       const f = ac.createBiquadFilter();
@@ -110,33 +136,106 @@
       state.textContent = isSafe() ? "Safe mode: blooms off" : "Idle";
     }
 
-    clearCanvas();
+    function stopMic() {
+      cancelAnimationFrame(micAnim);
+      micAnim = null;
+      if (micStream) micStream.getTracks().forEach((t) => t.stop());
+      micStream = null;
+      micAnalyser = null;
+      document.getElementById("micStart").disabled = false;
+      document.getElementById("micStop").disabled = true;
+      document.getElementById("micState").textContent = "Mic off";
+      document.getElementById("micMeterFill").style.width = "0%";
+    }
+
+    function drawMicFrame() {
+      if (!micAnalyser || isSafe()) return;
+      const data = new Uint8Array(micAnalyser.frequencyBinCount);
+      micAnalyser.getByteFrequencyData(data);
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) sum += data[i];
+      const avg = sum / data.length;
+      document.getElementById("micMeterFill").style.width = Math.min(100, avg * 1.4) + "%";
+
+      micCtx.fillStyle = "rgba(5,5,9,0.12)";
+      micCtx.fillRect(0, 0, micCanvas.width, micCanvas.height);
+
+      const bars = 48;
+      for (let i = 0; i < bars; i++) {
+        const v = data[Math.floor((i / bars) * data.length)] || 0;
+        if (v < 12) continue;
+        const hue = (i * 8 + hueShift + v) % 360;
+        const x = (i / bars) * micCanvas.width + micCanvas.width / bars * 0.2;
+        const y = micCanvas.height * 0.5 + (Math.random() - 0.5) * v * 0.6;
+        bloom(micCtx, micCanvas, hue, x, y, 8 + v * 0.22);
+      }
+      document.getElementById("micState").textContent = "Listening • " + Math.round(avg);
+      micAnim = requestAnimationFrame(drawMicFrame);
+    }
+
+    async function startMic() {
+      if (isSafe()) {
+        document.getElementById("micNote").textContent = "Safe mode — microphone visuals disabled.";
+        return;
+      }
+      try {
+        if (ac.state !== "running") await ac.resume();
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const src = ac.createMediaStreamSource(micStream);
+        micAnalyser = ac.createAnalyser();
+        micAnalyser.fftSize = 256;
+        src.connect(micAnalyser);
+        clearCanvas(micCtx, micCanvas);
+        document.getElementById("micStart").disabled = true;
+        document.getElementById("micStop").disabled = false;
+        document.getElementById("micState").textContent = "Listening…";
+        drawMicFrame();
+      } catch {
+        document.getElementById("micNote").textContent = "Microphone access denied or unavailable.";
+      }
+    }
+
+    clearCanvas(textCtx, textCanvas);
+    clearCanvas(micCtx, micCanvas);
+
     input.addEventListener("keydown", async (e) => {
       if (isSafe()) return;
       if (ac.state !== "running") await ac.resume();
-      bloom(e.key);
+      textBloom(e.key);
     });
-    c.addEventListener("mousemove", (e) => {
+
+    textCanvas.addEventListener("mousemove", (e) => {
       if (isSafe()) return;
-      const r = c.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
-      ctx2.fillStyle = "rgba(5,5,9,0.04)";
-      ctx2.fillRect(0, 0, c.width, c.height);
-      bloom(String.fromCharCode(65 + Math.floor((x / c.width) * 26)), x, y);
+      const r = textCanvas.getBoundingClientRect();
+      textCtx.fillStyle = "rgba(5,5,9,0.04)";
+      textCtx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+      textBloom(String.fromCharCode(65 + Math.floor(((e.clientX - r.left) / r.width) * 26)), e.clientX - r.left, e.clientY - r.top);
     });
+
+    document.getElementById("micStart").onclick = startMic;
+    document.getElementById("micStop").onclick = stopMic;
 
     document.getElementById("redoSim").onclick = () => {
       hueShift = CS.randInt(0, 359);
       input.value = "";
-      clearCanvas();
+      clearCanvas(textCtx, textCanvas);
+      clearCanvas(micCtx, micCanvas);
+      stopMic();
       updateSynNote();
-      CS.toast("New scenario — color and tone mapping shifted.");
+      CS.toast("New scenario — color mapping shifted.");
     };
 
     document.addEventListener("chroma-seizure-safe-change", () => {
-      clearCanvas();
+      clearCanvas(textCtx, textCanvas);
+      clearCanvas(micCtx, micCanvas);
+      stopMic();
       updateSynNote();
+    });
+
+    document.querySelectorAll("[data-cs-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        if (tab.dataset.csTab !== "mic") stopMic();
+      });
     });
 
     updateSynNote();

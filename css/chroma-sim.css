@@ -351,3 +351,155 @@
   margin-bottom: 0.85rem;
   font-size: 0.9rem;
 }
+
+/* Histrionic — silence distress flash */
+.cs-distress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin: 0.65rem 0;
+}
+.cs-distress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--chroma-orange), var(--chroma-magenta));
+  transition: width 0.35s ease;
+}
+.cs-red-flash {
+  animation: csRedFlash 0.55s ease;
+}
+@keyframes csRedFlash {
+  0%, 100% { box-shadow: inset 0 0 0 0 transparent; }
+  50% { box-shadow: inset 0 0 0 9999px rgba(220, 38, 38, 0.28); }
+}
+[data-seizure-safe="true"] .cs-red-flash {
+  animation: none;
+  box-shadow: inset 0 0 0 2px var(--chroma-magenta);
+}
+.cs-loud-hit {
+  animation: csLoudHit 0.25s ease;
+}
+@keyframes csLoudHit {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); filter: brightness(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Narcissistic — spotlight arena */
+.cs-spot-arena {
+  position: relative;
+  min-height: 260px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #050508;
+  overflow: hidden;
+}
+.cs-spot-beam {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 240, 200, 0.9) 0%, rgba(255, 200, 80, 0.25) 45%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: left 0.9s ease, top 0.9s ease;
+}
+.cs-spot-target {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--chroma-orange);
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+}
+
+/* Bipolar — mania / depression */
+.cs-mania-fast {
+  animation: csManiaPulse 0.45s linear infinite;
+}
+.cs-mania-drift {
+  animation: csManiaDrift 2.5s linear infinite;
+}
+@keyframes csManiaPulse {
+  0%, 100% { filter: saturate(1.2) contrast(1.05); }
+  50% { filter: saturate(1.45) contrast(1.12); }
+}
+@keyframes csManiaDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-28%); }
+}
+[data-seizure-safe="true"] .cs-mania-fast,
+[data-seizure-safe="true"] .cs-mania-drift { animation: none; }
+.cs-bed-timer {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--chroma-magenta);
+  margin: 0.5rem 0;
+}
+.cs-bed-scene {
+  min-height: 220px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--chroma-magenta) 6%, var(--bg-surface));
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+/* DID — dissociation / alters */
+.cs-dissoc-shell {
+  transition: transform 0.8s ease, filter 0.8s ease;
+  transform-origin: center center;
+}
+.cs-dissoc-shell.zoomed-out {
+  transform: scale(0.72);
+  filter: saturate(0.55) blur(0.6px);
+}
+.cs-alter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+.cs-alter-card {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  text-align: center;
+  background: var(--bg-elevated);
+  transition: transform 0.35s ease, border-color 0.35s ease, opacity 0.35s ease;
+}
+.cs-alter-card.active {
+  border-color: var(--chroma-teal);
+  transform: scale(1.04);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--chroma-teal) 30%, transparent);
+}
+.cs-alter-card.fading {
+  opacity: 0.35;
+  transform: scale(0.94);
+}
+
+/* Synesthesia mic canvas */
+.syn-canvas { width: 100%; max-width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #050509; display: block; }
+.cs-mic-meter {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+.cs-mic-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--chroma-teal);
+  transition: width 0.05s linear;
+}
+

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bipolar — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
+  <script src="js/chroma-safety-gate.js"></script>
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+  <main id="main">
+    <header class="page-header pillar-digital"><div class="container"><h1>Bipolar Pattern</h1><p>Mania speed and depression immobility — two poles of energy and movement.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="cs-warn"><strong>Content note:</strong> Mania tab uses fast motion. Use Safe mode if needed.</div>
+      <div id="bipolarShell" class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar"><button type="button" id="redoSim" class="btn btn-secondary">New scenario</button></div>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="mania" aria-selected="true">Mania</button>
+          <button type="button" class="cs-tab" data-cs-tab="depress" aria-selected="false">Depression</button>
+        </div>
+
+        <div class="cs-panel active" data-cs-panel="mania">
+          <p class="muted-note">Everything feels fast — thoughts, UI, and pressure to keep moving.</p>
+          <div id="maniaZone" class="cs-field cs-mania-fast" style="min-height:200px;overflow:hidden;position:relative;">
+            <div class="cs-mania-drift" style="display:flex;gap:1.5rem;white-space:nowrap;padding:1rem 0;">
+              <span>Ideas</span><span>Plans</span><span>Messages</span><span>Projects</span><span>Calls</span><span>Ideas</span><span>Plans</span><span>Now</span><span>More</span><span>Faster</span>
+            </div>
+            <p style="margin:1rem 0 0;position:relative;z-index:2;">Click as many targets as you can before the rush fades.</p>
+            <div id="maniaTargets" class="cs-choice-grid" style="margin-top:0.65rem;"></div>
+          </div>
+          <p id="maniaScore" class="muted-note" style="margin-top:0.5rem;">Rush score: 0</p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="depress" hidden>
+          <p class="muted-note">Try to get up and go to the bathroom — your body won't follow. Time in bed stacks up.</p>
+          <div class="cs-bed-scene">
+            <p class="muted-note" style="margin:0;">Time in bed</p>
+            <p id="bedTimer" class="cs-bed-timer">Day 1 — 06:14</p>
+            <button type="button" id="getUpBtn" class="btn btn-primary">Get up to go to the bathroom</button>
+            <p id="bedResult" class="muted-note" style="margin:0;text-align:center;">You try. Nothing happens.</p>
+          </div>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> Mood tracking, medication support, reduced sensory load, and flexible deadlines — not moral pressure to "try harder."</div>
+      </div>
+    </div></section>
+  </main>
+  <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
+  <script>
+    const CS = window.ChromaSim;
+    const shell = document.getElementById("bipolarShell");
+    let maniaScore = 0;
+    let bedMinutes = 6 * 24 * 60 + 14;
+    let bedTimer = null;
+
+    function formatBedTime(mins) {
+      const days = Math.floor(mins / (24 * 60)) + 1;
+      const rem = mins % (24 * 60);
+      const h = String(Math.floor(rem / 60)).padStart(2, "0");
+      const m = String(rem % 60).padStart(2, "0");
+      return "Day " + days + " — " + h + ":" + m;
+    }
+
+    function renderManiaTargets() {
+      const box = document.getElementById("maniaTargets");
+      box.innerHTML = "";
+      CS.shuffle(["Reply", "Start", "Buy", "Call", "Post", "Plan"]).forEach((label) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cs-choice-btn";
+        b.textContent = label;
+        b.onclick = () => {
+          maniaScore++;
+          document.getElementById("maniaScore").textContent = "Rush score: " + maniaScore;
+          b.disabled = true;
+        };
+        box.appendChild(b);
+      });
+    }
+
+    function startBedTimer() {
+      clearInterval(bedTimer);
+      bedTimer = setInterval(() => {
+        bedMinutes += window.chromaSeizureSafe?.() ? 1 : 3;
+        document.getElementById("bedTimer").textContent = formatBedTime(bedMinutes);
+      }, 800);
+    }
+
+    document.getElementById("getUpBtn").onclick = () => {
+      const msgs = [
+        "You try. Your body stays heavy. The room doesn't change.",
+        "You sit up halfway — then sink back. Shame adds weight.",
+        "The bathroom feels miles away. You stare at the ceiling instead.",
+        "Maybe in a minute. The minute doesn't come.",
+      ];
+      document.getElementById("bedResult").textContent = CS.pick(msgs);
+    };
+
+    document.querySelectorAll("[data-cs-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const on = tab.dataset.csTab === "depress";
+        if (on) startBedTimer();
+        else clearInterval(bedTimer);
+      });
+    });
+
+    document.getElementById("redoSim").onclick = () => {
+      maniaScore = 0;
+      bedMinutes = CS.randInt(4, 9) * 24 * 60 + CS.randInt(0, 400);
+      document.getElementById("maniaScore").textContent = "Rush score: 0";
+      document.getElementById("bedTimer").textContent = formatBedTime(bedMinutes);
+      document.getElementById("bedResult").textContent = "You try. Nothing happens.";
+      renderManiaTargets();
+      CS.toast("New scenario — mania and bed timer reset.");
+    };
+
+    renderManiaTargets();
+    document.getElementById("bedTimer").textContent = formatBedTime(bedMinutes);
+    startBedTimer();
+  </script>
+</body>
+</html>

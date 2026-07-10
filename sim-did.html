@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      const s = localStorage.getItem("chroma-theme");
+      const p = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", s || (p ? "light" : "dark"));
+      if (localStorage.getItem("chroma-seizure-safe") === "true") document.documentElement.setAttribute("data-seizure-safe", "true");
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DID — ChromaSim</title>
+  <link rel="icon" type="image/png" href="emblem.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
+  <script src="js/chroma-safety-gate.js"></script>
+  <script src="js/chroma-access.js"></script>
+</head>
+<body>
+  <header class="site-header"><div class="nav-container"><a href="index.html" class="logo"><img src="emblem.png" alt="" class="logo-img logo-dark" width="44" height="44"><img src="chinobg.PNG" alt="" class="logo-img logo-light" width="44" height="44"><span class="logo-text">Chroma Hub International</span></a><nav class="site-nav"><ul><li><a href="chroma-sim.html" class="active">Back to ChromaSim</a></li></ul></nav></div></header>
+  <main id="main">
+    <header class="page-header pillar-digital"><div class="container"><h1>Dissociative Identity Pattern</h1><p>Dissociation, alter switching, and amnesia gaps — educational framing with trauma-informed pivots.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
+    <section class="section"><div class="container">
+      <div class="cs-warn"><strong>Content note:</strong> Simulates dissociation and memory gaps. Pause anytime. Not diagnosis.</div>
+      <div id="didShell" class="experience-shell cs-dissoc-shell" data-cs-tabs>
+        <div class="cs-redo-bar"><button type="button" id="redoSim" class="btn btn-secondary">New scenario</button></div>
+        <div class="cs-tabs" role="tablist">
+          <button type="button" class="cs-tab active" data-cs-tab="dissoc" aria-selected="true">Dissociation</button>
+          <button type="button" class="cs-tab" data-cs-tab="switch" aria-selected="false">Switching</button>
+          <button type="button" class="cs-tab" data-cs-tab="amnesia" aria-selected="false">Amnesia</button>
+        </div>
+
+        <div class="cs-panel active" data-cs-panel="dissoc">
+          <p class="muted-note">The room may zoom out — you feel far from your own body and the screen.</p>
+          <button type="button" id="zoomOutBtn" class="btn btn-primary">Trigger dissociation</button>
+          <button type="button" id="groundBtn" class="btn btn-secondary" style="margin-left:0.35rem;">Grounding pivot</button>
+          <p id="dissocResult" class="muted-note" style="margin-top:0.65rem;">Press to feel distance from the moment.</p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="switch" hidden>
+          <p class="muted-note">Different parts may front — watch the active alter change.</p>
+          <p id="alterFront" class="xp-badge">Fronting: —</p>
+          <div id="alterGrid" class="cs-alter-grid"></div>
+          <button type="button" id="switchBtn" class="btn btn-primary" style="margin-top:0.75rem;">Switch</button>
+          <p id="switchLog" class="muted-note" style="margin-top:0.5rem;"></p>
+        </div>
+
+        <div class="cs-panel" data-cs-panel="amnesia" hidden>
+          <p class="muted-note">Try to write — nouns may vanish or swap as you type.</p>
+          <textarea id="amnesiaWrite" class="cs-input" rows="5" placeholder="Write what happened today…"></textarea>
+          <p id="amnesiaNote" class="muted-note" style="margin-top:0.5rem;">What you meant to say may not stay on the page.</p>
+        </div>
+
+        <div class="cs-pivot"><strong>Inclusive pivot:</strong> System communication tools, trauma-informed therapy, co-consciousness support, and environments that don't punish memory gaps.</div>
+      </div>
+    </div></section>
+  </main>
+  <script src="js/sim-common.js"></script>
+  <script src="js/chroma-sim.js"></script>
+  <script>
+    const CS = window.ChromaSim;
+    const shell = document.getElementById("didShell");
+    const NOUNS = ["friend", "teacher", "kitchen", "letter", "brother", "classroom", "dog", "appointment", "bag", "window", "phone", "sister", "office", "car", "note"];
+    const SWAPS = { friend: "stranger", teacher: "voice", kitchen: "hallway", brother: "someone", sister: "someone", office: "room", car: "seat" };
+
+    const ALTERS = [
+      { name: "Keeper", role: "Holds daily tasks", color: "#34c759" },
+      { name: "Scout", role: "Hypervigilant protector", color: "#ff9500" },
+      { name: "Lark", role: "Social, outward", color: "#5ac8fa" },
+      { name: "Ash", role: "Quiet, internal", color: "#5856d6" },
+      { name: "Mira", role: "Creative buffer", color: "#ff2d55" },
+    ];
+    let alterIdx = 0;
+    let amnesiaBuffer = "";
+
+    function renderAlters() {
+      const grid = document.getElementById("alterGrid");
+      grid.innerHTML = "";
+      ALTERS.forEach((a, i) => {
+        const card = document.createElement("div");
+        card.className = "cs-alter-card" + (i === alterIdx ? " active" : " fading");
+        card.innerHTML = "<strong style=\"color:" + a.color + "\">" + a.name + "</strong><p class=\"muted-note\" style=\"margin:0.35rem 0 0;font-size:0.82rem;\">" + a.role + "</p>";
+        grid.appendChild(card);
+      });
+      document.getElementById("alterFront").textContent = "Fronting: " + ALTERS[alterIdx].name;
+    }
+
+    function switchAlter() {
+      const prev = alterIdx;
+      do { alterIdx = CS.randInt(0, ALTERS.length - 1); } while (alterIdx === prev && ALTERS.length > 1);
+      renderAlters();
+      document.getElementById("switchLog").textContent =
+        "Switch — " + ALTERS[prev].name + " steps back, " + ALTERS[alterIdx].name + " is forward now.";
+    }
+
+    function stripNouns(text) {
+      return text.replace(/\b[A-Za-z]{3,}\b/g, (word) => {
+        const low = word.toLowerCase();
+        if (!NOUNS.includes(low) && !SWAPS[low]) return word;
+        if (Math.random() > 0.55) return "";
+        if (SWAPS[low]) return SWAPS[low];
+        return "";
+      }).replace(/\s{2,}/g, " ");
+    }
+
+    document.getElementById("zoomOutBtn").onclick = () => {
+      shell.classList.add("zoomed-out");
+      document.getElementById("dissocResult").textContent =
+        "You feel far away — watching yourself from outside the moment.";
+    };
+    document.getElementById("groundBtn").onclick = () => {
+      shell.classList.remove("zoomed-out");
+      document.getElementById("dissocResult").textContent = "Grounded — sensation returns to the room.";
+    };
+
+    document.getElementById("switchBtn").onclick = switchAlter;
+
+    const amnesiaWrite = document.getElementById("amnesiaWrite");
+    amnesiaWrite.addEventListener("input", () => {
+      const raw = amnesiaWrite.value;
+      if (raw.length < amnesiaBuffer.length) {
+        amnesiaBuffer = raw;
+        return;
+      }
+      const added = raw.slice(amnesiaBuffer.length);
+      let next = amnesiaBuffer + added;
+      if (Math.random() > 0.5 && /\b[A-Za-z]{3,}\b/.test(added)) {
+        next = stripNouns(next);
+      }
+      amnesiaBuffer = next;
+      amnesiaWrite.value = next;
+    });
+
+    document.getElementById("redoSim").onclick = () => {
+      shell.classList.remove("zoomed-out");
+      alterIdx = CS.randInt(0, ALTERS.length - 1);
+      amnesiaBuffer = "";
+      amnesiaWrite.value = "";
+      renderAlters();
+      document.getElementById("switchLog").textContent = "";
+      document.getElementById("dissocResult").textContent = "Press to feel distance from the moment.";
+      CS.toast("New scenario — alters and amnesia reset.");
+    };
+
+    renderAlters();
+  </script>
+</body>
+</html>
