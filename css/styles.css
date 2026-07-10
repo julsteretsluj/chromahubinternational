@@ -473,36 +473,48 @@ button:focus-visible {
   filter: saturate(0.45) contrast(0.88) brightness(0.95);
 }
 
-/* OpenDyslexic for dyslexia-friendly mode */
+/* OpenDyslexic for dyslexia-friendly mode (local files — CDN path was 404) */
 @font-face {
   font-family: "OpenDyslexic";
-  src: url("https://cdn.jsdelivr.net/gh/antijingoist/open-dyslexic@master/compiled/OpenDyslexic-Regular.woff2") format("woff2");
+  src: url("../fonts/OpenDyslexic-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../fonts/OpenDyslexic-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+[data-dyslexia-mode="true"] {
+  --font-sans: "OpenDyslexic", Verdana, sans-serif;
+  --font-display: "OpenDyslexic", Verdana, sans-serif;
 }
 
 [data-dyslexia-mode="true"] body,
 [data-dyslexia-mode="true"] button,
 [data-dyslexia-mode="true"] input,
 [data-dyslexia-mode="true"] textarea,
-[data-dyslexia-mode="true"] select {
-  font-family: "OpenDyslexic", "Comic Sans MS", Verdana, sans-serif !important;
-  line-height: 1.8;
-  letter-spacing: 0.05em;
-  word-spacing: 0.12em;
-}
-
+[data-dyslexia-mode="true"] select,
 [data-dyslexia-mode="true"] h1,
 [data-dyslexia-mode="true"] h2,
 [data-dyslexia-mode="true"] h3,
 [data-dyslexia-mode="true"] h4,
+[data-dyslexia-mode="true"] h5,
+[data-dyslexia-mode="true"] h6,
 [data-dyslexia-mode="true"] p,
-[data-dyslexia-mode="true"] li {
-  font-family: "OpenDyslexic", "Comic Sans MS", Verdana, sans-serif;
-  line-height: 1.85;
-  letter-spacing: 0.04em;
-  word-spacing: 0.1em;
+[data-dyslexia-mode="true"] li,
+[data-dyslexia-mode="true"] a,
+[data-dyslexia-mode="true"] label,
+[data-dyslexia-mode="true"] span {
+  font-family: "OpenDyslexic", Verdana, sans-serif !important;
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+  word-spacing: 0.12em;
 }
 
 /* Colorblind-safe palette remaps */
@@ -1198,9 +1210,10 @@ main {
 }
 
 .anchor-font {
-  font-family: "OpenDyslexic", "Comic Sans MS", "Arial", sans-serif;
+  font-family: "OpenDyslexic", Verdana, sans-serif !important;
   line-height: 2;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  word-spacing: 0.12em;
 }
 
 .drift-char {

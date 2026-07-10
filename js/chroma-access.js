@@ -49,8 +49,8 @@
       '<div id="chromaAccessPanel" class="access-panel" hidden>' +
       '<p class="access-panel-title">Reading &amp; color options</p>' +
       '<label class="access-row">' +
-      '<input type="checkbox" data-dyslexia-toggle aria-label="Dyslexia-friendly reading">' +
-      "<span>Dyslexia-friendly reading</span></label>" +
+      '<input type="checkbox" data-dyslexia-toggle aria-label="OpenDyslexic reading mode">' +
+      "<span>OpenDyslexic reading</span></label>" +
       '<label class="access-row">Color vision<select data-colorblind-select aria-label="Color vision mode">' +
       '<option value="off">Standard</option>' +
       '<option value="deuteranopia">Deuteranopia (red-green)</option>' +
