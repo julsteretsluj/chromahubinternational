@@ -186,6 +186,14 @@ body {
   transition: background-color var(--transition), color var(--transition);
 }
 
+html.safety-gate-pending body {
+  overflow: hidden;
+}
+
+html.safety-gate-pending body > *:not(.safety-gate) {
+  display: none !important;
+}
+
 body.safety-gate-active > *:not(.safety-gate) {
   display: none !important;
 }

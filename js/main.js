@@ -1,8 +1,6 @@
 (function () {
   const storageKey = "chroma-theme";
   const seizureSafeKey = "chroma-seizure-safe";
-  const safetyGateSeenKey = "chroma-safety-gate-seen";
-
   function getPreferredTheme() {
     return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   }
@@ -29,6 +27,10 @@
   }
 
   function setSeizureSafe(enabled) {
+    if (window.chromaSafetyGate?.setSeizureSafe) {
+      window.chromaSafetyGate.setSeizureSafe(enabled);
+      return;
+    }
     document.documentElement.setAttribute("data-seizure-safe", enabled ? "true" : "false");
     localStorage.setItem(seizureSafeKey, String(enabled));
     document.querySelectorAll(".safety-toggle").forEach((button) => {
@@ -87,51 +89,6 @@
     setSeizureSafe(document.documentElement.getAttribute("data-seizure-safe") === "true");
 
     if (window.chromaAccessInject) window.chromaAccessInject();
-
-    function closeSafetyGate() {
-      const gate = document.querySelector(".safety-gate");
-      if (gate) gate.remove();
-      document.body.classList.remove("safety-gate-active");
-      document.body.classList.add("site-ready");
-    }
-
-    function openSafetyGate() {
-      document.body.classList.add("safety-gate-active");
-      const gate = document.createElement("section");
-      gate.className = "safety-gate";
-      gate.setAttribute("aria-label", "Safety screen");
-      gate.innerHTML = `
-        <div class="safety-gate-card">
-          <h1>Safety Screen</h1>
-          <p>Before continuing, let us know if you are photosensitive or epileptic.</p>
-          <p>If yes, we will automatically enable reduced contrast and reduced motion mode.</p>
-          <div class="safety-gate-actions">
-            <button type="button" class="safety-gate-btn safety-gate-btn-primary" data-epilepsy-choice="yes">Yes, enable epilepsy safe mode</button>
-            <button type="button" class="safety-gate-btn" data-epilepsy-choice="no">No, continue standard mode</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(gate);
-      document.body.classList.add("site-ready");
-
-      gate.querySelector('[data-epilepsy-choice="yes"]').addEventListener("click", () => {
-        setSeizureSafe(true);
-        localStorage.setItem(safetyGateSeenKey, "true");
-        closeSafetyGate();
-      });
-
-      gate.querySelector('[data-epilepsy-choice="no"]').addEventListener("click", () => {
-        setSeizureSafe(false);
-        localStorage.setItem(safetyGateSeenKey, "true");
-        closeSafetyGate();
-      });
-    }
-
-    if (localStorage.getItem(safetyGateSeenKey) === "true") {
-      document.body.classList.add("site-ready");
-    } else {
-      openSafetyGate();
-    }
 
     const form = document.querySelector(".contact-form form");
     if (form) {

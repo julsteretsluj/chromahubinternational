@@ -19,6 +19,10 @@
   }
 
   function applySeizureSafe(enabled) {
+    if (window.chromaSafetyGate?.setSeizureSafe) {
+      window.chromaSafetyGate.setSeizureSafe(enabled);
+      return;
+    }
     document.documentElement.setAttribute("data-seizure-safe", enabled ? "true" : "false");
     localStorage.setItem(seizureKey, String(enabled));
     document.querySelectorAll(".safety-toggle").forEach((btn) => {
