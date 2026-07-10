@@ -226,6 +226,10 @@
     <section class="section">
       <div class="container">
         <div id="asdShell" class="experience-shell" data-cs-tabs>
+          <div class="cs-redo-bar">
+            <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+            <p class="cs-redo-hint muted-note">Reshuffles nudges, choices, and executive task costs.</p>
+          </div>
           <div class="cs-tabs" role="tablist" style="margin-bottom:0.85rem;">
             <button type="button" class="cs-tab active" data-cs-tab="social" aria-selected="true">Social communication</button>
             <button type="button" class="cs-tab" data-cs-tab="exec" aria-selected="false">Executive functioning</button>
@@ -331,6 +335,7 @@
   <script src="js/sim-common.js"></script>
   <script src="js/chroma-sim.js"></script>
   <script>
+    const CS = window.ChromaSim;
     const SYMPTOMS = {
       figurative: "Figurative instruction: metaphor replaces clear task wording",
       sensory: "Sensory burst: extra color and motion flood the workspace",
@@ -400,7 +405,7 @@
       const grid = document.getElementById("choiceGrid");
       grid.innerHTML = "";
       pathPick = null;
-      const options = pivotOn ? LITERAL_CHOICES : FIGURATIVE_CHOICES;
+      const options = CS.shuffle((pivotOn ? LITERAL_CHOICES : FIGURATIVE_CHOICES).slice());
       options.forEach((opt, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -621,26 +626,17 @@
       document.getElementById("nameInput").value = "";
       pathPick = null;
       submitted = false;
+      logged.clear();
+      load = 10;
+      document.getElementById("loadFill").style.width = "10%";
+      document.getElementById("symptomLog").innerHTML = '<p class="muted-note" style="margin:0;border:none;">Interact to see symptoms…</p>';
       renderChoices();
       document.getElementById("submitFeedback").textContent = pivotOn ? "Not submitted" : "Not sent";
       checkProgress();
       if (pivotOn) showStep(1);
     };
 
-    document.getElementById("prevStep").onclick = () => showStep(step - 1);
-    document.getElementById("nextStep").onclick = () => showStep(step + 1);
-
-    renderChoices();
-    setMode(false);
-    setTimeout(sensoryBurst, 1200);
-
-    document.addEventListener("chroma-seizure-safe-change", () => {
-      stopChallengeFx();
-      if (!pivotOn) startChallengeFx();
-      applyBodyFilter();
-    });
-
-    const ASD_TASKS = [
+    const ASD_TASK_POOL = [
       { label: "Reply to email", cost: 12 },
       { label: "Shower", cost: 18 },
       { label: "Make food", cost: 15 },
@@ -648,30 +644,65 @@
       { label: "Pay bill", cost: 14 },
       { label: "Call pharmacy", cost: 22 },
       { label: "Walk outside", cost: 16 },
+      { label: "Sort recycling", cost: 11 },
+      { label: "Water plants", cost: 9 },
+      { label: "Stretch / move", cost: 13 },
     ];
     let asdEnergy = 55;
     const asdList = document.getElementById("asdTasks");
-    ASD_TASKS.forEach((t) => {
-      const li = document.createElement("li");
-      li.innerHTML = "<span>" + t.label + " (−" + t.cost + " energy)</span>";
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "btn btn-secondary btn-sm";
-      btn.textContent = "Do";
-      btn.onclick = () => {
-        if (li.classList.contains("done")) return;
-        if (asdEnergy < t.cost) {
-          document.getElementById("asdExecResult").textContent = "Not enough energy — shutdown or rest needed.";
-          return;
-        }
-        asdEnergy -= t.cost;
-        li.classList.add("done");
-        btn.disabled = true;
-        document.getElementById("asdEnergyFill").style.width = asdEnergy + "%";
-        document.getElementById("asdEnergyLabel").textContent = "Energy reserve: " + asdEnergy;
-      };
-      li.appendChild(btn);
-      asdList.appendChild(li);
+
+    function renderExecTasks() {
+      asdList.innerHTML = "";
+      asdEnergy = CS.randInt(42, 62);
+      document.getElementById("asdEnergyFill").style.width = asdEnergy + "%";
+      document.getElementById("asdEnergyLabel").textContent = "Energy reserve: " + asdEnergy + " (not enough for all tasks)";
+      document.getElementById("asdExecResult").textContent = "Complete what you can — the rest waits until tomorrow.";
+      const picked = CS.shuffle(ASD_TASK_POOL.slice()).slice(0, CS.randInt(5, 7));
+      picked.forEach((t) => {
+        const cost = Math.max(8, t.cost + CS.randInt(-4, 5));
+        const li = document.createElement("li");
+        li.innerHTML = "<span>" + t.label + " (−" + cost + " energy)</span>";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-secondary btn-sm";
+        btn.textContent = "Do";
+        btn.onclick = () => {
+          if (li.classList.contains("done")) return;
+          if (asdEnergy < cost) {
+            document.getElementById("asdExecResult").textContent = "Not enough energy — shutdown or rest needed.";
+            return;
+          }
+          asdEnergy -= cost;
+          li.classList.add("done");
+          btn.disabled = true;
+          document.getElementById("asdEnergyFill").style.width = asdEnergy + "%";
+          document.getElementById("asdEnergyLabel").textContent = "Energy reserve: " + asdEnergy;
+        };
+        li.appendChild(btn);
+        asdList.appendChild(li);
+      });
+    }
+
+    document.getElementById("redoSim").onclick = () => {
+      document.getElementById("resetBtn").click();
+      renderExecTasks();
+      stopChallengeFx();
+      if (!pivotOn) startChallengeFx();
+      CS.toast("New scenario — fresh task load and nudges.");
+    };
+
+    document.getElementById("prevStep").onclick = () => showStep(step - 1);
+    document.getElementById("nextStep").onclick = () => showStep(step + 1);
+
+    renderChoices();
+    renderExecTasks();
+    setMode(false);
+    setTimeout(sensoryBurst, 1200);
+
+    document.addEventListener("chroma-seizure-safe-change", () => {
+      stopChallengeFx();
+      if (!pivotOn) startChallengeFx();
+      applyBodyFilter();
     });
   </script>
 </body>

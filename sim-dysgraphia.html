@@ -182,7 +182,7 @@
 
               <div class="experience-controls" style="margin-top:0.75rem;">
                 <button id="submitBtn" class="btn btn-secondary">Submit to teacher</button>
-                <button id="resetBtn" class="btn btn-secondary">Reset task</button>
+                <button id="resetBtn" class="btn btn-secondary">New sentence</button>
                 <span id="gradeBadge" class="xp-badge">Not submitted</span>
               </div>
             </div>
@@ -226,7 +226,22 @@
 
   <script src="js/sim-common.js"></script>
   <script>
-    const TARGET = "Accessibility helps everyone participate.";
+    const TARGETS = [
+      "Accessibility helps everyone participate.",
+      "Science fair projects are due next Friday morning.",
+      "Please write your name at the top of the page.",
+      "The library is open until six on weekdays.",
+      "Kindness and patience make teams stronger.",
+    ];
+    let targetIdx = 0;
+    let attempt = 0;
+    function currentTarget() {
+      return TARGETS[targetIdx];
+    }
+    function setTargetDisplay() {
+      document.getElementById("targetText").textContent = currentTarget();
+    }
+    setTargetDisplay();
     const REVERSALS = { b: "d", d: "b", p: "q", q: "p" };
 
     const copyInput = document.getElementById("copyInput");
@@ -252,7 +267,7 @@
 
     function seeded(i, ch) {
       const c = (ch && ch.charCodeAt(0)) || 32;
-      return ((i * 29 + c * 11 + Math.floor(fatigue)) % 100) / 100;
+      return ((i * 29 + c * 11 + Math.floor(fatigue) + attempt * 17) % 100) / 100;
     }
 
     function render() {
@@ -366,7 +381,7 @@
     document.getElementById("submitBtn").addEventListener("click", () => {
       const typed = copyInput.value.trim();
       const onPage = notebookText.trim();
-      const target = TARGET.trim();
+      const target = currentTarget().trim();
 
       if (pivotOn) {
         gradeBadge.textContent = typed.length > 10 ? "Accepted — content graded, not penmanship" : "Add your ideas first";
@@ -388,17 +403,22 @@
     });
 
     document.getElementById("resetBtn").addEventListener("click", () => {
+      const prev = targetIdx;
+      targetIdx = Math.floor(Math.random() * TARGETS.length);
+      if (TARGETS.length > 1 && targetIdx === prev) targetIdx = (targetIdx + 1) % TARGETS.length;
+      attempt++;
       copyInput.value = "";
       fatigue = 0;
       gradeBadge.textContent = "Not submitted";
+      setTargetDisplay();
       render();
       updateFatigue();
     });
 
     document.getElementById("dictateBtn").addEventListener("click", () => {
-      copyInput.value = TARGET;
+      copyInput.value = currentTarget();
       document.getElementById("dictateResult").textContent =
-        "Dictation captured: “" + TARGET + "” — no letter reversals or line drift.";
+        "Dictation captured: “" + currentTarget() + "” — no letter reversals or line drift.";
       fatigue = Math.max(0, fatigue - 20);
       render();
       updateFatigue();

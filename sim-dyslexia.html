@@ -24,6 +24,10 @@
     <header class="page-header pillar-digital"><div class="container"><h1>Dyslexia</h1><p>Drifting text, letter confusion, and disorganized speech — with accessibility pivots that restore reading agency.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
     <section class="section"><div class="container">
       <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+          <p class="cs-redo-hint muted-note">Each run uses different text, swaps, and playback order.</p>
+        </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="drift" aria-selected="true">Drifting text</button>
           <button type="button" class="cs-tab" data-cs-tab="misspell" aria-selected="false">Misspelling</button>
@@ -68,7 +72,21 @@
   <script src="js/chroma-sim.js"></script>
   <script>
     const CS = window.ChromaSim;
+    const DRIFT_PASSAGES = [
+      "Reading should feel stable, but when letters shift under your cursor, every line costs extra energy. Accessibility anchors like OpenDyslexic, spacing, and read-aloud can restore agency.",
+      "The sentence on screen looks familiar until glyphs slide apart — your eyes chase shapes that refuse to stay put. Extra spacing and a steady font can anchor the line again.",
+      "You know this word, but the page keeps offering a twin letter. Tracking from left to right becomes a negotiation with moving type.",
+      "Instructions blur when characters drift mid-word. A read-aloud layer or wider letter spacing can hand control back to you.",
+    ];
+    const SPEECH_SENTENCES = [
+      "The quick brown fox jumps over the lazy dog near the river.",
+      "Please send the report before the meeting ends at noon.",
+      "My brain knows the words but they arrive out of order when I speak.",
+      "The library closes early today so bring your books back soon.",
+      "She walked through the garden and noticed every color at once.",
+    ];
     let anchored = false;
+    let swapRate = 0.32 + Math.random() * 0.18;
     const driftPara = document.getElementById("driftPara");
     CS.bindDrift(driftPara, { paused: () => anchored });
     document.getElementById("anchorBtn").onclick = () => {
@@ -80,16 +98,34 @@
     const typeIn = document.getElementById("typeIn");
     const typeOut = document.getElementById("typeOut");
     typeIn.addEventListener("input", () => {
-      typeOut.textContent = CS.dyslexiaSwap(typeIn.value, 0.38);
+      typeOut.textContent = CS.dyslexiaSwap(typeIn.value, swapRate);
     });
+    function pickSpeechSentence() {
+      const el = document.getElementById("speechSentence");
+      const prev = el.textContent.trim();
+      el.textContent = CS.pick(SPEECH_SENTENCES, prev);
+    }
     document.getElementById("playScrambled").onclick = () => {
       const s = document.getElementById("speechSentence").textContent.trim();
       document.getElementById("speechStatus").textContent = "Playing…";
-      const order = CS.speakScrambled(s, (played) => {
+      CS.speakScrambled(s, (played) => {
         document.getElementById("speechStatus").textContent = "Done";
         document.getElementById("scrambledResult").textContent = "Playback order: " + played;
       });
-      document.getElementById("scrambledResult").textContent = "Shuffled: " + order.join(" ");
+    };
+    document.getElementById("redoSim").onclick = () => {
+      anchored = false;
+      driftPara.classList.remove("anchor-font");
+      document.getElementById("anchorBtn").textContent = "Accessibility anchor (stabilize)";
+      CS.resetDrift(driftPara, DRIFT_PASSAGES, { paused: () => anchored });
+      swapRate = 0.28 + Math.random() * 0.22;
+      typeIn.value = "";
+      typeOut.textContent = "";
+      pickSpeechSentence();
+      document.getElementById("scrambledResult").textContent = "";
+      document.getElementById("speechStatus").textContent = "Ready";
+      window.speechSynthesis.cancel();
+      CS.toast("New scenario — try each tab again.");
     };
   </script>
 </body>

@@ -18,6 +18,7 @@
   <title>Prosopagnosia Experience — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
 </head>
@@ -43,6 +44,10 @@
     <section class="section">
       <div class="container">
         <div class="experience-shell">
+          <div class="cs-redo-bar">
+            <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+            <p class="cs-redo-hint muted-note">Shuffles roles, voice markers, and face-first order.</p>
+          </div>
           <div class="experience-controls">
             <button id="toggleFaces" class="btn btn-primary">Activate Context-First Pivot</button>
             <span class="xp-badge" id="modeLabel">Challenge mode: face-first active</span>
@@ -57,26 +62,86 @@
       </div>
     </section>
   </main>
+  <script src="js/chroma-sim.js"></script>
   <script src="js/sim-common.js"></script>
   <script>
+    const CS = window.ChromaSim;
+    const ROSTER = [
+      { name: "Jules", role: "Founder, Accessible Ed Tech", hz: "212", icon: "Triad", color: "#ff9500" },
+      { name: "Ari", role: "Community Educator", hz: "186", icon: "Spiral", color: "#34c759" },
+      { name: "Sam", role: "Policy Analyst", hz: "247", icon: "Grid", color: "#5856d6" },
+      { name: "Rin", role: "UX Research Lead", hz: "203", icon: "Wave", color: "#ff2d55" },
+      { name: "Mo", role: "Assistive Tech Coach", hz: "174", icon: "Node", color: "#5ac8fa" },
+    ];
     const btn = document.getElementById("toggleFaces");
     const panel = document.getElementById("idPanel");
     const label = document.getElementById("modeLabel");
     let faceMode = true;
-    const contextual = panel.innerHTML;
-    const faceFirst = `<div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#aaa,#666);"></div><div><strong>Person A</strong><div class="muted-note">No contextual role tags shown</div></div></div>
-<div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#bbb,#777);"></div><div><strong>Person B</strong><div class="muted-note">No voice marker shown</div></div></div>
-<div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#999,#555);"></div><div><strong>Person C</strong><div class="muted-note">No functional metadata shown</div></div></div>
-<p class="muted-note">Face-first mode demonstrates lost context for many users.</p>`;
-    panel.innerHTML = faceFirst;
+
+    function renderContextual() {
+      const people = CS.shuffle(ROSTER.slice()).slice(0, 3);
+      return people
+        .map(
+          (p) =>
+            '<div class="identity-card" style="color:' +
+            p.color +
+            ';"><div class="identity-halo"></div><div><strong>' +
+            p.name +
+            " — " +
+            p.role +
+            '</strong><div class="muted-note">Voice Marker: ' +
+            p.hz +
+            "Hz · Icon: " +
+            p.icon +
+            "</div></div></div>"
+        )
+        .join("") +
+        '<p class="muted-note">Faces are intentionally de-emphasized. Identity remains persistent through contextual metadata.</p>';
+    }
+
+    function renderFaceFirst() {
+      const people = CS.shuffle(ROSTER.slice()).slice(0, 3);
+      const gradients = [
+        "linear-gradient(135deg,#aaa,#666)",
+        "linear-gradient(135deg,#bbb,#777)",
+        "linear-gradient(135deg,#999,#555)",
+        "linear-gradient(135deg,#888,#444)",
+      ];
+      return (
+        people
+          .map((p, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return (
+              '<div class="identity-card"><div style="width:36px;height:36px;border-radius:50%;background:' +
+              gradients[i % gradients.length] +
+              ';"></div><div><strong>Person ' +
+              letter +
+              '</strong><div class="muted-note">No contextual role tags shown</div></div></div>'
+            );
+          })
+          .join("") + '<p class="muted-note">Face-first mode demonstrates lost context for many users.</p>'
+      );
+    }
+
+    function renderPanel() {
+      panel.innerHTML = faceMode ? renderFaceFirst() : renderContextual();
+    }
+
     btn.onclick = () => {
       faceMode = !faceMode;
-      panel.innerHTML = faceMode ? faceFirst : contextual;
+      renderPanel();
       btn.textContent = faceMode ? "Activate Context-First Pivot" : "Return to Face-First Challenge";
       label.textContent = faceMode
         ? "Challenge mode: face-first active"
         : "Inclusive pivot: context-first active";
     };
+
+    document.getElementById("redoSim").onclick = () => {
+      renderPanel();
+      CS.toast("New scenario — different identity lineup.");
+    };
+
+    renderPanel();
   </script>
 </body>
 </html>

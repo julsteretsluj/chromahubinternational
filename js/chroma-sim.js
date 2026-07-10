@@ -18,6 +18,44 @@
     return a;
   }
 
+  function pick(arr, avoid) {
+    if (!arr?.length) return "";
+    if (arr.length === 1) return arr[0];
+    let item = arr[Math.floor(Math.random() * arr.length)];
+    if (avoid !== undefined && avoid !== null && arr.length > 1) {
+      let guard = 0;
+      while (item === avoid && guard++ < 12) {
+        item = arr[Math.floor(Math.random() * arr.length)];
+      }
+    }
+    return item;
+  }
+
+  function randBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function randInt(min, max) {
+    return Math.floor(randBetween(min, max + 1));
+  }
+
+  function resetDrift(el, passages, opts) {
+    if (!el) return "";
+    const pool = Array.isArray(passages) ? passages : [passages];
+    const prev = el.dataset.driftText || el.textContent.trim();
+    const text = pick(pool, prev);
+    el.dataset.driftText = text;
+    delete el.dataset.driftBound;
+    el.textContent = text;
+    bindDrift(el, opts);
+    return text;
+  }
+
+  function pinDigits() {
+    const digits = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+    return digits.join("");
+  }
+
   function dyslexiaSwap(text, rate) {
     const r = rate ?? 0.35;
     return [...text]
@@ -155,15 +193,20 @@
   window.ChromaSim = {
     isSafe,
     shuffle,
+    pick,
+    randBetween,
+    randInt,
     dyslexiaSwap,
     wrapDrift,
     bindDrift,
+    resetDrift,
     speakScrambled,
     bindLaggyInput,
     bindMisspellMirror,
     initTabs,
     toast,
     escapeHtml,
+    pinDigits,
   };
 
   document.addEventListener("DOMContentLoaded", () => {

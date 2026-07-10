@@ -18,6 +18,7 @@
   <title>Synesthesia Experience — ChromaSim</title>
   <link rel="icon" type="image/png" href="emblem.png">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chroma-sim.css">
   <script src="js/chroma-safety-gate.js"></script>
   <script src="js/chroma-access.js"></script>
 </head>
@@ -43,6 +44,10 @@
     <section class="section">
       <div class="container">
         <div class="experience-shell">
+          <div class="cs-redo-bar">
+            <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+            <p class="cs-redo-hint muted-note">Clears blooms and shifts color mapping.</p>
+          </div>
           <div class="experience-controls">
             <input id="synInput" class="xp-input" placeholder="Type here to generate color + sound">
             <span id="synState" class="xp-badge">Idle</span>
@@ -53,14 +58,17 @@
       </div>
     </section>
   </main>
+  <script src="js/chroma-sim.js"></script>
   <script src="js/sim-common.js"></script>
   <script>
+    const CS = window.ChromaSim;
     const c = document.getElementById("synCanvas");
     const ctx2 = c.getContext("2d");
     const input = document.getElementById("synInput");
     const state = document.getElementById("synState");
     const note = document.getElementById("synNote");
     const ac = new (window.AudioContext || window.webkitAudioContext)();
+    let hueShift = Math.floor(Math.random() * 360);
 
     function isSafe() {
       return window.chromaSeizureSafe?.();
@@ -76,7 +84,7 @@
       const code = char.charCodeAt(0) || 60;
       const px = x ?? Math.random() * c.width;
       const py = y ?? Math.random() * c.height;
-      const hue = (code * 7) % 360;
+      const hue = (code * 7 + hueShift) % 360;
       ctx2.fillStyle = `hsla(${hue},90%,60%,0.25)`;
       ctx2.beginPath();
       ctx2.arc(px, py, 25 + Math.random() * 40, 0, Math.PI * 2);
@@ -84,7 +92,7 @@
       const o = ac.createOscillator();
       const g = ac.createGain();
       const f = ac.createBiquadFilter();
-      o.frequency.value = 180 + (code % 60) * 8;
+      o.frequency.value = 180 + (code % 60) * 8 + (hueShift % 40);
       o.type = "sine";
       f.type = "lowpass";
       f.frequency.value = 600 + code * 10;
@@ -117,6 +125,14 @@
       ctx2.fillRect(0, 0, c.width, c.height);
       bloom(String.fromCharCode(65 + Math.floor((x / c.width) * 26)), x, y);
     });
+
+    document.getElementById("redoSim").onclick = () => {
+      hueShift = CS.randInt(0, 359);
+      input.value = "";
+      clearCanvas();
+      updateSynNote();
+      CS.toast("New scenario — color and tone mapping shifted.");
+    };
 
     document.addEventListener("chroma-seizure-safe-change", () => {
       clearCanvas();

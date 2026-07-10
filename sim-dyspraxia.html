@@ -24,6 +24,10 @@
     <header class="page-header pillar-digital"><div class="container"><h1>Dyspraxia</h1><p>Fine motor friction, delayed timing, and confusing spatial layouts that make everyday tasks harder than they look.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
     <section class="section"><div class="container">
       <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+          <p class="cs-redo-hint muted-note">Resets lag, target position, and table traps.</p>
+        </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="motor" aria-selected="true">Fine motor</button>
           <button type="button" class="cs-tab" data-cs-tab="timing" aria-selected="false">Timing</button>
@@ -68,11 +72,15 @@
   <script src="js/sim-common.js"></script>
   <script src="js/chroma-sim.js"></script>
   <script>
+    const CS = window.ChromaSim;
     const zone = document.getElementById("cursorZone");
     const dot = document.getElementById("cursorDot");
     const target = document.getElementById("cursorTarget");
+    const motorBtn = document.getElementById("motorTarget");
     let mx = 80, my = 80, cx = 80, cy = 80;
     let clicks = 0, misses = 0;
+    let lagFactor = 0.1 + Math.random() * 0.08;
+    let jitterScale = 5 + Math.random() * 6;
 
     zone.addEventListener("mousemove", (e) => {
       const r = zone.getBoundingClientRect();
@@ -84,17 +92,25 @@
 
     function tick() {
       const safe = window.chromaSeizureSafe?.();
-      const lag = safe ? 0.35 : 0.12;
-      const jitter = safe ? 0 : (Math.random() - 0.5) * 8;
+      const lag = safe ? 0.35 : lagFactor;
+      const jitter = safe ? 0 : (Math.random() - 0.5) * jitterScale;
       cx += (mx - cx) * lag + jitter;
-      cy += (my - cy) * lag + (Math.random() - 0.5) * (safe ? 0 : 6);
+      cy += (my - cy) * lag + (Math.random() - 0.5) * (safe ? 0 : jitterScale * 0.75);
       dot.style.left = cx + "px";
       dot.style.top = cy + "px";
       requestAnimationFrame(tick);
     }
     tick();
 
-    document.getElementById("motorTarget").addEventListener("click", () => {
+    function placeMotorTarget() {
+      const zr = zone.getBoundingClientRect();
+      motorBtn.style.left = CS.randInt(18, Math.max(20, zr.width - 90)) + "px";
+      motorBtn.style.top = CS.randInt(18, Math.max(20, zr.height - 50)) + "px";
+      motorBtn.style.transform = "none";
+    }
+    placeMotorTarget();
+
+    motorBtn.addEventListener("click", () => {
       clicks++;
       document.getElementById("motorResult").textContent = "Hit! Clicks on target: " + clicks + " — misses: " + misses;
     });
@@ -107,17 +123,74 @@
 
     const laggy = document.getElementById("laggyType");
     let buf = "";
-    laggy.addEventListener("keydown", (e) => {
-      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-        const ch = e.key;
-        const wait = (window.chromaSeizureSafe?.() ? 40 : 120) + Math.random() * 280;
-        setTimeout(() => {
-          buf += ch;
-          laggy.value = buf;
-        }, wait);
-      }
-    });
+    let typeDelayBase = 100 + Math.random() * 120;
+    function bindLaggy() {
+      laggy.onkeydown = (e) => {
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          const ch = e.key;
+          const wait = (window.chromaSeizureSafe?.() ? 40 : typeDelayBase) + Math.random() * 280;
+          setTimeout(() => {
+            buf += ch;
+            laggy.value = buf;
+          }, wait);
+        }
+      };
+    }
+    bindLaggy();
+
+    const TABLE_ROWS = [
+      [
+        { cells: ["B2", "3", "Maybe", "← arrow points right"], wrong: 0 },
+        { cells: ["Lab", "B2", "YES", "not this one"], wrong: 1 },
+        { cells: ["Exit", "1", "NO", "through kitchen"], wrong: 2 },
+        { cells: ["Kitchen", "2", "?", "Floor 3"], wrong: 3 },
+      ],
+      [
+        { cells: ["Lobby", "G", "Yes", "map rotated"], wrong: 2 },
+        { cells: ["Stairs", "1", "No", "sign says up"], wrong: 0 },
+        { cells: ["Cafe", "2", "Maybe", "exit behind counter"], wrong: 3 },
+        { cells: ["Hall B", "1", "?", "label faded"], wrong: 1 },
+      ],
+      [
+        { cells: ["Wing A", "4", "?", "stairs on left"], wrong: 3 },
+        { cells: ["Desk", "2", "No", "arrow reversed"], wrong: 2 },
+        { cells: ["Yard", "1", "Yes", "gate locked"], wrong: 0 },
+        { cells: ["Shop", "3", "Maybe", "floor mislabeled"], wrong: 1 },
+      ],
+    ];
+    let tableIdx = 0;
+    function renderTable() {
+      const layout = TABLE_ROWS[tableIdx % TABLE_ROWS.length];
+      const tbody = document.querySelector(".cs-map-table tbody");
+      tbody.innerHTML = layout
+        .map((row) => {
+          const tds = row.cells
+            .map((cell, i) => {
+              const cls = i === row.wrong ? ' class="cs-wrong"' : "";
+              return "<td" + cls + ">" + cell + "</td>";
+            })
+            .join("");
+          return "<tr>" + tds + "</tr>";
+        })
+        .join("");
+    }
+    renderTable();
+
+    document.getElementById("redoSim").onclick = () => {
+      clicks = 0;
+      misses = 0;
+      document.getElementById("motorResult").textContent = "Clicks: 0 — misses count when you don't hit the button";
+      lagFactor = 0.08 + Math.random() * 0.12;
+      jitterScale = 4 + Math.random() * 8;
+      typeDelayBase = 90 + Math.random() * 160;
+      buf = "";
+      laggy.value = "";
+      tableIdx = CS.randInt(0, TABLE_ROWS.length - 1);
+      renderTable();
+      placeMotorTarget();
+      CS.toast("New scenario — motor and table layout changed.");
+    };
   </script>
 </body>
 </html>

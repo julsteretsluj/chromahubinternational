@@ -35,6 +35,10 @@
     <header class="page-header pillar-digital"><div class="container"><h1>ADHD</h1><p>Distractions, hyperfocus traps, and forgotten alerts — with a focus pivot that quiets the noise.</p><div class="project-cta"><a href="chroma-sim.html" class="btn btn-secondary">← Back to ChromaSim</a></div></div></header>
     <section class="section"><div class="container">
       <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+          <p class="cs-redo-hint muted-note">New distractions, PIN, and missed-alert stack.</p>
+        </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="distract" aria-selected="true">Distractions</button>
           <button type="button" class="cs-tab" data-cs-tab="hyper" aria-selected="false">Hyperfocus</button>
@@ -58,10 +62,7 @@
           <p class="muted-note">A &quot;quick video&quot; becomes a trap — no obvious escape unless you find the hidden PIN.</p>
           <button id="openHyper" class="btn btn-primary">Open recommended video</button>
           <p class="muted-note" style="margin-top:0.5rem;">Hint: PIN digits may hide in plain sight on this page.</p>
-          <button id="pinClue" type="button" class="cs-hyper-pin" style="bottom:12px;left:12px;" title="">4</button>
-          <button type="button" class="cs-hyper-pin" style="top:120px;right:8px;" title="">7</button>
-          <button type="button" class="cs-hyper-pin" style="bottom:48px;right:24px;" title="">2</button>
-          <button type="button" class="cs-hyper-pin" style="top:200px;left:40%;" title="">9</button>
+          <div id="pinClueLayer"></div>
         </div>
 
         <div class="cs-panel" data-cs-panel="forget" hidden>
@@ -93,14 +94,29 @@
   <script src="js/sim-common.js"></script>
   <script src="js/chroma-sim.js"></script>
   <script>
+    const CS = window.ChromaSim;
     const POPUPS = [
       { title: "New message", body: "Quick question?" },
       { title: "Reminder", body: "Did you reply yet?" },
       { title: "URGENT", body: "(not actually urgent)" },
       { title: "New idea", body: "Reorganize your entire desk NOW." },
       { title: "Tab switch", body: "Wikipedia rabbit hole opened." },
+      { title: "Sale alert", body: "48% off something you don't need." },
+      { title: "Ping", body: "Someone reacted to your story." },
+      { title: "Calendar", body: "You have 3 events you forgot." },
+    ];
+    const MISSED_POOL = [
+      "Meeting in 5 min (missed)",
+      "Mom called (missed)",
+      "Deadline moved (unread)",
+      "Friend: are you OK? (ignored)",
+      "Doctor reminder (dismissed)",
+      "Package delivery failed (unread)",
+      "Team chat: @you (buried)",
+      "Bill due today (snoozed)",
     ];
     let masking = false, distractions = 0, spawnTimer = null;
+    let PIN = CS.pinDigits();
     const popupLayer = document.getElementById("popupLayer");
     const workspace = document.getElementById("workspace");
 
@@ -108,11 +124,11 @@
       if (masking || window.chromaSeizureSafe?.()) return;
       distractions++;
       document.getElementById("distractionBadge").textContent = "Distractions: " + distractions;
-      const d = POPUPS[Math.floor(Math.random() * POPUPS.length)];
+      const d = CS.pick(POPUPS);
       const el = document.createElement("div");
       el.className = "adhd-popup";
-      el.style.left = Math.random() * 120 + "px";
-      el.style.top = Math.random() * 80 + "px";
+      el.style.left = CS.randInt(8, 140) + "px";
+      el.style.top = CS.randInt(8, 100) + "px";
       el.innerHTML = '<div class="adhd-popup-head"><span>' + d.title + '</span><button type="button" class="adhd-popup-close">×</button></div><p style="margin:0">' + d.body + '</p>';
       el.querySelector(".adhd-popup-close").onclick = () => el.remove();
       popupLayer.appendChild(el);
@@ -121,7 +137,8 @@
     function startSpawning() {
       clearInterval(spawnTimer);
       if (masking) return;
-      spawnTimer = setInterval(spawnPopup, window.chromaSeizureSafe?.() ? 4500 : 1800);
+      const interval = window.chromaSeizureSafe?.() ? 4500 : CS.randInt(1400, 2400);
+      spawnTimer = setInterval(spawnPopup, interval);
     }
 
     document.getElementById("maskBtn").onclick = () => {
@@ -134,7 +151,23 @@
     startSpawning();
     spawnPopup();
 
-    const PIN = "4729";
+    function layoutPinClues() {
+      const layer = document.getElementById("pinClueLayer");
+      layer.innerHTML = "";
+      [...PIN].forEach((digit) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cs-hyper-pin";
+        btn.textContent = digit;
+        btn.style.left = CS.randInt(4, 78) + "%";
+        btn.style.top = CS.randInt(100, 280) + "px";
+        btn.style.right = "auto";
+        btn.style.bottom = "auto";
+        layer.appendChild(btn);
+      });
+    }
+    layoutPinClues();
+
     document.getElementById("openHyper").onclick = () => {
       document.getElementById("hyperOverlay").hidden = false;
       let w = 2;
@@ -150,20 +183,46 @@
       }
     };
 
-    const MISSED = ["Meeting in 5 min (missed)", "Mom called (missed)", "Deadline moved (unread)", "Friend: are you OK? (ignored)", "Doctor reminder (dismissed)"];
-    let bw = 100, mi = 0;
+    let bw = 100;
+    let missedQueue = [];
+    function resetMissed() {
+      missedQueue = CS.shuffle(MISSED_POOL.slice());
+      bw = 100;
+      document.getElementById("missedAlerts").innerHTML = "";
+      document.getElementById("bandwidthFill").style.width = "100%";
+      document.getElementById("bandwidthLabel").textContent = "Emotional bandwidth: 100%";
+      const initial = CS.randInt(2, 4);
+      for (let i = 0; i < initial; i++) addMissed();
+    }
     function addMissed() {
+      const text = missedQueue.shift() || CS.pick(MISSED_POOL);
       const el = document.createElement("div");
       el.className = "adhd-alert-missed";
-      el.textContent = MISSED[mi % MISSED.length];
+      el.textContent = text;
       document.getElementById("missedAlerts").appendChild(el);
-      mi++;
-      bw = Math.max(8, bw - 18);
+      bw = Math.max(8, bw - CS.randInt(12, 22));
       document.getElementById("bandwidthFill").style.width = bw + "%";
       document.getElementById("bandwidthLabel").textContent = "Emotional bandwidth: " + bw + "%";
     }
-    MISSED.slice(0, 2).forEach(addMissed);
-    document.getElementById("dismissMissed").onclick = () => { addMissed(); bw = Math.max(5, bw - 12); };
+    resetMissed();
+    document.getElementById("dismissMissed").onclick = () => { addMissed(); bw = Math.max(5, bw - CS.randInt(8, 16)); };
+
+    document.getElementById("redoSim").onclick = () => {
+      distractions = 0;
+      document.getElementById("distractionBadge").textContent = "Distractions: 0";
+      popupLayer.innerHTML = "";
+      document.getElementById("goalInput").value = "";
+      document.getElementById("whyInput").value = "";
+      PIN = CS.pinDigits();
+      layoutPinClues();
+      document.getElementById("pinInput").value = "";
+      document.getElementById("pinMsg").textContent = "";
+      document.getElementById("hyperOverlay").hidden = true;
+      resetMissed();
+      startSpawning();
+      spawnPopup();
+      CS.toast("New scenario — new PIN and distraction pattern.");
+    };
   </script>
 </body>
 </html>

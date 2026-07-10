@@ -30,6 +30,10 @@
     <section class="section"><div class="container">
       <div class="cs-warn"><strong>Content note:</strong> Intrusive audio and visual effects. Use low volume. Stop anytime.</div>
       <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+          <p class="cs-redo-hint muted-note">Different voices, visual overlays, and delusion paths.</p>
+        </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="audio" aria-selected="true">Auditory</button>
           <button type="button" class="cs-tab" data-cs-tab="visual" aria-selected="false">Visual</button>
@@ -74,16 +78,34 @@
   <script src="js/sim-common.js"></script>
   <script src="js/chroma-sim.js"></script>
   <script>
-    const LINES = ["They're talking about you.", "Don't trust what you read.", "Leave now.", "Can you hear me?", "Everyone is watching."];
+    const CS = window.ChromaSim;
+    const LINES = [
+      "They're talking about you.",
+      "Don't trust what you read.",
+      "Leave now.",
+      "Can you hear me?",
+      "Everyone is watching.",
+      "That wasn't real.",
+      "Check the locks.",
+      "You missed something important.",
+      "They're coordinating.",
+    ];
+    const READ_PROMPTS = [
+      "Read: The meeting is at three o'clock by the fountain.",
+      "Read: Pick up milk after work and call Sam.",
+      "Read: Your appointment moved to room 4B upstairs.",
+      "Read: The bus leaves at quarter past six.",
+    ];
     let voicesOn = false, grounded = false, timer = null;
+    let readIdx = 0;
 
     function speak() {
       if (!voicesOn || grounded) return;
-      const t = LINES[Math.floor(Math.random() * LINES.length)];
+      const t = CS.pick(LINES);
       const cap = document.createElement("div");
       cap.className = "sz-voice-caption";
-      cap.style.left = (10 + Math.random() * 50) + "%";
-      cap.style.top = (10 + Math.random() * 60) + "%";
+      cap.style.left = CS.randInt(8, 58) + "%";
+      cap.style.top = CS.randInt(8, 62) + "%";
       cap.textContent = "“" + t + "”";
       document.getElementById("voiceLayer").appendChild(cap);
       const u = new SpeechSynthesisUtterance(t);
@@ -96,14 +118,29 @@
       voicesOn = true;
       document.getElementById("voiceBadge").textContent = "Voices on";
       speak();
-      timer = setInterval(speak, window.chromaSeizureSafe?.() ? 5000 : 2800);
+      timer = setInterval(speak, window.chromaSeizureSafe?.() ? 5000 : CS.randInt(2200, 3200));
     };
     document.getElementById("groundBtn").onclick = () => {
       grounded = !grounded;
       if (grounded) { clearInterval(timer); speechSynthesis.cancel(); document.getElementById("voiceLayer").innerHTML = ""; }
-      else if (voicesOn) timer = setInterval(speak, 2800);
+      else if (voicesOn) timer = setInterval(speak, CS.randInt(2200, 3200));
       document.getElementById("groundBtn").textContent = grounded ? "Exit grounding" : "Grounding pivot";
     };
+
+    function renderHallucinations(url) {
+      const layer = document.getElementById("hallucinationLayer");
+      layer.innerHTML = "";
+      const count = CS.randInt(2, 5);
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement("img");
+        h.src = url;
+        h.className = "cs-hallucination-img";
+        h.style.left = CS.randInt(5, 65) + "%";
+        h.style.top = CS.randInt(8, 55) + "%";
+        h.style.transform = "rotate(" + CS.randInt(-18, 18) + "deg) scale(" + (0.7 + Math.random() * 0.5).toFixed(2) + ")";
+        layer.appendChild(h);
+      }
+    }
 
     document.getElementById("photoUpload").onchange = (e) => {
       const file = e.target.files?.[0];
@@ -111,48 +148,86 @@
       const url = URL.createObjectURL(file);
       const img = document.getElementById("uploadPreview");
       img.src = url;
+      img.dataset.hallUrl = url;
       img.style.display = "block";
       document.getElementById("visualPlaceholder").hidden = true;
-      const layer = document.getElementById("hallucinationLayer");
-      layer.innerHTML = "";
-      for (let i = 0; i < 3; i++) {
-        const h = document.createElement("img");
-        h.src = url;
-        h.className = "cs-hallucination-img";
-        h.style.left = (15 + i * 28) + "%";
-        h.style.top = (20 + i * 15) + "%";
-        layer.appendChild(h);
-      }
+      renderHallucinations(url);
     };
 
-    const DELUSION_TREE = {
-      start: { text: "You notice a coworker whispering. What do you think?", choices: [
-        { label: "Probably unrelated", next: "mild" },
-        { label: "Maybe about the project", next: "mid" },
-        { label: "They're plotting against me", next: "high" },
-      ]},
-      mild: { text: "You feel uneasy anyway. A door closes down the hall.", choices: [
-        { label: "Ignore it", next: "end_ok" },
-        { label: "They planned that sound", next: "mid" },
-      ]},
-      mid: { text: "Your phone buzzes with no message. Coincidence?", choices: [
-        { label: "Glitch", next: "mild" },
-        { label: "They're monitoring my screen", next: "high" },
-      ]},
-      high: { text: "The pattern is obvious now. Everyone knows. The building feels hostile.", choices: [
-        { label: "I need to leave", next: "end_bad" },
-        { label: "It's all connected", next: "end_bad" },
-      ]},
-      end_ok: { text: "You ground yourself. The whisper might have been nothing.", choices: [] },
-      end_bad: { text: "Thoughts spiral — relief only comes with support, grounding, or care. This sim stops here.", choices: [] },
-    };
+    const DELUSION_TREES = [
+      {
+        start: { text: "You notice a coworker whispering. What do you think?", choices: [
+          { label: "Probably unrelated", next: "mild" },
+          { label: "Maybe about the project", next: "mid" },
+          { label: "They're plotting against me", next: "high" },
+        ]},
+        mild: { text: "You feel uneasy anyway. A door closes down the hall.", choices: [
+          { label: "Ignore it", next: "end_ok" },
+          { label: "They planned that sound", next: "mid" },
+        ]},
+        mid: { text: "Your phone buzzes with no message. Coincidence?", choices: [
+          { label: "Glitch", next: "mild" },
+          { label: "They're monitoring my screen", next: "high" },
+        ]},
+        high: { text: "The pattern is obvious now. Everyone knows. The building feels hostile.", choices: [
+          { label: "I need to leave", next: "end_bad" },
+          { label: "It's all connected", next: "end_bad" },
+        ]},
+        end_ok: { text: "You ground yourself. The whisper might have been nothing.", choices: [] },
+        end_bad: { text: "Thoughts spiral — relief only comes with support, grounding, or care. This sim stops here.", choices: [] },
+      },
+      {
+        start: { text: "A news headline feels personally aimed at you. What now?", choices: [
+          { label: "Coincidence", next: "mild" },
+          { label: "Someone sent me a message through it", next: "mid" },
+          { label: "It's a direct warning", next: "high" },
+        ]},
+        mild: { text: "You try to scroll past, but the next post mentions your street.", choices: [
+          { label: "Algorithm weirdness", next: "end_ok" },
+          { label: "They're tracking my location", next: "high" },
+        ]},
+        mid: { text: "A stranger makes eye contact too long on the train.", choices: [
+          { label: "Random", next: "mild" },
+          { label: "They were sent to watch me", next: "high" },
+        ]},
+        high: { text: "Every ad, song, and sign starts to reference you.", choices: [
+          { label: "I should tell someone I trust", next: "end_ok" },
+          { label: "The network is complete", next: "end_bad" },
+        ]},
+        end_ok: { text: "Grounding breaks the loop — for now.", choices: [] },
+        end_bad: { text: "The spiral feels airtight. Real support interrupts this pattern.", choices: [] },
+      },
+      {
+        start: { text: "Your reflection looks slightly off today.", choices: [
+          { label: "Bad lighting", next: "mild" },
+          { label: "I'm exhausted", next: "mid" },
+          { label: "That's not my face", next: "high" },
+        ]},
+        mild: { text: "You laugh it off, but the feeling lingers.", choices: [
+          { label: "Move on", next: "end_ok" },
+          { label: "Look again", next: "mid" },
+        ]},
+        mid: { text: "A voice on the street says your name — no one is there.", choices: [
+          { label: "Misheard", next: "mild" },
+          { label: "They're calling me", next: "high" },
+        ]},
+        high: { text: "Ordinary objects seem arranged like clues.", choices: [
+          { label: "Breathe and ground", next: "end_ok" },
+          { label: "Decode the pattern", next: "end_bad" },
+        ]},
+        end_ok: { text: "Sensory grounding returns you to the room.", choices: [] },
+        end_bad: { text: "Without support, the clues feel undeniable.", choices: [] },
+      },
+    ];
+    let treeIdx = 0;
     let node = "start";
     function renderDelusion() {
-      const n = DELUSION_TREE[node];
+      const tree = DELUSION_TREES[treeIdx];
+      const n = tree[node];
       document.getElementById("delusionPrompt").textContent = n.text;
       const box = document.getElementById("delusionChoices");
       box.innerHTML = "";
-      n.choices.forEach((c) => {
+      CS.shuffle(n.choices).forEach((c) => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "cs-choice-btn" + (c.next === "high" || c.next === "end_bad" ? " intense" : "");
@@ -166,7 +241,31 @@
       });
     }
     renderDelusion();
-    document.getElementById("delusionReset").onclick = () => { node = "start"; renderDelusion(); document.getElementById("delusionLog").textContent = ""; };
+    document.getElementById("delusionReset").onclick = () => {
+      treeIdx = CS.randInt(0, DELUSION_TREES.length - 1);
+      node = "start";
+      renderDelusion();
+      document.getElementById("delusionLog").textContent = "";
+    };
+
+    document.getElementById("redoSim").onclick = () => {
+      readIdx = CS.randInt(0, READ_PROMPTS.length - 1);
+      document.querySelector("#audioField p").innerHTML = READ_PROMPTS[readIdx];
+      treeIdx = CS.randInt(0, DELUSION_TREES.length - 1);
+      node = "start";
+      renderDelusion();
+      document.getElementById("delusionLog").textContent = "";
+      clearInterval(timer);
+      speechSynthesis.cancel();
+      voicesOn = false;
+      grounded = false;
+      document.getElementById("voiceBadge").textContent = "Voices off";
+      document.getElementById("voiceLayer").innerHTML = "";
+      document.getElementById("groundBtn").textContent = "Grounding pivot";
+      const img = document.getElementById("uploadPreview");
+      if (img.dataset.hallUrl) renderHallucinations(img.dataset.hallUrl);
+      CS.toast("New scenario — fresh voice and delusion branch.");
+    };
   </script>
 </body>
 </html>

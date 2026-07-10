@@ -25,6 +25,10 @@
     <section class="section"><div class="container">
       <div class="cs-warn"><strong>Content note:</strong> Simulates emotional intensity around relationships. Pause anytime. This is education, not diagnosis.</div>
       <div class="experience-shell" data-cs-tabs>
+        <div class="cs-redo-bar">
+          <button type="button" id="redoSim" class="btn btn-secondary">New scenario</button>
+          <p class="cs-redo-hint muted-note">Fresh prompts, reactions, and reminder order.</p>
+        </div>
         <div class="cs-tabs" role="tablist">
           <button type="button" class="cs-tab active" data-cs-tab="react" aria-selected="true">Reactivity</button>
           <button type="button" class="cs-tab" data-cs-tab="bw" aria-selected="false">Black &amp; white</button>
@@ -72,21 +76,87 @@
   <script src="js/sim-common.js"></script>
   <script src="js/chroma-sim.js"></script>
   <script>
-    const REACT = [
-      { label: "Sure, no problem", result: "You feel calm. (Baseline — rare in this sim.)" },
-      { label: "Why — what did I do?", result: "Your chest tightens. You replay every message from the last week." },
-      { label: "Are you angry at me?", result: "They say no, but your mind fills the silence with worst-case stories." },
-      { label: "Fine. Whatever.", result: "Sharp reply sent. Regret arrives in under a minute." },
+    const CS = window.ChromaSim;
+    const REACT_SCENARIOS = [
+      {
+        prompt: 'Your colleague says: "Can we talk later about the project?"',
+        choices: [
+          { label: "Sure, no problem", result: "You feel calm. (Baseline — rare in this sim.)" },
+          { label: "Why — what did I do?", result: "Your chest tightens. You replay every message from the last week." },
+          { label: "Are you angry at me?", result: "They say no, but your mind fills the silence with worst-case stories." },
+          { label: "Fine. Whatever.", result: "Sharp reply sent. Regret arrives in under a minute." },
+        ],
+      },
+      {
+        prompt: 'A friend texts: "We need to reschedule."',
+        choices: [
+          { label: "OK, thanks for letting me know", result: "Brief relief — until you wonder what changed." },
+          { label: "Did I do something wrong?", result: "You scan the last chat for hidden meaning." },
+          { label: "Again? You always cancel on me", result: "Heat rises fast. The message feels like proof." },
+          { label: "Don't bother then", result: "Sent before you can breathe. Shame follows." },
+        ],
+      },
+      {
+        prompt: 'Your manager says: "Good work on the draft."',
+        choices: [
+          { label: "Thank you", result: "Polite on the surface — you wait for the other shoe." },
+          { label: "What was wrong with it?", result: "Praise sounds like a warning. You brace for criticism." },
+          { label: "So it wasn't good enough?", result: "The compliment collapses into failure." },
+          { label: "I'll redo everything tonight", result: "Overcorrection starts before anyone asked." },
+        ],
+      },
     ];
-    const rc = document.getElementById("reactChoices");
-    REACT.forEach((r) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "cs-choice-btn" + (r.label.includes("angry") || r.label.includes("Whatever") ? " intense" : "");
-      b.textContent = r.label;
-      b.onclick = () => { document.getElementById("reactResult").textContent = r.result; };
-      rc.appendChild(b);
-    });
+    const BW_STATEMENTS = [
+      { quote: '"I guess we\'ll see how today goes."', ok: "They're open and hopeful about today", bad: "They're already disappointed in me" },
+      { quote: '"Take your time — no rush."', ok: "They're being patient and kind", bad: "They're losing interest in me" },
+      { quote: '"Interesting choice."', ok: "They're curious about my decision", bad: "They're mocking me" },
+    ];
+    const SPLIT_ALERTS = [
+      "Notification: Alex liked your message from 3 days ago.",
+      "Notification: Alex viewed your story but didn't reply.",
+      "Notification: Alex is online — no message yet.",
+      "Notification: Alex hearted someone else's post first.",
+    ];
+    const ABANDON = [
+      "They're online but didn't reply to you.",
+      "You were kind last week — maybe it wasn't enough.",
+      "Everyone else gets faster replies.",
+      "If you need them this much, you'll push them away.",
+      "They liked someone else's post before yours.",
+      "You apologized already — why are you still anxious?",
+      "They said they were busy — busy with who?",
+    ];
+    let reactIdx = 0;
+    let bwIdx = 0;
+    let splitIdx = 0;
+    let abandonOrder = [];
+
+    function renderReact() {
+      const scenario = REACT_SCENARIOS[reactIdx];
+      document.getElementById("reactPrompt").innerHTML = scenario.prompt;
+      const rc = document.getElementById("reactChoices");
+      rc.innerHTML = "";
+      CS.shuffle(scenario.choices).forEach((r) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "cs-choice-btn" + (/angry|Whatever|cancel|bother|wrong|redo/i.test(r.label) ? " intense" : "");
+        b.textContent = r.label;
+        b.onclick = () => { document.getElementById("reactResult").textContent = r.result; };
+        rc.appendChild(b);
+      });
+      document.getElementById("reactResult").textContent = "";
+    }
+
+    function renderBw() {
+      const s = BW_STATEMENTS[bwIdx];
+      document.querySelector('[data-cs-panel="bw"] blockquote').textContent = s.quote;
+      document.getElementById("bwExplain").textContent = "";
+    }
+
+    function renderSplit() {
+      document.getElementById("fpAlert").textContent = SPLIT_ALERTS[splitIdx];
+      document.getElementById("splitResult").textContent = "";
+    }
 
     document.getElementById("bwOk").onclick = () => {
       document.getElementById("bwExplain").textContent = "Neurotypical read: neutral optimism. Your read may scan for hidden rejection — both can coexist.";
@@ -99,26 +169,47 @@
       document.getElementById("splitResult").textContent = "FP is perfect again. Relief floods in — until the next notification.";
     };
     document.getElementById("splitBad").onclick = () => {
-      document.getElementById("splitResult").textContent = "FP is cruel / gone. You draft three messages you don&apos;t send.";
+      document.getElementById("splitResult").textContent = "FP is cruel / gone. You draft three messages you don't send.";
     };
 
-    const ABANDON = [
-      "They&apos;re online but didn&apos;t reply to you.",
-      "You were kind last week — maybe it wasn&apos;t enough.",
-      "Everyone else gets faster replies.",
-      "If you need them this much, you&apos;ll push them away.",
-      "They liked someone else&apos;s post before yours.",
-    ];
-    let ai = 0;
-    function addAbandon() {
+    function resetAbandon() {
+      abandonOrder = CS.shuffle(ABANDON.slice());
+      const feed = document.getElementById("abandonFeed");
+      feed.innerHTML = "";
       const p = document.createElement("div");
       p.className = "cs-fp-alert";
-      p.innerHTML = ABANDON[ai % ABANDON.length];
+      p.innerHTML = abandonOrder[0];
+      feed.appendChild(p);
+    }
+    let ai = 1;
+    function addAbandon() {
+      if (!abandonOrder.length) resetAbandon();
+      const p = document.createElement("div");
+      p.className = "cs-fp-alert";
+      p.innerHTML = abandonOrder[ai % abandonOrder.length];
       document.getElementById("abandonFeed").appendChild(p);
       ai++;
     }
-    addAbandon();
     document.getElementById("moreAbandon").onclick = addAbandon;
+
+    document.getElementById("redoSim").onclick = () => {
+      const prevR = reactIdx;
+      reactIdx = CS.randInt(0, REACT_SCENARIOS.length - 1);
+      if (REACT_SCENARIOS.length > 1 && reactIdx === prevR) reactIdx = (reactIdx + 1) % REACT_SCENARIOS.length;
+      bwIdx = CS.randInt(0, BW_STATEMENTS.length - 1);
+      splitIdx = CS.randInt(0, SPLIT_ALERTS.length - 1);
+      ai = 1;
+      renderReact();
+      renderBw();
+      renderSplit();
+      resetAbandon();
+      CS.toast("New scenario — different social cues loaded.");
+    };
+
+    renderReact();
+    renderBw();
+    renderSplit();
+    resetAbandon();
   </script>
 </body>
 </html>

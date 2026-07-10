@@ -27,6 +27,21 @@
 .cs-panel { display: none; }
 .cs-panel.active { display: block; }
 
+.cs-redo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.cs-redo-hint {
+  font-size: 0.82rem;
+  margin: 0;
+}
+
 .cs-drift-para {
   line-height: 1.85;
   word-break: normal;
