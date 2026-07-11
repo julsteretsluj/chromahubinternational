@@ -39,8 +39,8 @@
           <div id="cursorZone" class="cs-cursor-zone">
             <div id="cursorTarget" class="cs-cursor-target"></div>
             <div id="cursorDot" class="cs-cursor-dot"></div>
-            <p style="position:absolute;bottom:8px;left:8px;font-size:0.8rem;color:var(--text-muted);margin:0;">Try to click the orange square</p>
-            <button id="motorTarget" type="button" style="position:absolute;top:40%;left:55%;transform:translate(-50%,-50%);padding:0.4rem 0.6rem;font-size:0.8rem;">Target</button>
+            <p style="position:absolute;bottom:8px;left:8px;font-size:0.8rem;color:var(--text-muted);margin:0;">Click the orange square — your cursor lags behind</p>
+            <button id="motorTarget" type="button" class="cs-motor-btn" aria-label="Motor target"></button>
           </div>
           <p id="motorResult" class="muted-note" style="margin-top:0.5rem;">Clicks: 0 — misses count when you don't hit the button</p>
         </div>
@@ -70,6 +70,11 @@
             </tbody>
           </table>
           <p class="muted-note" style="margin-top:0.65rem;">Which row lists the actual exit on floor 1? The layout fights you.</p>
+          <p class="muted-note" style="margin-bottom:0.5rem;"><strong>Floor 1 map</strong> — tap the real exit (decoys are mislabeled).</p>
+          <div id="mapZone" class="cs-map-zone" aria-label="Floor 1 map with exit targets">
+            <span class="cs-map-floor">Floor 1</span>
+          </div>
+          <p id="mapResult" class="muted-note" style="margin-top:0.5rem;">Find the exit: 0 found — decoy taps: 0</p>
         </div>
 
         <div class="cs-pivot"><strong>Inclusive pivot:</strong> Larger click targets, sticky keys, voice input, step-by-step maps, and predictable layouts.</div>
@@ -111,8 +116,9 @@
 
     function placeMotorTarget() {
       const zr = zone.getBoundingClientRect();
-      motorBtn.style.left = CS.randInt(18, Math.max(20, zr.width - 90)) + "px";
-      motorBtn.style.top = CS.randInt(18, Math.max(20, zr.height - 50)) + "px";
+      const size = 40;
+      motorBtn.style.left = CS.randInt(18, Math.max(20, zr.width - size - 12)) + "px";
+      motorBtn.style.top = CS.randInt(18, Math.max(20, zr.height - size - 36)) + "px";
       motorBtn.style.transform = "none";
     }
     placeMotorTarget();
@@ -236,6 +242,78 @@
     }
     renderTable();
 
+    const MAP_LAYOUTS = [
+      {
+        decoys: [
+          { label: "EXIT →", left: 72, top: 28 },
+          { label: "Floor 2", left: 18, top: 62 },
+          { label: "NO EXIT", left: 68, top: 78 },
+        ],
+        real: { label: "Exit", left: 38, top: 48 },
+      },
+      {
+        decoys: [
+          { label: "↑ Exit", left: 14, top: 24 },
+          { label: "Gate?", left: 76, top: 34 },
+          { label: "Kitchen", left: 62, top: 72 },
+        ],
+        real: { label: "Exit 1", left: 42, top: 58 },
+      },
+      {
+        decoys: [
+          { label: "Maybe", left: 58, top: 18 },
+          { label: "← OUT", left: 8, top: 70 },
+          { label: "Stairs", left: 78, top: 68 },
+        ],
+        real: { label: "Exit", left: 28, top: 38 },
+      },
+    ];
+    let mapIdx = 0;
+    let mapFound = 0;
+    let mapDecoys = 0;
+    const mapZone = document.getElementById("mapZone");
+    const mapResult = document.getElementById("mapResult");
+
+    function updateMapResult(extra) {
+      mapResult.textContent =
+        (extra ? extra + " — " : "") +
+        "Find the exit: " + mapFound + " found — decoy taps: " + mapDecoys;
+    }
+
+    function renderMap() {
+      const layout = MAP_LAYOUTS[mapIdx % MAP_LAYOUTS.length];
+      mapZone.querySelectorAll(".cs-map-pin").forEach((el) => el.remove());
+      layout.decoys.forEach((pin) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cs-map-pin cs-map-pin--decoy";
+        btn.textContent = pin.label;
+        btn.style.left = pin.left + "%";
+        btn.style.top = pin.top + "%";
+        btn.addEventListener("click", () => {
+          mapDecoys++;
+          updateMapResult("Wrong marker — label lied");
+        });
+        mapZone.appendChild(btn);
+      });
+      const real = document.createElement("button");
+      real.type = "button";
+      real.id = "exitTarget";
+      real.className = "cs-map-pin cs-map-pin--real";
+      real.textContent = layout.real.label;
+      real.style.left = layout.real.left + "%";
+      real.style.top = layout.real.top + "%";
+      real.setAttribute("aria-label", "Real exit on floor 1");
+      real.addEventListener("click", () => {
+        mapFound++;
+        updateMapResult("Correct — floor 1 exit (matches table row 3)");
+        real.classList.add("found");
+        CS.toast("Exit found — but the table still contradicts itself.");
+      });
+      mapZone.appendChild(real);
+    }
+    renderMap();
+
     document.getElementById("redoSim").onclick = () => {
       clicks = 0;
       misses = 0;
@@ -249,8 +327,13 @@
       document.getElementById("timingResult").textContent = "Not finished";
       tableIdx = CS.randInt(0, TABLE_ROWS.length - 1);
       renderTable();
+      mapIdx = CS.randInt(0, MAP_LAYOUTS.length - 1);
+      mapFound = 0;
+      mapDecoys = 0;
+      updateMapResult();
+      renderMap();
       placeMotorTarget();
-      CS.toast("New scenario — motor and table layout changed.");
+      CS.toast("New scenario — motor, map, and table layout changed.");
     };
   </script>
 </body>

@@ -1,8 +1,11 @@
 /* ChromaShare library platform */
 .cs-app {
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
 }
 
@@ -13,8 +16,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--glass-border-faint);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
 }
 
 .cs-tabs {
@@ -33,11 +38,19 @@
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+
+.cs-tab:hover,
+.cs-tab:focus-visible,
+.cs-tab.active {
+  color: var(--text-primary);
+  -webkit-text-fill-color: currentColor;
 }
 
 .cs-tab:hover { border-color: var(--chroma-teal); }
 .cs-tab.active {
-  background: color-mix(in srgb, var(--chroma-teal) 14%, var(--bg-surface));
+  background: color-mix(in srgb, var(--chroma-teal) 18%, var(--bg-surface));
   border-color: var(--chroma-teal);
 }
 
@@ -89,12 +102,18 @@
 }
 
 .cs-card {
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: 12px;
-  background: var(--bg-surface);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
   padding: 0.9rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass);
   text-align: left;
   font: inherit;
   color: inherit;
@@ -102,8 +121,9 @@
 }
 
 .cs-card:hover {
-  border-color: var(--chroma-teal);
-  box-shadow: var(--shadow);
+  border-color: var(--glass-border-hover);
+  transform: scale(1.01);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .cs-card-type {
@@ -281,14 +301,17 @@
 .cs-modal-overlay.open { display: flex; }
 
 .cs-modal {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+  border: 1px solid var(--glass-border-faint);
   border-radius: var(--radius-lg);
   max-width: 640px;
   width: 100%;
   max-height: 85vh;
   overflow: auto;
   padding: 1.25rem;
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .cs-modal-head {

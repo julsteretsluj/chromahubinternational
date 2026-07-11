@@ -1,8 +1,11 @@
 /* ChromaIndex benchmark platform */
 .ci-app {
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
 }
 
@@ -11,8 +14,10 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--glass-border-faint);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
 }
 
 .ci-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }

@@ -1,8 +1,11 @@
 /* ChromaForge learning platform */
 .cf-app {
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
 }
 
@@ -13,8 +16,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--glass-border-faint);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
 }
 
 .cf-tabs { display: flex; flex-wrap: wrap; gap: 0.35rem; }
@@ -58,10 +63,13 @@
 }
 
 .cf-stat-card {
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: 12px;
   padding: 0.9rem;
-  background: var(--bg-surface);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
+  box-shadow: var(--glass-shadow);
 }
 
 .cf-stat-card h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
@@ -192,7 +200,17 @@
   color: var(--text-primary);
   font: inherit;
   font-size: 0.86rem;
+  font-weight: 600;
   cursor: pointer;
+  -webkit-text-fill-color: currentColor;
+}
+
+.cf-scenario-options button:hover,
+.cf-scenario-options button:focus-visible,
+.cf-scenario-options button.correct,
+.cf-scenario-options button.wrong {
+  color: var(--text-primary);
+  -webkit-text-fill-color: currentColor;
 }
 
 .cf-scenario-options button:hover { border-color: var(--chroma-orange); }

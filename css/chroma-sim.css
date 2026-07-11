@@ -7,21 +7,43 @@
 }
 
 .cs-tab {
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
+  border: 1px solid var(--glass-border-faint);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   color: var(--text-primary);
   border-radius: 999px;
-  padding: 0.35rem 0.75rem;
+  padding: 0.4rem 0.85rem;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+  -webkit-text-fill-color: currentColor;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass),
+    background var(--duration-glass) var(--ease-glass);
 }
 
-.cs-tab:hover { border-color: var(--chroma-teal); }
+.cs-tab:hover,
+.cs-tab:focus-visible,
 .cs-tab.active {
-  background: color-mix(in srgb, var(--chroma-teal) 14%, var(--bg-surface));
+  color: var(--text-primary);
+  -webkit-text-fill-color: currentColor;
+}
+
+.cs-tab:hover {
+  border-color: var(--glass-border-hover);
+  transform: scale(1.01);
+  box-shadow: var(--glass-shadow);
+}
+
+.cs-tab.active {
+  background: color-mix(in srgb, var(--chroma-teal) 18%, var(--glass-bg-strong));
   border-color: var(--chroma-teal);
+  box-shadow: var(--glass-shadow);
 }
 
 .cs-panel { display: none; }
@@ -34,7 +56,7 @@
   gap: 0.5rem 0.75rem;
   margin-bottom: 0.85rem;
   padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--glass-border-faint);
 }
 
 .cs-redo-hint {
@@ -68,38 +90,61 @@
 }
 
 .cs-field {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-surface);
-  padding: 1rem;
+  border: 1px solid var(--glass-border-faint);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
+  padding: 1.25rem 1.5rem;
   position: relative;
   overflow: hidden;
   min-height: 200px;
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass);
+}
+
+.cs-field:hover {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .cs-field--drift {
   overflow: visible;
   min-height: auto;
-  padding: 1.25rem 1rem;
+  padding: 1.5rem 1.25rem;
 }
 
 .cs-input {
   width: 100%;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid var(--border);
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--glass-border-faint);
   border-radius: 8px;
-  background: var(--bg-elevated);
+  background: var(--glass-bg-input);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   color: var(--text-primary);
   font: inherit;
   margin-top: 0.45rem;
+  transition: border-color var(--duration-glass) var(--ease-glass), box-shadow var(--duration-glass) var(--ease-glass);
+}
+
+.cs-input:focus {
+  outline: none;
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--chroma-teal) 22%, transparent);
 }
 
 .cs-output {
   margin-top: 0.65rem;
-  padding: 0.75rem;
+  padding: 0.85rem 1rem;
   border-radius: 8px;
-  border: 1px dashed var(--chroma-magenta);
-  background: color-mix(in srgb, var(--chroma-magenta) 6%, var(--bg-elevated));
+  border: 1px dashed color-mix(in srgb, var(--chroma-magenta) 45%, var(--glass-border-faint));
+  background: color-mix(in srgb, var(--chroma-magenta) 8%, var(--glass-bg-elevated));
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   font-size: 1.05rem;
   line-height: 1.55;
   min-height: 3rem;
@@ -107,12 +152,15 @@
 
 .cs-cursor-zone {
   height: 220px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: 10px;
-  background: var(--bg-elevated);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   position: relative;
   cursor: none;
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .cs-cursor-dot {
@@ -159,11 +207,14 @@
   min-height: 120px;
   font-size: 1.4rem;
   font-weight: 700;
-  padding: 1rem;
-  border: 1px solid var(--border);
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--glass-border-faint);
   border-radius: 10px;
-  background: var(--bg-elevated);
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   overflow: hidden;
+  box-shadow: var(--glass-shadow);
 }
 
 .cs-float-math span {
@@ -244,21 +295,25 @@
 .cs-hyper-pin {
   position: fixed;
   font-size: 0.7rem;
-  color: color-mix(in srgb, var(--text-muted) 40%, transparent);
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0.2rem;
   border: none;
   background: transparent;
   z-index: 501;
+  -webkit-text-fill-color: currentColor;
 }
 
 .cs-hyper-modal {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-xl));
+  -webkit-backdrop-filter: blur(var(--glass-blur-xl));
+  border: 1px solid var(--glass-border-faint);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
   max-width: 320px;
   text-align: center;
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .cs-choice-grid {
@@ -269,17 +324,42 @@
 
 .cs-choice-btn {
   text-align: left;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border-faint);
   border-radius: 10px;
-  padding: 0.65rem 0.8rem;
-  background: var(--bg-elevated);
+  padding: 0.75rem 0.95rem;
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   color: var(--text-primary);
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
+  -webkit-text-fill-color: currentColor;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass),
+    background var(--duration-glass) var(--ease-glass);
 }
 
-.cs-choice-btn:hover { border-color: var(--chroma-orange); }
-.cs-choice-btn.intense { border-color: var(--chroma-magenta); background: color-mix(in srgb, var(--chroma-magenta) 10%, var(--bg-elevated)); }
+.cs-choice-btn:hover,
+.cs-choice-btn:focus-visible,
+.cs-choice-btn.intense {
+  color: var(--text-primary);
+  -webkit-text-fill-color: currentColor;
+}
+
+.cs-choice-btn:hover {
+  border-color: var(--glass-border-hover);
+  transform: scale(1.01);
+  box-shadow: var(--glass-shadow);
+}
+
+.cs-choice-btn.intense {
+  border-color: var(--chroma-magenta);
+  background: color-mix(in srgb, var(--chroma-magenta) 14%, var(--glass-bg-strong));
+}
 
 .cs-hallucination-layer {
   position: absolute;
@@ -307,12 +387,15 @@
 
 .cs-fp-alert {
   border-left: 4px solid var(--chroma-magenta);
-  padding: 0.55rem 0.75rem;
+  padding: 0.65rem 0.85rem;
   margin-bottom: 0.5rem;
-  background: color-mix(in srgb, var(--chroma-magenta) 8%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--chroma-magenta) 10%, var(--glass-bg-elevated));
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   border-radius: 0 8px 8px 0;
   font-size: 0.88rem;
   animation: csFpPulse 2s ease infinite;
+  box-shadow: var(--glass-shadow);
 }
 
 @keyframes csFpPulse {
@@ -327,32 +410,169 @@
   bottom: 1rem;
   right: 1rem;
   z-index: 600;
-  background: var(--bg-card);
-  border: 1px solid var(--chroma-teal);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur-lg));
+  -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+  border: 1px solid color-mix(in srgb, var(--chroma-teal) 45%, var(--glass-border-faint));
   border-radius: 10px;
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1rem;
   font-size: 0.88rem;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .cs-pivot {
-  border: 1px dashed var(--chroma-teal);
-  border-radius: 12px;
-  padding: 0.85rem;
+  border: 1px dashed color-mix(in srgb, var(--chroma-teal) 50%, var(--glass-border-faint));
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
   margin-top: 0.85rem;
-  background: color-mix(in srgb, var(--chroma-teal) 7%, var(--bg-elevated));
+  background: color-mix(in srgb, var(--chroma-teal) 9%, var(--glass-bg-elevated));
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  box-shadow: var(--glass-shadow);
 }
 
 .cs-warn {
-  border: 1px solid var(--chroma-orange);
+  border: 1px solid color-mix(in srgb, var(--chroma-orange) 55%, var(--glass-border-faint));
   border-radius: 10px;
-  padding: 0.75rem;
-  background: color-mix(in srgb, var(--chroma-orange) 10%, var(--bg-elevated));
+  padding: 0.85rem 1rem;
+  background: color-mix(in srgb, var(--chroma-orange) 12%, var(--glass-bg-elevated));
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
   margin-bottom: 0.85rem;
   font-size: 0.9rem;
+  box-shadow: var(--glass-shadow);
 }
 
-/* Histrionic — silence distress flash */
+/* Dyspraxia motor target */
+.cs-motor-btn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid var(--chroma-orange);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--chroma-orange) 22%, var(--glass-bg-strong));
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 149, 0, 0.35),
+    var(--glass-shadow);
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass);
+}
+
+.cs-motor-btn:hover,
+.cs-motor-btn:focus-visible {
+  border-color: color-mix(in srgb, var(--chroma-orange) 80%, white);
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 2px rgba(255, 149, 0, 0.45),
+    var(--glass-shadow-hover);
+}
+
+/* Dyspraxia floor map targets */
+.cs-map-zone {
+  position: relative;
+  min-height: 180px;
+  margin-top: 0.35rem;
+  border: 1px solid var(--glass-border-faint);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    var(--glass-bg-elevated);
+  background-size: 24px 24px, 24px 24px, auto;
+  backdrop-filter: blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: blur(var(--glass-blur-md));
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+}
+
+.cs-map-floor {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.cs-map-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 2.4rem;
+  padding: 0.28rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: inherit;
+  line-height: 1.2;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    transform var(--duration-glass) var(--ease-glass),
+    border-color var(--duration-glass) var(--ease-glass),
+    box-shadow var(--duration-glass) var(--ease-glass);
+}
+
+.cs-map-pin--decoy {
+  color: var(--text-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  border: 1px solid var(--glass-border-faint);
+  box-shadow: var(--glass-shadow);
+}
+
+.cs-map-pin--decoy:hover {
+  transform: translate(-50%, -50%) scale(1.03);
+  border-color: var(--chroma-magenta);
+}
+
+.cs-map-pin--real {
+  width: 34px;
+  height: 34px;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid var(--chroma-orange);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--chroma-orange) 24%, var(--glass-bg-strong));
+  color: transparent;
+  box-shadow:
+    0 0 0 1px rgba(255, 149, 0, 0.35),
+    var(--glass-shadow);
+}
+
+.cs-map-pin--real::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 3px;
+  background: var(--chroma-orange);
+  opacity: 0.85;
+}
+
+.cs-map-pin--real:hover,
+.cs-map-pin--real:focus-visible {
+  transform: translate(-50%, -50%) scale(1.06);
+  border-color: color-mix(in srgb, var(--chroma-orange) 85%, white);
+}
+
+.cs-map-pin--real.found {
+  border-color: var(--chroma-green);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--chroma-green) 40%, transparent);
+}
+
+.cs-map-pin--real.found::after {
+  background: var(--chroma-green);
+}
+
 .cs-distress-bar {
   height: 10px;
   border-radius: 999px;
